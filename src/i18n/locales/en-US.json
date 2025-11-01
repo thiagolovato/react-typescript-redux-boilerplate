@@ -1,0 +1,165 @@
+{
+  "app": {
+    "name": "Mentor Mentee",
+    "tagline": "Connecting people for mutual growth and professional development"
+  },
+  "navigation": {
+    "login": "Login",
+    "register": "Sign Up",
+    "dashboard": "Dashboard"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "subtitle": "Welcome back! Please sign in to continue",
+      "email": "Email",
+      "password": "Password",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password",
+      "loginButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Sign up",
+      "success": "Login successful!",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email",
+        "passwordRequired": "Password is required",
+        "invalidCredentials": "Login failed. Please check your credentials.",
+        "general": "Login failed. Please try again.",
+        "tokenNotReceived": "Token not received from server"
+      }
+    },
+    "register": {
+      "title": "Create new account",
+      "subtitle": "Join our community of mentors and mentees",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "userType": "User Type",
+      "mentor": "I'm a Mentor",
+      "mentee": "I'm a Student",
+      "mentorDescription": "I want to share knowledge and experience",
+      "menteeDescription": "I want to learn and receive guidance",
+      "emailPlaceholder": "Enter your email",
+      "passwordPlaceholder": "Enter your password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "registerButton": "Sign Up",
+      "hasAccount": "Already have an account?",
+      "loginHere": "Sign in here",
+      "success": "Account created successfully! Welcome!",
+      "termsOfUse": "I agree to the terms of use",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email",
+        "passwordRequired": "Password is required",
+        "passwordMinLength": "Password must be at least 6 characters",
+        "confirmPasswordRequired": "Password confirmation is required",
+        "passwordsNotMatch": "Passwords do not match",
+        "userTypeRequired": "User type is required",
+        "general": "Failed to create account. Please try again.",
+        "tokenNotReceived": "Token not received from server"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome to Mentor Mentee!",
+    "subtitle": "Connect, learn and grow together with our community of mentors and mentees.",
+    "quickActions": "Quick Actions",
+    "findMentors": "Find Mentors",
+    "findMentees": "Find Mentees",
+    "myProfile": "My Profile",
+    "sessions": "Mentorship Sessions",
+    "logout": "Sign Out",
+    "loading": "Loading...",
+    "findMentorsDescription": "Discover experienced mentors in your field of interest and accelerate your professional growth.",
+    "findMenteesDescription": "Share your knowledge and help other professionals grow in their careers.",
+    "myProfileDescription": "Manage your personal information, skills and mentorship preferences.",
+    "sessionsDescription": "Track your active mentorship sessions and manage your commitments.",
+    "exploreMentors": "Explore Mentors",
+    "findMenteesButton": "Find Mentees",
+    "myProfileButton": "View Profile",
+    "viewConversations": "View Conversations"
+  },
+  "designSystem": {
+    "title": "Design System",
+    "subtitle": "Mentor Mentee design components and tokens",
+    "sections": {
+      "colors": "Colors",
+      "buttons": "Buttons",
+      "inputs": "Input Fields",
+      "spacing": "Spacing",
+      "typography": "Typography"
+    },
+    "buttons": {
+      "primary": "Primary",
+      "secondary": "Secondary", 
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "loading": "Loading...",
+      "withIcon": "With Icon",
+      "fullWidth": "Full Width"
+    },
+    "inputs": {
+      "default": "Default",
+      "error": "Error",
+      "success": "Success",
+      "withLabel": "With Label",
+      "withHelper": "With Helper Text",
+      "placeholder": "Type something..."
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "remove": "Remove"
+  },
+  "validation": {
+    "required": "This field is required",
+    "emailInvalid": "Invalid email format",
+    "passwordMinLength": "Password must be at least {{min}} characters",
+    "passwordsNotMatch": "Passwords do not match"
+  },
+  "profile": {
+    "title": "My Profile",
+    "loading": "Loading profile...",
+    "personalInfo": "Personal Information",
+    "professionalInfo": "Professional Information",
+    "address": "Address",
+    "qualifications": "Qualifications",
+    "name": "Name",
+    "age": "Age",
+    "gender": "Gender",
+    "profession": "Profession",
+    "generation": "Generation",
+    "city": "City",
+    "region": "Region",
+    "country": "Country",
+    "expectations": "Expectations",
+    "isGraduated": "I have a college degree",
+    "hasMentorshipTraining": "I have mentorship training",
+    "hasMentorshipExperience": "I have previous mentorship experience",
+    "hasRuralTraining": "I have rural training experience",
+    "languages": "Languages",
+    "language": "Language",
+    "addLanguage": "Add Language",
+    "contacts": "Contact Information",
+    "contactType": "Contact Type",
+    "contactValue": "Contact Value",
+    "preferentialContact": "Preferred Contact Method",
+    "addContact": "Add Contact",
+    "errors": {
+      "loadProfile": "Failed to load profile",
+      "saveProfile": "Failed to save profile"
+    }
+  }
+} 

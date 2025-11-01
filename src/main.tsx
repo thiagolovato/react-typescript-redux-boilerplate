@@ -1,14 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-import { store } from './redux/store.ts';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+import './i18n'; // Import i18n configuration
+import App from './App.tsx';
+import { store, persistor } from './redux/store';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+    <StrictMode>
       <Provider store={store}>
-        <App />
+        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </PersistGate>
       </Provider>
-    </React.StrictMode>,
+    </StrictMode>,
 );

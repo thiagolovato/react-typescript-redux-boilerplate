@@ -1,0 +1,165 @@
+{
+  "app": {
+    "name": "Mentor Mentee",
+    "tagline": "Conectando pessoas para crescimento mútuo e desenvolvimento profissional"
+  },
+  "navigation": {
+    "login": "Login",
+    "register": "Criar Conta",
+    "dashboard": "Dashboard"
+  },
+  "auth": {
+    "login": {
+      "title": "Entre na sua conta",
+      "subtitle": "Bem-vindo de volta! Faça login para continuar",
+      "email": "Email",
+      "password": "Senha",
+      "emailPlaceholder": "Digite seu email",
+      "passwordPlaceholder": "Digite sua senha",
+      "loginButton": "Entrar",
+      "noAccount": "Não tem uma conta?",
+      "createAccount": "Criar conta",
+      "success": "Login realizado com sucesso!",
+      "errors": {
+        "emailRequired": "Email é obrigatório",
+        "emailInvalid": "Email inválido",
+        "passwordRequired": "Senha é obrigatória",
+        "invalidCredentials": "Erro ao fazer login. Verifique suas credenciais.",
+        "general": "Erro ao fazer login. Tente novamente.",
+        "tokenNotReceived": "Token não recebido do servidor"
+      }
+    },
+    "register": {
+      "title": "Criar nova conta",
+      "subtitle": "Junte-se à nossa comunidade de mentores e mentees",
+      "email": "Email",
+      "password": "Senha",
+      "confirmPassword": "Confirmar Senha",
+      "userType": "Tipo de Usuário",
+      "mentor": "Sou Mentor",
+      "mentee": "Sou Estudante",
+      "mentorDescription": "Quero compartilhar conhecimento e experiência",
+      "menteeDescription": "Quero aprender e receber orientação",
+      "emailPlaceholder": "Digite seu email",
+      "passwordPlaceholder": "Digite sua senha",
+      "confirmPasswordPlaceholder": "Confirme sua senha",
+      "registerButton": "Criar Conta",
+      "hasAccount": "Já tem uma conta?",
+      "loginHere": "Entre aqui",
+      "success": "Conta criada com sucesso! Bem-vindo(a)!",
+      "termsOfUse": "Concordo com os termos de uso",
+      "errors": {
+        "emailRequired": "Email é obrigatório",
+        "emailInvalid": "Email inválido",
+        "passwordRequired": "Senha é obrigatória",
+        "passwordMinLength": "Senha deve ter pelo menos 6 caracteres",
+        "confirmPasswordRequired": "Confirmação de senha é obrigatória",
+        "passwordsNotMatch": "Senhas não coincidem",
+        "userTypeRequired": "Tipo de usuário é obrigatório",
+        "general": "Erro ao criar conta. Tente novamente.",
+        "tokenNotReceived": "Token não recebido do servidor"
+      }
+    }
+  },
+  "dashboard": {
+    "welcome": "Bem-vindo ao Mentor Mentee!",
+    "subtitle": "Conecte-se, aprenda e cresça junto com nossa comunidade de mentores e mentees.",
+    "quickActions": "Ações Rápidas",
+    "findMentors": "Encontrar Mentores",
+    "findMentees": "Encontrar Mentees",
+    "myProfile": "Meu Perfil",
+    "sessions": "Sessões de Mentoria",
+    "logout": "Sair",
+    "loading": "Carregando...",
+    "findMentorsDescription": "Descubra mentores experientes na sua área de interesse e acelere seu crescimento profissional.",
+    "findMenteesDescription": "Compartilhe seu conhecimento e ajude outros profissionais a crescerem em suas carreiras.",
+    "myProfileDescription": "Gerencie suas informações pessoais, habilidades e preferências de mentoria.",
+    "sessionsDescription": "Acompanhe suas sessões de mentoria ativas e gerencie seus compromissos.",
+    "exploreMentors": "Explorar Mentores",
+    "findMenteesButton": "Encontrar Mentees",
+    "myProfileButton": "Ver Perfil",
+    "viewConversations": "Ver Conversas"
+  },
+  "designSystem": {
+    "title": "Sistema de Design",
+    "subtitle": "Componentes e tokens de design do Mentor Mentee",
+    "sections": {
+      "colors": "Cores",
+      "buttons": "Botões",
+      "inputs": "Campos de Entrada",
+      "spacing": "Espaçamento",
+      "typography": "Tipografia"
+    },
+    "buttons": {
+      "primary": "Primário",
+      "secondary": "Secundário", 
+      "outline": "Contorno",
+      "ghost": "Fantasma",
+      "loading": "Carregando...",
+      "withIcon": "Com Ícone",
+      "fullWidth": "Largura Total"
+    },
+    "inputs": {
+      "default": "Padrão",
+      "error": "Erro",
+      "success": "Sucesso",
+      "withLabel": "Com Rótulo",
+      "withHelper": "Com Texto de Ajuda",
+      "placeholder": "Digite algo..."
+    }
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "close": "Fechar",
+    "remove": "Remover"
+  },
+  "validation": {
+    "required": "Este campo é obrigatório",
+    "emailInvalid": "Formato de email inválido",
+    "passwordMinLength": "Senha deve ter pelo menos {{min}} caracteres",
+    "passwordsNotMatch": "As senhas não coincidem"
+  },
+  "profile": {
+    "title": "Meu Perfil",
+    "loading": "Carregando perfil...",
+    "personalInfo": "Informações Pessoais",
+    "professionalInfo": "Informações Profissionais",
+    "address": "Endereço",
+    "qualifications": "Qualificações",
+    "name": "Nome",
+    "age": "Idade",
+    "gender": "Gênero",
+    "profession": "Profissão",
+    "generation": "Geração",
+    "city": "Cidade",
+    "region": "Estado",
+    "country": "País",
+    "expectations": "Expectativas",
+    "isGraduated": "Possuo diploma universitário",
+    "hasMentorshipTraining": "Possuo treinamento em mentoria",
+    "hasMentorshipExperience": "Possuo experiência prévia em mentoria",
+    "hasRuralTraining": "Possuo experiência em treinamento rural",
+    "languages": "Idiomas",
+    "language": "Idioma",
+    "addLanguage": "Adicionar Idioma",
+    "contacts": "Informações de Contato",
+    "contactType": "Tipo de Contato",
+    "contactValue": "Valor do Contato",
+    "preferentialContact": "Método de Contato Preferido",
+    "addContact": "Adicionar Contato",
+    "errors": {
+      "loadProfile": "Falha ao carregar perfil",
+      "saveProfile": "Falha ao salvar perfil"
+    }
+  }
+} 
