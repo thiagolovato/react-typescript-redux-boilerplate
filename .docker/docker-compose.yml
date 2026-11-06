@@ -1,0 +1,19 @@
+# Builds the app and serves it with nginx on http://localhost:8080.
+# The browser calls the gateway at http://localhost:8765, so start the backend stacks too.
+# From the project root: docker compose -f .docker/docker-compose.yml up -d --build
+name: mentor-mentee-app
+
+services:
+  mentor-mentee-app:
+    container_name: mentor-mentee-app
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    image: mentor-mentee-app:latest
+    ports:
+      - "8080:8080"
+
+networks:
+  # Shared by every mentor-mentee stack, so stacks started separately can reach each other.
+  default:
+    name: mentor-mentee-network
