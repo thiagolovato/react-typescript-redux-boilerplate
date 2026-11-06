@@ -1,39 +1,22 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAppSelector } from '@rdx/hooks';
+import { useState } from 'react';
+import { Navigate, Outlet } from 'react-router';
+import { useAppSelector } from '../../redux/hooks';
 import { Sidebar } from './Sidebar';
-import { tokens } from '../../constants/tokens';
 
-const LayoutContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-`;
-
-const MainContent = styled.main`
-  flex: 1;
-  margin-left: 280px;
-  padding: ${tokens.spacing[6]};
-  transition: margin-left ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-
-  &.collapsed {
-    margin-left: 80px;
-  }
-`;
-
-export const AuthLayout: React.FC = () => {
+export function AuthLayout() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
   return (
-    <LayoutContainer>
-      <Sidebar />
-      <MainContent>
+    <div className="min-h-screen">
+      <Sidebar isCollapsed={isCollapsed} onToggleCollapsed={() => setIsCollapsed((value) => !value)} />
+      <main className={`p-4 sm:p-6 ${isCollapsed ? 'md:ml-20' : 'md:ml-70'}`}>
         <Outlet />
-      </MainContent>
-    </LayoutContainer>
+      </main>
+    </div>
   );
-};
+}

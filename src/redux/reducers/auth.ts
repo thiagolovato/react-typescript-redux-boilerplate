@@ -133,7 +133,9 @@ export const authSlice = createSlice({
           customerType?: 'MENTOR' | 'MENTEE'
         };
         if (decoded) {
+          // Keep userId from login/register. The token payload does not carry it.
           state.user = {
+            ...state.user,
             email: decoded.sub || decoded.email,
             customerType: decoded.customerType,
           };

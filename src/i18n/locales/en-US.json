@@ -6,7 +6,11 @@
   "navigation": {
     "login": "Login",
     "register": "Sign Up",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "mainMenu": "Main menu",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu"
   },
   "auth": {
     "login": {
@@ -80,34 +84,6 @@
     "myProfileButton": "View Profile",
     "viewConversations": "View Conversations"
   },
-  "designSystem": {
-    "title": "Design System",
-    "subtitle": "Mentor Mentee design components and tokens",
-    "sections": {
-      "colors": "Colors",
-      "buttons": "Buttons",
-      "inputs": "Input Fields",
-      "spacing": "Spacing",
-      "typography": "Typography"
-    },
-    "buttons": {
-      "primary": "Primary",
-      "secondary": "Secondary", 
-      "outline": "Outline",
-      "ghost": "Ghost",
-      "loading": "Loading...",
-      "withIcon": "With Icon",
-      "fullWidth": "Full Width"
-    },
-    "inputs": {
-      "default": "Default",
-      "error": "Error",
-      "success": "Success",
-      "withLabel": "With Label",
-      "withHelper": "With Helper Text",
-      "placeholder": "Type something..."
-    }
-  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
@@ -121,7 +97,8 @@
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
-    "remove": "Remove"
+    "remove": "Remove",
+    "language": "Language"
   },
   "validation": {
     "required": "This field is required",
@@ -161,5 +138,9 @@
       "loadProfile": "Failed to load profile",
       "saveProfile": "Failed to save profile"
     }
+  },
+  "roles": {
+    "MENTOR": "Mentor",
+    "MENTEE": "Student"
   }
-} 
+}

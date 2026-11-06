@@ -1,138 +1,23 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAppSelector } from '@rdx/hooks';
-import { tokens } from '../../constants/tokens';
-import { Button } from '../ui/Button';
-import { useI18n } from '../../hooks/useI18n';
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logoutUser } from '../../redux/reducers/auth';
-import { useAppDispatch } from '../../redux/hooks';
+import { useI18n } from '../../hooks/useI18n';
+import { Button, LanguageToggle } from '../ui';
 
-const SidebarContainer = styled.aside<{ $isCollapsed: boolean }>`
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: ${({ $isCollapsed }) => ($isCollapsed ? '80px' : '280px')};
-  background: ${tokens.colors.primary[800]};
-  border-right: 1px solid ${tokens.colors.primary[700]};
-  transition: width ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-`;
+interface SidebarProps {
+  isCollapsed: boolean;
+  onToggleCollapsed: () => void;
+}
 
-const Logo = styled.div<{ $isCollapsed: boolean }>`
-  display: flex;
-  align-items: center;
-  padding: ${tokens.spacing[4]};
-  color: ${tokens.colors.neutral[50]};
-  border-bottom: 1px solid ${tokens.colors.primary[700]};
-  min-height: 64px;
+const navItems = [
+  { to: '/dashboard', icon: '🏠', label: 'navigation.dashboard' },
+  { to: '/profile', icon: '👤', label: 'navigation.profile' },
+] as const;
 
-  span {
-    font-size: ${({ $isCollapsed }) => ($isCollapsed ? '1.5rem' : '1.2rem')};
-    font-weight: ${tokens.typography.fontWeight.bold};
-    margin-left: ${({ $isCollapsed }) => ($isCollapsed ? '0' : tokens.spacing[2])};
-    opacity: ${({ $isCollapsed }) => ($isCollapsed ? '0' : '1')};
-    transition: opacity ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-  }
-`;
-
-const Navigation = styled.nav`
-  display: flex;
-  flex-direction: column;
-  padding: ${tokens.spacing[4]} 0;
-  flex: 1;
-`;
-
-const NavLink = styled(Link)<{ $isActive: boolean; $isCollapsed: boolean }>`
-  color: ${({ $isActive }) => ($isActive ? tokens.colors.neutral[50] : tokens.colors.neutral[400])};
-  text-decoration: none;
-  padding: ${tokens.spacing[3]} ${tokens.spacing[4]};
-  display: flex;
-  align-items: center;
-  gap: ${tokens.spacing[3]};
-  transition: all ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-  position: relative;
-
-  &:hover {
-    background: ${tokens.colors.primary[700]};
-    color: ${tokens.colors.neutral[50]};
-  }
-
-  ${({ $isActive }) =>
-    $isActive &&
-    `
-    background: ${tokens.colors.primary[700]};
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: ${tokens.colors.primary[500]};
-    }
-  `}
-
-  span {
-    opacity: ${({ $isCollapsed }) => ($isCollapsed ? '0' : '1')};
-    transition: opacity ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-    white-space: nowrap;
-  }
-`;
-
-const ToggleButton = styled.button`
-  position: absolute;
-  right: -12px;
-  top: ${tokens.spacing[4]};
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: ${tokens.colors.primary[500]};
-  border: none;
-  color: ${tokens.colors.neutral[50]};
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-
-  &:hover {
-    background: ${tokens.colors.primary[400]};
-  }
-`;
-
-const Footer = styled.div<{ $isCollapsed: boolean }>`
-  padding: ${tokens.spacing[4]};
-  border-top: 1px solid ${tokens.colors.primary[700]};
-  display: flex;
-  flex-direction: column;
-  gap: ${tokens.spacing[2]};
-
-  ${({ $isCollapsed }) =>
-    $isCollapsed &&
-    `
-    align-items: center;
-    padding: ${tokens.spacing[2]};
-  `}
-`;
-
-const UserInfo = styled.div<{ $isCollapsed: boolean }>`
-  color: ${tokens.colors.neutral[50]};
-  font-size: ${tokens.typography.fontSize.sm};
-  opacity: ${({ $isCollapsed }) => ($isCollapsed ? '0' : '1')};
-  transition: opacity ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-export const Sidebar: React.FC = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useAppDispatch();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
@@ -140,74 +25,80 @@ export const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      navigate('/login');
     }
+    navigate('/login');
   };
 
+  // Labels hide only on desktop when collapsed. The mobile panel always shows them.
+  const labelClass = isCollapsed ? 'md:sr-only' : '';
+
   return (
-    <SidebarContainer $isCollapsed={isCollapsed}>
-      <Logo $isCollapsed={isCollapsed}>
-        <span>🌸</span>
-        <span>{t('app.name')}</span>
-      </Logo>
+    <aside
+      className={`z-40 flex flex-col border-primary-700 bg-primary-800 text-neutral-50
+        md:fixed md:inset-y-0 md:left-0 md:border-r ${isCollapsed ? 'md:w-20' : 'md:w-70'}`}
+    >
+      <div className="flex min-h-16 items-center gap-2 border-b border-primary-700 px-4">
+        <span aria-hidden="true" className={`text-2xl ${isCollapsed ? 'md:hidden' : ''}`}>🌸</span>
+        <span className={`flex-1 truncate text-lg font-bold ${labelClass}`}>{t('app.name')}</span>
+        <button
+          type="button"
+          onClick={() => setIsMobileOpen((value) => !value)}
+          aria-expanded={isMobileOpen}
+          aria-controls="main-navigation"
+          className="rounded-md px-3 py-2 hover:bg-primary-700 md:hidden"
+        >
+          <span aria-hidden="true">☰</span>
+          <span className="sr-only">{t('navigation.mainMenu')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onToggleCollapsed}
+          aria-expanded={!isCollapsed}
+          aria-controls="main-navigation"
+          aria-label={t(isCollapsed ? 'navigation.expand' : 'navigation.collapse')}
+          className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-primary-500
+            hover:bg-primary-400 md:flex"
+        >
+          <span aria-hidden="true">{isCollapsed ? '→' : '←'}</span>
+        </button>
+      </div>
 
-      <ToggleButton onClick={() => setIsCollapsed(!isCollapsed)}>
-        {isCollapsed ? '→' : '←'}
-      </ToggleButton>
+      <div
+        id="main-navigation"
+        className={`flex-1 flex-col md:flex ${isMobileOpen ? 'flex' : 'hidden'}`}
+      >
+        <nav aria-label={t('navigation.mainMenu')} className="flex flex-1 flex-col py-4">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={() => setIsMobileOpen(false)}
+              title={isCollapsed ? t(item.label) : undefined}
+              className={({ isActive }) => `flex items-center gap-3 border-l-4 px-4 py-3 transition-colors
+                hover:bg-primary-700 hover:text-neutral-50
+                ${isActive ? 'border-primary-500 bg-primary-700 text-neutral-50' : 'border-transparent text-neutral-400'}`}
+            >
+              <span aria-hidden="true">{item.icon}</span>
+              <span className={`whitespace-nowrap ${labelClass}`}>{t(item.label)}</span>
+            </NavLink>
+          ))}
+        </nav>
 
-      <Navigation>
-        <NavLink
-          to="/dashboard"
-          $isActive={location.pathname === '/dashboard'}
-          $isCollapsed={isCollapsed}
-        >
-          <span>🏠</span>
-          <span>{t('navigation.dashboard')}</span>
-        </NavLink>
-        <NavLink
-          to="/mentors"
-          $isActive={location.pathname === '/mentors'}
-          $isCollapsed={isCollapsed}
-        >
-          <span>👥</span>
-          <span>Mentores</span>
-        </NavLink>
-        <NavLink
-          to="/sessions"
-          $isActive={location.pathname === '/sessions'}
-          $isCollapsed={isCollapsed}
-        >
-          <span>📅</span>
-          <span>Sessões</span>
-        </NavLink>
-        <NavLink
-          to="/profile"
-          $isActive={location.pathname === '/profile'}
-          $isCollapsed={isCollapsed}
-        >
-          <span>👤</span>
-          <span>{t('profile.title')}</span>
-        </NavLink>
-      </Navigation>
-
-      <Footer $isCollapsed={isCollapsed}>
-        {user && (
-          <UserInfo $isCollapsed={isCollapsed}>
-            {user.email} ({user.customerType === 'MENTOR' ? 'Mentor' : 'Estudante'})
-          </UserInfo>
-        )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleLogout}
-          fullWidth={!isCollapsed}
-        >
-          {isCollapsed ? '🚪' : t('dashboard.logout')}
-        </Button>
-      </Footer>
-    </SidebarContainer>
+        <div className="flex flex-col gap-3 border-t border-primary-700 p-4">
+          <LanguageToggle className={isCollapsed ? 'md:hidden' : ''} />
+          {user && (
+            <p className={`truncate text-sm ${labelClass}`}>
+              {user.email} ({t(user.customerType === 'MENTOR' ? 'roles.MENTOR' : 'roles.MENTEE')})
+            </p>
+          )}
+          <Button variant="outline" size="sm" onClick={handleLogout} fullWidth title={t('dashboard.logout')}>
+            {isCollapsed && <span aria-hidden="true" className="hidden md:inline">🚪</span>}
+            <span className={labelClass}>{t('dashboard.logout')}</span>
+          </Button>
+        </div>
+      </div>
+    </aside>
   );
-};
+}

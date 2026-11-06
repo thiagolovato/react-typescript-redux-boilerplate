@@ -5,7 +5,7 @@ export type Language = 'pt-BR' | 'en-US';
 export const useI18n = () => {
   const { t, i18n } = useTranslation();
 
-  const currentLanguage = i18n.language as Language;
+  const currentLanguage = (i18n.resolvedLanguage ?? i18n.language) as Language;
 
   const changeLanguage = async (language: Language) => {
     try {

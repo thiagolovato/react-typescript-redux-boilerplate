@@ -2,14 +2,6 @@
 
 Um design system completo inspirado na elegante beleza das flores azul-violeta florescendo em hastes verdes, criando uma sensação de frescor, sofisticação e naturalidade.
 
-## 📋 Índice
-
-- [Paleta de Cores](#-paleta-de-cores)
-- [Tokens de Design](#-tokens-de-design)
-- [Componentes](#-componentes)
-- [Instalação e Uso](#-instalação-e-uso)
-- [Princípios de Design](#-princípios-de-design)
-
 ## 🎨 Paleta de Cores
 
 ### Cores Primárias (Blue-Violet Range)
@@ -80,248 +72,34 @@ spacing: {
 }
 ```
 
-### Tipografia
-```typescript
-typography: {
-  fontFamily: {
-    sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto...',
-    mono: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas...',
-  },
-  fontSize: {
-    xs: '0.75rem',    // 12px
-    sm: '0.875rem',   // 14px
-    base: '1rem',     // 16px
-    lg: '1.125rem',   // 18px
-    xl: '1.25rem',    // 20px
-    '2xl': '1.5rem',  // 24px
-    '3xl': '1.875rem', // 30px
-    '4xl': '2.25rem',  // 36px
-    '5xl': '3rem',     // 48px
-    '6xl': '3.75rem',  // 60px
-  },
-  fontWeight: {
-    light: '300',
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-    extrabold: '800',
-  }
-}
-```
+## Onde a paleta vive
 
-## 🧩 Componentes
+- `src/constants/colors.ts` é a fonte da verdade dos valores hex.
+- `src/index.css` replica esses valores no tema do Tailwind CSS v4 (`@theme`). Ao mudar uma cor, altere os dois arquivos.
 
-### Button
+Classes disponíveis:
 
-Um componente versátil com múltiplas variações e estados.
+- Cores: `primary-50` a `primary-900`, `secondary-50` a `secondary-900`, `neutral-50` a `neutral-900`,
+  `success-{light,main,dark}`, `warning-*`, `error-*`, `info-*`. Exemplo: `bg-primary-800`, `text-error-dark`.
+- Gradientes: `bg-primary-bold`, `bg-secondary-bold`, `bg-accent`.
+- Sombras de marca: `shadow-primary-bold`, `shadow-secondary-bold`.
 
-#### Variações
-- `primary` - Botão principal com gradiente azul
-- `secondary` - Botão secundário com gradiente verde
-- `outline` - Botão com borda
-- `ghost` - Botão transparente
-- `success` - Para ações positivas
-- `warning` - Para alertas
-- `error` - Para ações destrutivas
+## Componentes
 
-#### Tamanhos
-- `sm` - Pequeno (32px altura)
-- `md` - Médio (40px altura) - padrão
-- `lg` - Grande (48px altura)
-- `xl` - Extra grande (56px altura)
+Ficam em `src/components/ui/` e usam só classes Tailwind.
 
-#### Exemplo de Uso
-```tsx
-import { Button } from './components/ui';
+- `Button`: `variant` (`primary`, `secondary`, `outline`, `ghost`, `success`, `warning`, `error`),
+  `size` (`sm`, `md`, `lg`, `xl`), `isLoading`, `leftIcon`, `rightIcon`, `fullWidth`. O tipo padrão é `button`.
+- `Input`: `size`, `variant` (`default`, `success`, `warning`, `error`), `label`, `helperText`, `isRequired`,
+  `leftIcon`, `rightIcon`, `fullWidth`. Liga label e mensagem ao campo por `id`.
+- `TextArea`: mesmas opções de `Input`, sem ícones e tamanhos.
+- `Checkbox`: checkbox nativo com `label`.
+- `LanguageToggle`: `select` nativo para trocar o idioma.
 
-// Botão básico
-<Button>Click me</Button>
+Labels herdam a cor do texto do contêiner. Assim os campos funcionam em cartões claros e em superfícies `primary-800`.
 
-// Botão com variação e tamanho
-<Button variant="secondary" size="lg">
-  Large Secondary Button
-</Button>
+## Regras
 
-// Botão com estado de loading
-<Button isLoading={true}>
-  Loading...
-</Button>
-
-// Botão com ícones
-<Button leftIcon="🚀" rightIcon="→">
-  Launch App
-</Button>
-
-// Botão de largura total
-<Button fullWidth>
-  Full Width Button
-</Button>
-```
-
-### Input
-
-Campo de entrada com suporte a labels, ícones, diferentes estados e validação visual.
-
-#### Variações
-- `default` - Estado padrão
-- `success` - Campo válido
-- `warning` - Campo com aviso
-- `error` - Campo com erro
-
-#### Tamanhos
-- `sm` - Pequeno (32px altura)
-- `md` - Médio (40px altura) - padrão
-- `lg` - Grande (48px altura)
-
-#### Exemplo de Uso
-```tsx
-import { Input } from './components/ui';
-
-// Input básico
-<Input placeholder="Digite seu nome" />
-
-// Input com label e helper text
-<Input
-  label="Email"
-  placeholder="seu@email.com"
-  helperText="Usaremos este email para contato"
-  isRequired
-/>
-
-// Input com ícones
-<Input
-  label="Buscar"
-  leftIcon="🔍"
-  rightIcon="⌘K"
-  placeholder="Buscar..."
-/>
-
-// Input com estado de erro
-<Input
-  variant="error"
-  label="Senha"
-  type="password"
-  helperText="A senha deve ter pelo menos 8 caracteres"
-/>
-```
-
-### Checkbox
-
-Componente de checkbox com suporte a estados indeterminados, descrições e múltiplas variações.
-
-#### Variações
-- `default` - Padrão azul
-- `success` - Verde para confirmações
-- `warning` - Amarelo para avisos
-- `error` - Vermelho para erros
-
-#### Tamanhos
-- `sm` - Pequeno (16px)
-- `md` - Médio (20px) - padrão
-- `lg` - Grande (24px)
-
-#### Exemplo de Uso
-```tsx
-import { Checkbox } from './components/ui';
-
-// Checkbox básico
-<Checkbox label="Aceito os termos de uso" />
-
-// Checkbox com descrição
-<Checkbox
-  label="Receber newsletters"
-  description="Receba as últimas novidades em seu email"
-/>
-
-// Checkbox indeterminado
-<Checkbox
-  label="Selecionar todos"
-  isIndeterminate={true}
-/>
-
-// Checkbox com variação
-<Checkbox
-  variant="success"
-  label="Tarefa concluída"
-  checked={true}
-/>
-```
-
-## 🚀 Instalação e Uso
-
-### Importação
-```tsx
-// Importar componentes individuais
-import { Button, Input, Checkbox } from './components/ui';
-
-// Importar tokens de design
-import { tokens } from './constants/tokens';
-import { colors } from './constants/colors';
-
-// Usar tokens em styled-components
-const StyledDiv = styled.div`
-  padding: ${tokens.spacing[4]};
-  background: ${tokens.colors.primary[50]};
-  border-radius: ${tokens.borderRadius.lg};
-  box-shadow: ${tokens.shadows.base};
-`;
-```
-
-### Acessar a Demo
-Visite `/design-system` na aplicação para ver todos os componentes em ação com exemplos interativos.
-
-## 🎯 Princípios de Design
-
-### 1. **Consistência**
-- Uso consistente de espaçamentos baseados em grid de 8px
-- Padrões visuais uniformes em todos os componentes
-- Nomenclatura consistente para variações e tamanhos
-
-### 2. **Acessibilidade**
-- Contraste adequado entre cores
-- Estados de foco visíveis
-- Suporte a leitores de tela
-- Navegação por teclado
-
-### 3. **Flexibilidade**
-- Componentes modulares e reutilizáveis
-- Sistema de tokens configurável
-- Suporte a temas e personalizações
-
-### 4. **Performance**
-- Componentes otimizados com styled-components
-- Uso de tokens para minimizar re-renderizações
-- Lazy loading quando apropriado
-
-### 5. **Escalabilidade**
-- Arquitetura baseada em tokens
-- Componentes compostos
-- Fácil extensão e manutenção
-
-## 🔧 Estrutura de Arquivos
-
-```
-src/
-├── constants/
-│   ├── colors.ts       # Paleta de cores
-│   └── tokens.ts       # Todos os tokens de design
-├── components/
-│   ├── ui/
-│   │   ├── Button.tsx
-│   │   ├── Input.tsx
-│   │   ├── Checkbox.tsx
-│   │   └── index.ts    # Exports
-│   └── DesignSystemDemo.tsx  # Página de demonstração
-```
-
-## 📚 Referências
-
-- **Inspiração**: Flores azul-violeta em hastes verdes
-- **Princípios**: Atomic Design, Design Systems
-- **Tecnologias**: React, TypeScript, Styled Components
-- **Padrões**: DRY (Don't Repeat Yourself), Component Composition
-
----
-
-💡 **Dica**: Para explorar todos os componentes interativamente, acesse `/design-system` na aplicação! 
+- Sem keyframes decorativos. A única animação é o spinner de `isLoading` (`animate-spin`).
+- Foco visível global em `src/index.css` (`outline-primary-400`).
+- Escreva classes completas no código. O Tailwind não detecta nomes montados em tempo de execução.

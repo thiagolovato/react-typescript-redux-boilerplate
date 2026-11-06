@@ -1,20 +1,53 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import type { Profile } from '../../types/profile';
-import { httpClient } from './httpClient';
 
-// Gateway Configuration
 const GATEWAY_BASE_URL = 'http://localhost:8765';
 
-// Route-specific configurations
 const API_ROUTES = {
-  auth: '/auth', // Maps to mentor-mentee-auth service
-  core: '/mmc', // Maps to mentor-mentee-core service
+  auth: '/auth',
+  core: '/mmc',
 } as const;
 
-// Configure axios defaults
 axios.defaults.baseURL = GATEWAY_BASE_URL;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+axiosRetry(axios, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error: AxiosError) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+           error.response?.status === 503 ||
+           error.response?.status === 502 ||
+           error.response?.status === 504;
+  },
+  onRetry: (retryCount, _error, requestConfig) => {
+    console.log(`Retry attempt ${retryCount} for ${requestConfig.url}`);
+  },
+});
+
+const authAxios = axios.create({
+  baseURL: GATEWAY_BASE_URL,
+  timeout: 10000,
+});
+
+axiosRetry(authAxios, {
+  retries: 5,
+  retryDelay: (retryCount) => {
+    return retryCount * 500;
+  },
+  retryCondition: (error: AxiosError) => {
+    return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+           error.response?.status === 503 ||
+           error.response?.status === 502 ||
+           error.response?.status === 504 ||
+           error.response?.status === 500;
+  },
+  onRetry: (retryCount, _error, requestConfig) => {
+    console.log(`Auth retry attempt ${retryCount} for ${requestConfig.url}`);
+  },
+});
 
 // API Error types
 interface ApiErrorResponse {
@@ -74,14 +107,13 @@ export const httpClient = {
 
 // Auth Service - Routes through /auth/** gateway
 export const authService = {
-  // Register new user
   register: async (data: RegisterRequest): Promise<RegisterResponse> => {
     try {
-      const response = await httpClient.post<RegisterResponse>(
+      const response = await authAxios.post<RegisterResponse>(
           `${API_ROUTES.auth}/users/register`,
           data,
       );
-      return response;
+      return response.data;
     } catch (error) {
       const apiError = error as ApiError;
       if (apiError.response?.data) {
@@ -93,14 +125,13 @@ export const authService = {
     }
   },
 
-  // Login user
   login: async (email: string, password: string): Promise<RegisterResponse> => {
     try {
-      const response = await httpClient.post<RegisterResponse>(
+      const response = await authAxios.post<RegisterResponse>(
           `${API_ROUTES.auth}/users/login`,
           { email, password },
       );
-      return response;
+      return response.data;
     } catch (error) {
       const apiError = error as ApiError;
       if (apiError.response?.data) {
@@ -112,28 +143,26 @@ export const authService = {
     }
   },
 
-  // Validate token
   authenticate: async (token: string): Promise<unknown> => {
     try {
-      const response = await httpClient.get(
+      const response = await authAxios.get(
           `${API_ROUTES.auth}/users/authenticate`,
           { headers: { Authorization: `Bearer ${token}` } },
       );
-      return response;
-    } catch (error) {
+      return response.data;
+    } catch {
       throw new Error('Token inválido');
     }
   },
 
-  // Refresh token (future implementation)
   refreshToken: async (refreshToken: string): Promise<RegisterResponse> => {
     try {
-      const response = await httpClient.post<RegisterResponse>(
+      const response = await authAxios.post<RegisterResponse>(
           `${API_ROUTES.auth}/users/refresh`,
           { refreshToken },
       );
-      return response;
-    } catch (error) {
+      return response.data;
+    } catch {
       throw new Error('Erro ao renovar token');
     }
   },
@@ -164,7 +193,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao buscar perfil do usuário');
     }
   },
@@ -178,7 +207,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao atualizar perfil');
     }
   },
@@ -193,7 +222,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao buscar mentores');
     }
   },
@@ -207,7 +236,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao buscar mentees');
     }
   },
@@ -221,7 +250,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao buscar sessões de mentoria');
     }
   },
@@ -235,7 +264,7 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error('Erro ao criar sessão de mentoria');
     }
   },

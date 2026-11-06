@@ -6,7 +6,11 @@
   "navigation": {
     "login": "Login",
     "register": "Criar Conta",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "profile": "Perfil",
+    "mainMenu": "Menu principal",
+    "collapse": "Recolher menu",
+    "expand": "Expandir menu"
   },
   "auth": {
     "login": {
@@ -80,34 +84,6 @@
     "myProfileButton": "Ver Perfil",
     "viewConversations": "Ver Conversas"
   },
-  "designSystem": {
-    "title": "Sistema de Design",
-    "subtitle": "Componentes e tokens de design do Mentor Mentee",
-    "sections": {
-      "colors": "Cores",
-      "buttons": "Botões",
-      "inputs": "Campos de Entrada",
-      "spacing": "Espaçamento",
-      "typography": "Tipografia"
-    },
-    "buttons": {
-      "primary": "Primário",
-      "secondary": "Secundário", 
-      "outline": "Contorno",
-      "ghost": "Fantasma",
-      "loading": "Carregando...",
-      "withIcon": "Com Ícone",
-      "fullWidth": "Largura Total"
-    },
-    "inputs": {
-      "default": "Padrão",
-      "error": "Erro",
-      "success": "Sucesso",
-      "withLabel": "Com Rótulo",
-      "withHelper": "Com Texto de Ajuda",
-      "placeholder": "Digite algo..."
-    }
-  },
   "common": {
     "loading": "Carregando...",
     "error": "Erro",
@@ -121,7 +97,8 @@
     "next": "Próximo",
     "previous": "Anterior",
     "close": "Fechar",
-    "remove": "Remover"
+    "remove": "Remover",
+    "language": "Idioma"
   },
   "validation": {
     "required": "Este campo é obrigatório",
@@ -161,5 +138,9 @@
       "loadProfile": "Falha ao carregar perfil",
       "saveProfile": "Falha ao salvar perfil"
     }
+  },
+  "roles": {
+    "MENTOR": "Mentor",
+    "MENTEE": "Estudante"
   }
-} 
+}

@@ -1,122 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { useAppSelector } from '@rdx/hooks';
-import { tokens } from '../constants/tokens';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { TextArea } from './ui/TextArea';
-import { Checkbox } from './ui/Checkbox';
+import { useNavigate } from 'react-router';
+import { useAppSelector } from '../redux/hooks';
+import { Button, Checkbox, Input, TextArea } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import withAuthentication from './hoc/withAuthentication';
 import { profileService } from '../service/request/api';
 import type { CustomerContact, ProfileFormData } from '../types/profile';
 
-const PageContainer = styled.div`
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: ${tokens.spacing[8]} ${tokens.spacing[4]};
-    margin: 0 auto;
-`;
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-4">
+      <h2 className="border-b border-primary-700 pb-2 text-xl font-semibold">{title}</h2>
+      {children}
+    </section>
+  );
+}
 
-const ProfileContainer = styled.div`
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-`;
-
-const Title = styled.h1`
-    font-size: ${tokens.typography.fontSize['3xl']};
-    color: ${tokens.colors.neutral[50]};
-    margin-bottom: ${tokens.spacing[6]};
-    text-align: center;
-`;
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    gap: ${tokens.spacing[6]};
-    background: ${tokens.colors.primary[800]};
-    padding: ${tokens.spacing[6]};
-    border-radius: ${tokens.borderRadius.xl};
-    box-shadow: ${tokens.shadows.xl};
-    border: 1px solid ${tokens.colors.primary[700]};
-`;
-
-const FormSection = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: ${tokens.spacing[4]};
-`;
-
-const SectionTitle = styled.h2`
-    font-size: ${tokens.typography.fontSize.xl};
-    color: ${tokens.colors.neutral[50]};
-    margin-bottom: ${tokens.spacing[2]};
-    border-bottom: 1px solid ${tokens.colors.primary[700]};
-    padding-bottom: ${tokens.spacing[2]};
-`;
-
-const InputGroup = styled.div`
-    display: flex;
-    gap: ${tokens.spacing[4]};
-    flex-wrap: wrap;
-
-    ${({ alignItems }) => alignItems && css`
-        align-items: ${alignItems};
-    `}
-    > * {
-        flex: 1;
-        min-width: 200px;
-    }
-`;
-
-const CheckboxGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: ${tokens.spacing[3]};
-    color: ${tokens.colors.neutral[50]};
-`;
-
-const ButtonGroup = styled.div`
-    display: flex;
-    gap: ${tokens.spacing[4]};
-    justify-content: flex-end;
-    margin-top: ${tokens.spacing[6]};
-`;
-
-const ErrorMessage = styled.div`
-    color: ${tokens.colors.error.main};
-    background: ${tokens.colors.error.light};
-    padding: ${tokens.spacing[4]};
-    border-radius: ${tokens.borderRadius.md};
-    margin-bottom: ${tokens.spacing[4]};
-    font-size: ${tokens.typography.fontSize.sm};
-`;
-
-const AddButton = styled(Button)`
-    margin-top: ${tokens.spacing[2]};
-`;
-
-const ContactItem = styled.div`
-    display: flex;
-    gap: ${tokens.spacing[2]};
-    align-items: center;
-    margin-bottom: ${tokens.spacing[2]};
-`;
-
-const RemoveButton = styled(Button)`
-    flex-shrink: 0;
-`;
-
-const Profile: React.FC = () => {
+function Profile() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<{ message?: string; fallbackKey: string } | null>(null);
 
   const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
@@ -164,7 +70,7 @@ const Profile: React.FC = () => {
           hasMentorshipExperience: profile.hasMentorshipExperience,
         });
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar perfil');
+        setError({ message: err instanceof Error ? err.message : undefined, fallbackKey: 'profile.errors.loadProfile' });
       } finally {
         setLoading(false);
       }
@@ -178,7 +84,7 @@ const Profile: React.FC = () => {
     if (!user?.userId) return;
 
     try {
-      setLoading(true);
+      setSaving(true);
       setError(null);
       await profileService.save({
         ...formData,
@@ -186,9 +92,9 @@ const Profile: React.FC = () => {
       });
       navigate('/dashboard');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao salvar perfil');
+      setError({ message: err instanceof Error ? err.message : undefined, fallbackKey: 'profile.errors.saveProfile' });
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -284,241 +190,207 @@ const Profile: React.FC = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <ProfileContainer>
-          <Title>{t('profile.loading')}</Title>
-        </ProfileContainer>
-      </PageContainer>
+      <p role="status" className="py-16 text-center text-2xl text-neutral-50">{t('profile.loading')}</p>
     );
   }
 
   return (
-    <PageContainer>
-      <ProfileContainer>
-        <Title>{t('profile.title')}</Title>
-        {error && (
-          <ErrorMessage>
-            {error}
-          </ErrorMessage>
-        )}
-        <Form onSubmit={handleSubmit}>
-          <FormSection>
-            <SectionTitle>{t('profile.personalInfo')}</SectionTitle>
-            <InputGroup>
-              <Input
-                label={t('profile.name')}
-                labelColor={tokens.colors.neutral[0]}
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-              <Input
-                label={t('profile.age')}
-                labelColor={tokens.colors.neutral[0]}
-                name="age"
-                type="number"
-                value={formData.age}
-                onChange={handleInputChange}
-                required
-              />
-              <Input
-                label={t('profile.gender')}
-                labelColor={tokens.colors.neutral[0]}
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
-                required
-              />
-            </InputGroup>
-          </FormSection>
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      <h1 className="text-center text-3xl font-bold text-neutral-50">{t('profile.title')}</h1>
+      {error && (
+        <p role="alert" className="rounded-md bg-error-light p-4 text-sm text-error-dark">
+          {error.message ?? t(error.fallbackKey)}
+        </p>
+      )}
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-8 rounded-xl border border-primary-700 bg-primary-800 p-6 text-neutral-50
+          shadow-lg"
+      >
+        <FormSection title={t('profile.personalInfo')}>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Input label={t('profile.name')} name="name" value={formData.name} onChange={handleInputChange} required />
+            <Input
+              label={t('profile.age')}
+              name="age"
+              type="number"
+              min={0}
+              value={formData.age}
+              onChange={handleInputChange}
+              required
+            />
+            <Input
+              label={t('profile.gender')}
+              name="gender"
+              value={formData.gender}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        </FormSection>
 
-          <FormSection>
-            <SectionTitle>{t('profile.languages')}</SectionTitle>
-            {formData.languages.map((lang, index) => (
-              <InputGroup key={index} alignItems={'self-end'}>
+        <FormSection title={t('profile.languages')}>
+          {formData.languages.map((lang, index) => (
+            <div key={index} className="flex items-end gap-3">
+              <div className="flex-1">
                 <Input
                   label={t('profile.language')}
-                  labelColor={tokens.colors.neutral[0]}
                   value={lang.languageId}
                   onChange={(e) => handleLanguageChange(index, e.target.value)}
                   required
+                  fullWidth
                 />
-                <RemoveButton
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleRemoveLanguage(index)}
-                >
-                  {t('common.remove')}
-                </RemoveButton>
-              </InputGroup>
-            ))}
-            <AddButton
-              type="button"
-              variant="outline"
-              onClick={handleAddLanguage}
+              </div>
+              <Button variant="outline" onClick={() => handleRemoveLanguage(index)}>
+                {t('common.remove')}
+              </Button>
+            </div>
+          ))}
+          <Button variant="outline" className="self-start" onClick={handleAddLanguage}>
+            {t('profile.addLanguage')}
+          </Button>
+        </FormSection>
+
+        <FormSection title={t('profile.professionalInfo')}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={t('profile.profession')}
+              name="profession"
+              value={formData.profession}
+              onChange={handleInputChange}
+              required
+            />
+            <Input
+              label={t('profile.generation')}
+              name="generation"
+              value={formData.generation}
+              onChange={handleInputChange}
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title={t('profile.contacts')}>
+          {formData.contacts.map((contact, index) => (
+            <fieldset key={index} className="grid items-end gap-3 rounded-lg border border-primary-700 p-4
+              sm:grid-cols-[10rem_1fr_auto]"
             >
-              {t('profile.addLanguage')}
-            </AddButton>
-          </FormSection>
-
-          <FormSection>
-            <SectionTitle>{t('profile.professionalInfo')}</SectionTitle>
-            <InputGroup>
-              <Input
-                label={t('profile.profession')}
-                labelColor={tokens.colors.neutral[0]}
-                name="profession"
-                value={formData.profession}
-                onChange={handleInputChange}
-                required
-              />
-              <Input
-                label={t('profile.generation')}
-                labelColor={tokens.colors.neutral[0]}
-                name="generation"
-                value={formData.generation}
-                onChange={handleInputChange}
-              />
-            </InputGroup>
-          </FormSection>
-
-          <FormSection>
-            <SectionTitle>{t('profile.contacts')}</SectionTitle>
-            {formData.contacts.map((contact, index) => (
-              <ContactItem key={index}>
-                <Input
-                  label={t('profile.contactType')}
+              <legend className="sr-only">{`${t('profile.contacts')} ${index + 1}`}</legend>
+              <label className="flex flex-col gap-2 text-sm font-medium">
+                {t('profile.contactType')}
+                <select
                   value={contact.contactType}
                   onChange={(e) => handleContactChange(index, 'contactType', e.target.value)}
                   required
-                />
-                <Input
-                  label={t('profile.contactValue')}
-                  value={contact.contactValue}
-                  onChange={(e) => handleContactChange(index, 'contactValue', e.target.value)}
-                  required
+                  className="h-10 rounded-lg border border-neutral-300 bg-white px-3 text-base text-neutral-900"
+                >
+                  <option value="EMAIL">EMAIL</option>
+                  <option value="PHONE">PHONE</option>
+                </select>
+              </label>
+              <Input
+                label={t('profile.contactValue')}
+                value={contact.contactValue}
+                onChange={(e) => handleContactChange(index, 'contactValue', e.target.value)}
+                required
+                fullWidth
+              />
+              <Button variant="outline" onClick={() => handleRemoveContact(index)}>
+                {t('common.remove')}
+              </Button>
+              <Checkbox
+                label={t('profile.preferentialContact')}
+                checked={contact.isPreferentialContact}
+                onChange={(e) => handleContactChange(index, 'isPreferentialContact', e.target.checked)}
+                className="sm:col-span-3"
+              />
+            </fieldset>
+          ))}
+          <Button variant="outline" className="self-start" onClick={handleAddContact}>
+            {t('profile.addContact')}
+          </Button>
+        </FormSection>
+
+        <FormSection title={t('profile.address')}>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Input
+              label={t('profile.city')}
+              name="city"
+              value={formData.address.city}
+              onChange={handleAddressChange}
+              required
+            />
+            <Input
+              label={t('profile.region')}
+              name="region"
+              value={formData.address.region}
+              onChange={handleAddressChange}
+              required
+            />
+            <Input
+              label={t('profile.country')}
+              name="country"
+              value={formData.address.country}
+              onChange={handleAddressChange}
+              required
+            />
+          </div>
+        </FormSection>
+
+        <FormSection title={t('profile.expectations')}>
+          <TextArea
+            aria-label={t('profile.expectations')}
+            name="expectations"
+            value={formData.expectations}
+            onChange={handleInputChange}
+            rows={4}
+          />
+        </FormSection>
+
+        <FormSection title={t('profile.qualifications')}>
+          <div className="flex flex-col gap-3">
+            <Checkbox
+              label={t('profile.isGraduated')}
+              name="isGraduated"
+              checked={formData.isGraduated}
+              onChange={handleInputChange}
+            />
+            {user?.customerType === 'MENTOR' && (
+              <>
+                <Checkbox
+                  label={t('profile.hasMentorshipTraining')}
+                  name="hasMentorshipTraining"
+                  checked={formData.hasMentorshipTraining}
+                  onChange={handleInputChange}
                 />
                 <Checkbox
-                  label={t('profile.preferentialContact')}
-                  checked={contact.isPreferentialContact}
-                  onChange={(e) => handleContactChange(index, 'isPreferentialContact', e.target.checked)}
+                  label={t('profile.hasMentorshipExperience')}
+                  name="hasMentorshipExperience"
+                  checked={formData.hasMentorshipExperience}
+                  onChange={handleInputChange}
                 />
-                <RemoveButton
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleRemoveContact(index)}
-                >
-                  {t('common.remove')}
-                </RemoveButton>
-              </ContactItem>
-            ))}
-            <AddButton
-              type="button"
-              variant="outline"
-              onClick={handleAddContact}
-            >
-              {t('profile.addContact')}
-            </AddButton>
-          </FormSection>
-
-          <FormSection>
-            <SectionTitle>{t('profile.address')}</SectionTitle>
-            <InputGroup>
-              <Input
-                label={t('profile.city')}
-                labelColor={tokens.colors.neutral[0]}
-                name="city"
-                value={formData.address.city}
-                onChange={handleAddressChange}
-                required
-              />
-              <Input
-                label={t('profile.region')}
-                labelColor={tokens.colors.neutral[0]}
-                name="region"
-                value={formData.address.region}
-                onChange={handleAddressChange}
-                required
-              />
-              <Input
-                label={t('profile.country')}
-                labelColor={tokens.colors.neutral[0]}
-                name="country"
-                value={formData.address.country}
-                onChange={handleAddressChange}
-                required
-              />
-            </InputGroup>
-          </FormSection>
-
-          <FormSection>
-            <SectionTitle>{t('profile.expectations')}</SectionTitle>
-            <TextArea
-              label={t('profile.expectations')}
-              name="expectations"
-              value={formData.expectations}
+              </>
+            )}
+            <Checkbox
+              label={t('profile.hasRuralTraining')}
+              name="hasRuralTraining"
+              checked={formData.hasRuralTraining}
               onChange={handleInputChange}
-              rows={4}
             />
-          </FormSection>
+          </div>
+        </FormSection>
 
-          <FormSection>
-            <SectionTitle>{t('profile.qualifications')}</SectionTitle>
-            <CheckboxGroup>
-              <Checkbox
-                label={t('profile.isGraduated')}
-                name="isGraduated"
-                checked={formData.isGraduated}
-                onChange={handleInputChange}
-              />
-              {user?.customerType === 'MENTOR' && (
-                <>
-                  <Checkbox
-                    label={t('profile.hasMentorshipTraining')}
-                    name="hasMentorshipTraining"
-                    checked={formData.hasMentorshipTraining}
-                    onChange={handleInputChange}
-                  />
-                  <Checkbox
-                    label={t('profile.hasMentorshipExperience')}
-                    name="hasMentorshipExperience"
-                    checked={formData.hasMentorshipExperience}
-                    onChange={handleInputChange}
-                  />
-                </>
-              )}
-              <Checkbox
-                label={t('profile.hasRuralTraining')}
-                name="hasRuralTraining"
-                checked={formData.hasRuralTraining}
-                onChange={handleInputChange}
-              />
-            </CheckboxGroup>
-          </FormSection>
-
-          <ButtonGroup>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/dashboard')}
-              disabled={loading}
-            >
-              {t('common.cancel')}
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              isLoading={loading}
-            >
-              {t('common.save')}
-            </Button>
-          </ButtonGroup>
-        </Form>
-      </ProfileContainer>
-    </PageContainer>
+        <div className="flex justify-end gap-4">
+          <Button variant="outline" onClick={() => navigate('/dashboard')} disabled={saving}>
+            {t('common.cancel')}
+          </Button>
+          <Button type="submit" isLoading={saving}>
+            {t('common.save')}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
-};
+}
 
 export default withAuthentication(Profile, {
   requireAuth: true,

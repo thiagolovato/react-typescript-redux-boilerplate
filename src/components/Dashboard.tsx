@@ -1,190 +1,93 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { Button } from './ui/Button';
-import { tokens } from '../constants/tokens';
+import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router';
+import { Button } from './ui';
 import { useI18n } from '../hooks/useI18n';
-import { useAppSelector } from '@rdx/hooks';
+import { useAppSelector } from '../redux/hooks';
 import withAuthentication from './hoc/withAuthentication';
 
-const DashboardContainer = styled.div`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: ${tokens.spacing[8]};
-`;
+interface ActionCardProps {
+  icon: string;
+  title: string;
+  description: string;
+  children: ReactNode;
+}
 
-const MainContent = styled.main`
-    width: 100%;
-    max-width: 1200px;
-    padding: ${tokens.spacing[8]} ${tokens.spacing[6]};
-    margin: auto auto;
-    background: ${tokens.colors.primary[700]};
-    border-radius: ${tokens.borderRadius['2xl']};
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-sizing: border-box;
+function ActionCard({ icon, title, description, children }: ActionCardProps) {
+  return (
+    <article className="flex flex-col items-start gap-3 rounded-xl bg-white p-6 shadow-sm">
+      <span aria-hidden="true" className="text-4xl">{icon}</span>
+      <h3 className="text-xl font-semibold text-neutral-900">{title}</h3>
+      <p className="flex-1 text-sm text-neutral-600">{description}</p>
+      {children}
+    </article>
+  );
+}
 
-    @media (max-width: ${tokens.breakpoints.mobile}) {
-        padding: ${tokens.spacing[6]} ${tokens.spacing[4]};
-        margin: ${tokens.spacing[4]} ${tokens.spacing[2]} 0;
-        border-radius: ${tokens.borderRadius.xl};
-    }
-`;
-
-const WelcomeSection = styled.section`
-    text-align: center;
-    margin-bottom: ${tokens.spacing[8]};
-`;
-
-const WelcomeTitle = styled.h1`
-    font-size: ${tokens.typography.fontSize['4xl']};
-    font-weight: ${tokens.typography.fontWeight.bold};
-    color: white;
-    margin-bottom: ${tokens.spacing[4]};
-
-    @media (max-width: ${tokens.breakpoints.mobile}) {
-        font-size: ${tokens.typography.fontSize['3xl']};
-    }
-`;
-
-const WelcomeSubtitle = styled.p`
-    font-size: ${tokens.typography.fontSize.lg};
-    color: rgba(255, 255, 255, 0.9);
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: ${tokens.typography.lineHeight.relaxed};
-
-    @media (max-width: ${tokens.breakpoints.mobile}) {
-        font-size: ${tokens.typography.fontSize.base};
-    }
-`;
-
-const QuickActionsSection = styled.section`
-    margin-top: ${tokens.spacing[8]};
-`;
-
-const SectionTitle = styled.h2`
-    font-size: ${tokens.typography.fontSize['2xl']};
-    font-weight: ${tokens.typography.fontWeight.bold};
-    color: white;
-    margin-bottom: ${tokens.spacing[6]};
-    text-align: center;
-`;
-
-const ActionsGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: ${tokens.spacing[6]};
-`;
-
-const ActionCard = styled.div`
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border-radius: ${tokens.borderRadius.xl};
-    padding: ${tokens.spacing[6]};
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: ${tokens.shadows.xl};
-    transition: ${tokens.transitions.duration.normal} ${tokens.transitions.easing.easeInOut};
-
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow: ${tokens.shadows['2xl']};
-    }
-`;
-
-const ActionIcon = styled.div`
-    font-size: 3rem;
-    margin-bottom: ${tokens.spacing[4]};
-`;
-
-const ActionTitle = styled.h3`
-    font-size: ${tokens.typography.fontSize.xl};
-    font-weight: ${tokens.typography.fontWeight.semibold};
-    color: ${tokens.colors.neutral[900]};
-    margin-bottom: ${tokens.spacing[2]};
-`;
-
-const ActionDescription = styled.p`
-    color: ${tokens.colors.neutral[600]};
-    margin-bottom: ${tokens.spacing[4]};
-    font-size: ${tokens.typography.fontSize.sm};
-`;
-
-const Dashboard: React.FC = () => {
+function Dashboard() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
 
   return (
-    <DashboardContainer>
-      <MainContent>
-        <WelcomeSection>
-          <WelcomeTitle>{t('dashboard.welcome')}</WelcomeTitle>
-          <WelcomeSubtitle>
-            {t('dashboard.subtitle')}
-          </WelcomeSubtitle>
-        </WelcomeSection>
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 rounded-2xl border border-white/10 bg-primary-700 p-6
+      text-white shadow-lg sm:p-8"
+    >
+      <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl font-bold sm:text-4xl">{t('dashboard.welcome')}</h1>
+          <p className="mt-3 text-lg opacity-90">{t('dashboard.subtitle')}</p>
+        </div>
+        <Button size="lg" onClick={() => navigate('/profile')}>
+          {t('dashboard.myProfileButton')}
+        </Button>
+      </header>
 
-        <QuickActionsSection>
-          <SectionTitle>{t('dashboard.quickActions')}</SectionTitle>
-          <ActionsGrid>
-            {user?.customerType === 'MENTEE' && (
-              <ActionCard>
-                <ActionIcon>🔍</ActionIcon>
-                <ActionTitle>{t('dashboard.findMentors')}</ActionTitle>
-                <ActionDescription>
-                  {t('dashboard.findMentorsDescription')}
-                </ActionDescription>
-                <Button variant="primary" size="md">
-                  {t('dashboard.exploreMentors')}
-                </Button>
-              </ActionCard>
-            )}
+      <section aria-labelledby="quick-actions" className="flex flex-col gap-4">
+        <h2 id="quick-actions" className="text-2xl font-bold">{t('dashboard.quickActions')}</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <ActionCard
+            icon="👤"
+            title={t('dashboard.myProfile')}
+            description={t('dashboard.myProfileDescription')}
+          >
+            <Button variant="outline" onClick={() => navigate('/profile')}>
+              {t('dashboard.myProfileButton')}
+            </Button>
+          </ActionCard>
 
-            {user?.customerType === 'MENTOR' && (
-              <ActionCard>
-                <ActionIcon>👥</ActionIcon>
-                <ActionTitle>{t('dashboard.findMentees')}</ActionTitle>
-                <ActionDescription>
-                  {t('dashboard.findMenteesDescription')}
-                </ActionDescription>
-                <Button variant="secondary" size="md">
-                  {t('dashboard.findMenteesButton')}
-                </Button>
-              </ActionCard>
-            )}
-
-            <ActionCard>
-              <ActionIcon>👤</ActionIcon>
-              <ActionTitle>{t('dashboard.myProfile')}</ActionTitle>
-              <ActionDescription>
-                {t('dashboard.myProfileDescription')}
-              </ActionDescription>
-              <Button variant="outline" size="md" onClick={() => navigate('/profile')}>
-                {t('dashboard.myProfileButton')}
-              </Button>
+          {/* Mentor search and sessions have no page yet. Their buttons stay disabled until the feature exists. */}
+          {user?.customerType === 'MENTEE' && (
+            <ActionCard
+              icon="🔍"
+              title={t('dashboard.findMentors')}
+              description={t('dashboard.findMentorsDescription')}
+            >
+              <Button disabled>{t('dashboard.exploreMentors')}</Button>
             </ActionCard>
+          )}
 
-            <ActionCard>
-              <ActionIcon>📅</ActionIcon>
-              <ActionTitle>{t('dashboard.sessions')}</ActionTitle>
-              <ActionDescription>
-                {t('dashboard.sessionsDescription')}
-              </ActionDescription>
-              <Button variant="outline" size="md">
-                {t('dashboard.viewConversations')}
-              </Button>
+          {user?.customerType === 'MENTOR' && (
+            <ActionCard
+              icon="👥"
+              title={t('dashboard.findMentees')}
+              description={t('dashboard.findMenteesDescription')}
+            >
+              <Button variant="secondary" disabled>{t('dashboard.findMenteesButton')}</Button>
             </ActionCard>
-          </ActionsGrid>
-        </QuickActionsSection>
-      </MainContent>
-    </DashboardContainer>
+          )}
+
+          <ActionCard
+            icon="📅"
+            title={t('dashboard.sessions')}
+            description={t('dashboard.sessionsDescription')}
+          >
+            <Button variant="outline" disabled>{t('dashboard.viewConversations')}</Button>
+          </ActionCard>
+        </div>
+      </section>
+    </div>
   );
-};
+}
 
 const AuthDashboard = withAuthentication(Dashboard, {
   requireAuth: true,

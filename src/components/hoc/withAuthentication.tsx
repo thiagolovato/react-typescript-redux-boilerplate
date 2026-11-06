@@ -1,7 +1,8 @@
 import React, { ComponentType, useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { validateToken, initializeAuth } from '../../redux/reducers/auth';
+import { useI18n } from '../../hooks/useI18n';
 
 interface WithAuthenticationProps {
   requireAuth?: boolean;
@@ -14,6 +15,7 @@ const withAuthentication = <P extends object>(
 ) => {
   const WrappedComponent: React.FC<P> = (props) => {
     const dispatch = useAppDispatch();
+    const { t } = useI18n();
     const { isAuthenticated, token, loading } = useAppSelector((state) => state.auth);
     const [isValidating, setIsValidating] = useState(true);
 
@@ -47,18 +49,8 @@ const withAuthentication = <P extends object>(
     // Show loading state while validating
     if (isValidating || loading) {
       return (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            fontSize: '1.2rem',
-          }}
-        >
-          <div>Verificando autenticação...</div>
+        <div role="status" className="flex min-h-[50vh] items-center justify-center text-lg text-white">
+          {t('common.loading')}
         </div>
       );
     }

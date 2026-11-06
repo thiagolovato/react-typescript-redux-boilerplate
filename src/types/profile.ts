@@ -44,4 +44,4 @@ export interface Profile {
   hasMentorshipExperience: boolean;
 }
 
-export interface ProfileFormData extends Omit<Profile, 'id' | 'userId'> {}
+export type ProfileFormData = Omit<Profile, 'id' | 'userId'>;

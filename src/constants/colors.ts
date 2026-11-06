@@ -1,5 +1,4 @@
-import { linearGradient, transparentize } from 'polished';
-
+// Source of truth for the brand palette. src/index.css mirrors these values in the Tailwind theme.
 // Design System Color Palette - Inspired by blue-violet flowers and olive green
 export const colors = {
   // Primary Colors - Blue-Violet Range
@@ -70,29 +69,6 @@ export const colors = {
     main: '#3B82F6',
     dark: '#1D4ED8',
   },
-
-  // Legacy color mappings for backwards compatibility
-  transparent: 'rgba(0,0,0,0)',
-  black: '#000000',
-  white: '#ffffff',
-  white100: '#f9f9f9',
-  white200: '#f1f1f1',
-  red: '#EF4444',
-  yellow: '#F59E0B',
-  gold: '#e6e4bc',
-  green: '#10B981',
-  green100: '#D1FAE5',
-  green200: '#129c8c',
-  green300: '#047857',
-  gray100: '#F3F4F6',
-  gray200: '#E5E7EB',
-  gray300: '#D1D5DB',
-  gray400: '#9CA3AF',
-  gray500: '#6B7280',
-  gray600: '#4B5563',
-  gray700: '#374151',
-  gray800: '#1F2937',
-  gray900: '#111827',
 } as const;
 
 // Gradients
@@ -102,33 +78,3 @@ export const gradients = {
   secondaryBold: 'linear-gradient(135deg, #9CB22A 0%, #7A8A21 100%)',
   accent: 'linear-gradient(135deg, #8EA0FD 0%, #9CB22A 100%)',
 } as const;
-
-// Legacy support - will be deprecated
-export const COLORS = colors;
-
-const STATE_COLORS = Object.freeze({
-  success: colors.success.main,
-  invalid: colors.error.main,
-  warning: colors.warning.main,
-});
-
-const LINEAR_GRADIENT = Object.freeze({
-  green: linearGradient({
-    colorStops: [colors.secondary[500], colors.primary[600]],
-    fallback: colors.primary[600],
-    toDirection: 'to right',
-  }),
-  gray: linearGradient({
-    colorStops: [colors.neutral[200], colors.neutral[300]],
-    fallback: colors.neutral[200],
-    toDirection: 'to right',
-  }),
-});
-
-const TRANSPARENT_BLACK = Object.freeze({
-  soft: transparentize(0.8, colors.neutral[1000]),
-  normal: transparentize(0.5, colors.neutral[1000]),
-  hard: transparentize(0.3, colors.neutral[1000]),
-});
-
-export { STATE_COLORS, LINEAR_GRADIENT, TRANSPARENT_BLACK };
