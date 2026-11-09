@@ -275,7 +275,7 @@ export function DesignSystem() {
         <Specimen {...section('checkbox')}>
           <div className="flex flex-col gap-3">
             <Checkbox label={t('profile.preferentialContact')} defaultChecked />
-            <Checkbox label={t('profile.isGraduated')} />
+            <Checkbox label={t('profile.hasRuralTraining')} />
             <Checkbox label={t('designSystem.demo.disabled')} disabled />
           </div>
         </Specimen>

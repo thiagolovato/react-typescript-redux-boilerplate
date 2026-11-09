@@ -198,6 +198,13 @@ export function Register() {
               }
             }}
           />
+          <Link
+            to="/privacy"
+            target="_blank"
+            className="ml-7 text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
+          >
+            {t('auth.register.readTerms')}
+          </Link>
           {formErrors.termsAccepted && (
             <span className="text-sm text-error-dark">{formErrors.termsAccepted}</span>
           )}

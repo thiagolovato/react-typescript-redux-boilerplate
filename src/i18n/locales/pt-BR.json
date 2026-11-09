@@ -62,7 +62,8 @@
         "userTypeRequired": "Tipo de usuário é obrigatório",
         "general": "Erro ao criar conta. Tente novamente.",
         "tokenNotReceived": "Token não recebido do servidor"
-      }
+      },
+      "readTerms": "Ler termos de uso e privacidade"
     }
   },
   "dashboard": {
@@ -109,23 +110,22 @@
   "profile": {
     "title": "Meu Perfil",
     "loading": "Carregando perfil...",
-    "personalInfo": "Informações Pessoais",
-    "professionalInfo": "Informações Profissionais",
-    "address": "Endereço",
-    "qualifications": "Qualificações",
     "name": "Nome",
-    "age": "Idade",
     "gender": "Gênero",
-    "profession": "Profissão",
-    "generation": "Geração",
-    "city": "Cidade",
-    "region": "Estado",
+    "profession": {
+      "MENTOR": "Profissão",
+      "MENTEE": "Escolha de carreira"
+    },
+    "city": "Cidade, vila ou localidade",
+    "region": "Estado ou região (opcional)",
     "country": "País",
-    "expectations": "Expectativas",
-    "isGraduated": "Possuo diploma universitário",
-    "hasMentorshipTraining": "Possuo treinamento em mentoria",
-    "hasMentorshipExperience": "Possuo experiência prévia em mentoria",
-    "hasRuralTraining": "Possuo experiência em treinamento rural",
+    "expectations": {
+      "MENTOR": "O que você espera de um mentee?",
+      "MENTEE": "O que você espera de um mentor?"
+    },
+    "hasMentorshipTraining": "Recebi treinamento formal em mentoria",
+    "hasMentorshipExperience": "Já tenho experiência como mentor",
+    "hasRuralTraining": "Tenho formação ou experiência em saúde rural",
     "languages": "Idiomas",
     "addLanguage": "Adicionar idioma",
     "contacts": "Informações de Contato",
@@ -135,12 +135,14 @@
     "addContact": "Adicionar contato",
     "errors": {
       "loadProfile": "Falha ao carregar perfil",
-      "saveProfile": "Falha ao salvar perfil"
+      "saveProfile": "Falha ao salvar perfil",
+      "loadInterestAreas": "Não foi possível carregar as áreas de interesse.",
+      "languagesRequired": "Adicione pelo menos um idioma.",
+      "interestAreasRequired": "Escolha pelo menos uma área de interesse."
     },
     "searchLanguage": "Digite para buscar um idioma",
     "removeLanguage": "Remover {{language}}",
     "removeContact": "Remover contato {{index}}",
-    "selectGender": "Selecione",
     "genderSelfDescribe": "Como você descreve seu gênero?",
     "genders": {
       "WOMAN": "Mulher",
@@ -158,6 +160,68 @@
     "contactTypes": {
       "EMAIL": "E-mail",
       "PHONE": "Telefone"
+    },
+    "intro": {
+      "MENTOR": "Estas respostas ajudam a coordenação a encontrar o mentee certo para você. Só a coordenação vê seu perfil.",
+      "MENTEE": "Estas respostas ajudam a coordenação a encontrar o mentor certo para você. Só a coordenação vê seu perfil."
+    },
+    "sections": {
+      "aboutYou": "Sobre você",
+      "location": "Onde você mora ou atua",
+      "education": "Formação e carreira",
+      "interests": "Áreas de interesse",
+      "mentorship": "Mentoria",
+      "consent": "Termos e privacidade"
+    },
+    "select": "Selecione",
+    "birthDate": "Data de nascimento",
+    "languagesHelp": "Os idiomas em que você consegue conversar numa mentoria.",
+    "graduationYear": {
+      "MENTOR": "Ano de formatura (ou previsão)",
+      "MENTEE": "Ano de formatura (ou previsão)"
+    },
+    "academicBackground": "Formação acadêmica",
+    "academicBackgroundHelp": "Curso, instituição e especializações.",
+    "professionalLink": "Perfil profissional (opcional)",
+    "professionalLinkHelp": "Link do LinkedIn ou rede parecida.",
+    "interestsHelp": "Escolha as áreas em que você quer ajudar ou ser ajudado. Pelo menos uma.",
+    "selectedCount_one": "{{count}} escolhida",
+    "selectedCount_other": "{{count}} escolhidas",
+    "motivation": {
+      "MENTOR": "Por que você quer ser mentor?",
+      "MENTEE": "Por que você quer ser mentee neste programa?"
+    },
+    "goals": {
+      "MENTOR": "O que você espera fazer como mentor?",
+      "MENTEE": "O que você espera fazer como mentee?"
+    },
+    "contactPreference": {
+      "MENTOR": "Como prefere falar com seu mentee?",
+      "MENTEE": "Como prefere falar com seu mentor?"
+    },
+    "contactPreferences": {
+      "VIDEO_CALL": "Chamada de vídeo",
+      "PHONE_CALL": "Telefone",
+      "MESSAGING": "Mensagens (WhatsApp, Telegram...)",
+      "EMAIL": "E-mail",
+      "NO_PREFERENCE": "Sem preferência"
+    },
+    "preferredMentorGender": "Preferência de gênero do mentor",
+    "noPreference": "Sem preferência",
+    "acceptedBackgrounds": "Que formação você se sente confortável em mentorar? (opcional)",
+    "acceptedBackgroundsHelp": "Por exemplo: estudantes de enfermagem, médicos recém-formados.",
+    "otherPartyPreferences": {
+      "MENTOR": "Alguma preferência sobre seu mentee? (opcional)",
+      "MENTEE": "Alguma preferência sobre seu mentor? (opcional)"
+    },
+    "contactsHelp": "A coordenação usa estes contatos. Seu par só os recebe depois que vocês dois aceitarem a mentoria.",
+    "additionalInfo": "Quer acrescentar algo? (opcional)",
+    "consent": {
+      "summary": "Seus dados são usados só para formar pares e acompanhar o programa.",
+      "readTerms": "Ler termos de uso e privacidade",
+      "acceptTerms": "Li e aceito os termos de uso e a política de privacidade",
+      "termsChanged": "Os termos mudaram desde a última vez. Aceite a nova versão para salvar.",
+      "research": "Autorizo o uso anônimo das minhas respostas em pesquisa (opcional, pode mudar depois)"
     }
   },
   "roles": {
@@ -256,6 +320,41 @@
       "expectationsPlaceholder": "O que você espera da mentoria?",
       "expectationsHelper": "Seu mentor lê isto antes da primeira sessão.",
       "contactType": "Tipo de contato"
+    }
+  },
+  "privacy": {
+    "title": "Termos de uso e privacidade",
+    "version": "Versão {{version}}",
+    "back": "Voltar",
+    "sections": {
+      "programme": {
+        "title": "O programa",
+        "body": "O Mentor-Mentee é um programa de mentoria voluntário e gratuito para profissionais e estudantes de saúde. A coordenação forma os pares, acompanha as mentorias e emite os certificados."
+      },
+      "data": {
+        "title": "Dados que coletamos",
+        "body": "E-mail e senha da conta, e as respostas do perfil: nome, data de nascimento, gênero, país e cidade, idiomas, formação, profissão, áreas de interesse, contatos, preferências e respostas abertas."
+      },
+      "use": {
+        "title": "Para que usamos",
+        "body": "Para formar pares, falar com você sobre o programa, acompanhar as mentorias e emitir certificados. Não vendemos nem compartilhamos seus dados com terceiros."
+      },
+      "access": {
+        "title": "Quem vê seus dados",
+        "body": "Só a coordenação vê seu perfil completo. Seu nome e contatos só são passados ao seu par depois que vocês dois aceitarem a mentoria."
+      },
+      "research": {
+        "title": "Pesquisa (opcional)",
+        "body": "Se você autorizar, suas respostas e avaliações podem ser usadas em pesquisa, sempre sem identificar você. Sem autorização, nada seu entra na pesquisa. Você pode mudar essa escolha no perfil a qualquer momento."
+      },
+      "rights": {
+        "title": "Seus direitos",
+        "body": "Você pode ver e corrigir seus dados no perfil, e pedir à coordenação que os exclua ou que encerre sua participação."
+      },
+      "conduct": {
+        "title": "Participação",
+        "body": "Mentor e mentee tratam um ao outro com respeito e mantêm em sigilo o que é conversado. Qualquer um pode encerrar a mentoria avisando por escrito com duas semanas de antecedência."
+      }
     }
   }
 }

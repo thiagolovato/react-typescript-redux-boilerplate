@@ -4,6 +4,7 @@ import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { Dashboard } from './components/Dashboard';
 import Profile from './components/Profile';
+import { Privacy } from './components/Privacy';
 import { AuthLayout } from './components/layout/AuthLayout';
 
 // Dev-only reference page. Vite replaces import.meta.env.DEV with false in production builds,
@@ -18,6 +19,7 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/privacy" element={<Privacy />} />
       {DesignSystem && (
         <Route path="/design-system" element={<Suspense><DesignSystem /></Suspense>} />
       )}

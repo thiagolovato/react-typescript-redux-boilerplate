@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
-import type { Profile, ProfileRequest } from '../../types/profile';
+import type { InterestGroup, Profile, ProfileRequest } from '../../types/profile';
 
 const GATEWAY_BASE_URL = 'http://localhost:8765';
 
@@ -348,6 +348,17 @@ export const profileService = {
   update: async (profile: ProfileRequest): Promise<Profile> => {
     try {
       return await httpClient.put<Profile>(`${API_ROUTES.core}/customers/me`, profile, authHeader());
+    } catch (error) {
+      throw new Error(coreErrorMessage(error));
+    }
+  },
+};
+
+export const referenceDataService = {
+  /** Interest groups and their areas, for the profile form. */
+  getInterestGroups: async (): Promise<InterestGroup[]> => {
+    try {
+      return await httpClient.get<InterestGroup[]>(`${API_ROUTES.core}/interest-groups`, authHeader());
     } catch (error) {
       throw new Error(coreErrorMessage(error));
     }

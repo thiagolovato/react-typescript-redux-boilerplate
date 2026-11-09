@@ -21,3 +21,15 @@ export const GENDER_OPTIONS = [
 ] as const;
 
 export const GENDER_SELF_DESCRIBE = 'SELF_DESCRIBE';
+
+// A mentee can ask for a mentor of one of these genders, or leave it empty for no preference.
+export const PREFERRED_MENTOR_GENDER_OPTIONS = GENDER_OPTIONS.filter((option) => option !== 'PREFER_NOT_TO_SAY');
+
+export const CONTACT_PREFERENCES = ['VIDEO_CALL', 'PHONE_CALL', 'MESSAGING', 'EMAIL', 'NO_PREFERENCE'] as const;
+
+// The subscription forms accept graduation years from the past or a few years ahead.
+export const MIN_GRADUATION_YEAR = 1940;
+export const MAX_GRADUATION_YEARS_AHEAD = 10;
+
+// Same limit as CustomerRequest.MIN_AGE in mentor-mentee-core.
+export const MIN_AGE = 16;
