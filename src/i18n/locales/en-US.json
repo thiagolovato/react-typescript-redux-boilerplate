@@ -127,20 +127,135 @@
     "hasMentorshipExperience": "I have previous mentorship experience",
     "hasRuralTraining": "I have rural training experience",
     "languages": "Languages",
-    "language": "Language",
-    "addLanguage": "Add Language",
+    "addLanguage": "Add language",
     "contacts": "Contact Information",
     "contactType": "Contact Type",
     "contactValue": "Contact Value",
     "preferentialContact": "Preferred Contact Method",
-    "addContact": "Add Contact",
+    "addContact": "Add contact",
     "errors": {
       "loadProfile": "Failed to load profile",
       "saveProfile": "Failed to save profile"
+    },
+    "searchLanguage": "Type to search a language",
+    "removeLanguage": "Remove {{language}}",
+    "removeContact": "Remove contact {{index}}",
+    "selectGender": "Select",
+    "genderSelfDescribe": "How do you describe your gender?",
+    "genders": {
+      "WOMAN": "Woman",
+      "MAN": "Man",
+      "NON_BINARY": "Non-binary",
+      "TRANS_WOMAN": "Trans woman",
+      "TRANS_MAN": "Trans man",
+      "GENDERQUEER": "Genderqueer",
+      "GENDERFLUID": "Genderfluid",
+      "AGENDER": "Agender",
+      "TWO_SPIRIT": "Two-Spirit",
+      "PREFER_NOT_TO_SAY": "Prefer not to say",
+      "SELF_DESCRIBE": "Prefer to self-describe"
+    },
+    "contactTypes": {
+      "EMAIL": "Email",
+      "PHONE": "Phone"
     }
   },
   "roles": {
     "MENTOR": "Mentor",
     "MENTEE": "Student"
+  },
+  "designSystem": {
+    "title": "Design system",
+    "intro": "Every piece the app is built from, with the code to use it. Colors come from the logo: blue for mentors, green for mentees.",
+    "navLabel": "Sections",
+    "sections": {
+      "colors": {
+        "title": "Colors",
+        "description": "Each scale is sampled from the logo. Use 600 or darker for text and buttons on white, lighter steps for tints."
+      },
+      "roles": {
+        "title": "Role colors",
+        "description": "Color says whose feature it is. Mentor features take blue, mentee features green, shared ones teal."
+      },
+      "perch": {
+        "title": "Perch",
+        "description": "The branch both birds stand on. The only gradient in the app: use it once per screen at most."
+      },
+      "typography": {
+        "title": "Typography",
+        "description": "One family, Lexend. Sentence case everywhere, no all-caps labels."
+      },
+      "buttons": {
+        "title": "Buttons",
+        "description": "Solid fills, no gradients. Name the button after what it does: \"Save\", not \"Submit\"."
+      },
+      "inputs": {
+        "title": "Inputs",
+        "description": "The label and helper text are linked to the field. Error text says what is wrong and how to fix it."
+      },
+      "textarea": {
+        "title": "Text area",
+        "description": "Same options as Input, without icons or sizes. The user can resize it vertically."
+      },
+      "select": {
+        "title": "Select",
+        "description": "A native select with a required label. Use it for short, fixed lists."
+      },
+      "checkbox": {
+        "title": "Checkbox",
+        "description": "A native checkbox. The whole label is clickable."
+      },
+      "languageToggle": {
+        "title": "Language toggle",
+        "description": "Switches the interface language and remembers the choice."
+      },
+      "roleBird": {
+        "title": "Role bird",
+        "description": "The bird for a role, cropped from the logo. Decorative: always put the role name next to it."
+      },
+      "icons": {
+        "title": "Icons",
+        "description": "Line icons with a 1.75 stroke. Use them instead of emoji."
+      }
+    },
+    "roles": {
+      "mentor": "Mentor",
+      "mentee": "Mentee",
+      "shared": "Shared",
+      "other": "Everything else"
+    },
+    "type": {
+      "pageTitle": "Page title",
+      "pageTitleSample": "Find a mentor who has walked your path",
+      "sectionTitle": "Section title",
+      "sectionTitleSample": "Professional information",
+      "cardTitle": "Card title",
+      "cardTitleSample": "Mentoring sessions",
+      "body": "Body",
+      "bodySample": "Tell your mentor what you want to learn and how often you would like to meet. Clear expectations make the first session easier.",
+      "secondary": "Secondary text",
+      "secondarySample": "Updated 2 days ago"
+    },
+    "demo": {
+      "addContact": "Add contact",
+      "disabled": "Disabled",
+      "disabledValue": "Not editable",
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "emailHelper": "We never share your email.",
+      "invalidEmail": "ana@",
+      "errorHelper": "Enter a full email, like ana@example.com.",
+      "search": "Search",
+      "searchPlaceholder": "Search languages",
+      "city": "City",
+      "cityValue": "Porto Alegre",
+      "successHelper": "City found.",
+      "age": "Age",
+      "warningHelper": "Mentees must be 16 or older.",
+      "expectations": "Expectations",
+      "expectationsPlaceholder": "What do you want from mentoring?",
+      "expectationsHelper": "Your mentor reads this before the first session.",
+      "contactType": "Contact type"
+    }
   }
 }

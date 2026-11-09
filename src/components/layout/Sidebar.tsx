@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { logoutUser } from '../../redux/reducers/auth';
 import { useI18n } from '../../hooks/useI18n';
-import { Button, LanguageToggle } from '../ui';
+import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
+import birds from '../../assets/mentor-mentee-birds-640.jpg';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -11,8 +12,8 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { to: '/dashboard', icon: '🏠', label: 'navigation.dashboard' },
-  { to: '/profile', icon: '👤', label: 'navigation.profile' },
+  { to: '/dashboard', Icon: HomeIcon, label: 'navigation.dashboard' },
+  { to: '/profile', Icon: UserIcon, label: 'navigation.profile' },
 ] as const;
 
 export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
@@ -36,20 +37,24 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
 
   return (
     <aside
-      className={`z-40 flex flex-col border-primary-700 bg-primary-800 text-neutral-50
-        md:fixed md:inset-y-0 md:left-0 md:border-r ${isCollapsed ? 'md:w-20' : 'md:w-70'}`}
+      className={`z-40 flex flex-col border-b border-neutral-200 bg-neutral-50
+        md:fixed md:inset-y-0 md:left-0 md:border-r md:border-b-0 ${isCollapsed ? 'md:w-20' : 'md:w-70'}`}
     >
-      <div className="flex min-h-16 items-center gap-2 border-b border-primary-700 px-4">
-        <span aria-hidden="true" className={`text-2xl ${isCollapsed ? 'md:hidden' : ''}`}>🌸</span>
-        <span className={`flex-1 truncate text-lg font-bold ${labelClass}`}>{t('app.name')}</span>
+      <div className={`flex min-h-16 items-center gap-3 px-4 ${isCollapsed ? 'md:flex-col md:justify-center md:py-4' : ''}`}>
+        <span aria-hidden="true" className="size-10 shrink-0 overflow-hidden">
+          <img src={birds} alt="" className="size-full scale-150 object-cover mix-blend-multiply" />
+        </span>
+        <span className={`flex-1 truncate text-lg font-semibold tracking-tight text-neutral-900 ${labelClass}`}>
+          {t('app.name')}
+        </span>
         <button
           type="button"
           onClick={() => setIsMobileOpen((value) => !value)}
           aria-expanded={isMobileOpen}
           aria-controls="main-navigation"
-          className="rounded-md px-3 py-2 hover:bg-primary-700 md:hidden"
+          className="flex size-9 items-center justify-center rounded-md text-neutral-700 hover:bg-neutral-100 md:hidden"
         >
-          <span aria-hidden="true">☰</span>
+          <MenuIcon />
           <span className="sr-only">{t('navigation.mainMenu')}</span>
         </button>
         <button
@@ -58,10 +63,11 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
           aria-expanded={!isCollapsed}
           aria-controls="main-navigation"
           aria-label={t(isCollapsed ? 'navigation.expand' : 'navigation.collapse')}
-          className="hidden size-8 shrink-0 items-center justify-center rounded-full bg-primary-500
-            hover:bg-primary-400 md:flex"
+          title={t(isCollapsed ? 'navigation.expand' : 'navigation.collapse')}
+          className="hidden size-8 shrink-0 items-center justify-center rounded-md text-neutral-500
+            hover:bg-neutral-100 hover:text-neutral-900 md:flex"
         >
-          <span aria-hidden="true">{isCollapsed ? '→' : '←'}</span>
+          <PanelIcon />
         </button>
       </div>
 
@@ -69,32 +75,47 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
         id="main-navigation"
         className={`flex-1 flex-col md:flex ${isMobileOpen ? 'flex' : 'hidden'}`}
       >
-        <nav aria-label={t('navigation.mainMenu')} className="flex flex-1 flex-col py-4">
-          {navItems.map((item) => (
+        <nav aria-label={t('navigation.mainMenu')} className="flex flex-1 flex-col gap-1 p-3">
+          {navItems.map(({ to, Icon, label }) => (
             <NavLink
-              key={item.to}
-              to={item.to}
+              key={to}
+              to={to}
               onClick={() => setIsMobileOpen(false)}
-              title={isCollapsed ? t(item.label) : undefined}
-              className={({ isActive }) => `flex items-center gap-3 border-l-4 px-4 py-3 transition-colors
-                hover:bg-primary-700 hover:text-neutral-50
-                ${isActive ? 'border-primary-500 bg-primary-700 text-neutral-50' : 'border-transparent text-neutral-400'}`}
+              title={isCollapsed ? t(label) : undefined}
+              className={({ isActive }) => `flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors
+                ${isCollapsed ? 'md:justify-center' : ''}
+                ${isActive
+                  ? 'bg-primary-50 font-medium text-primary-800'
+                  : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}`}
             >
-              <span aria-hidden="true">{item.icon}</span>
-              <span className={`whitespace-nowrap ${labelClass}`}>{t(item.label)}</span>
+              <Icon />
+              <span className={`whitespace-nowrap ${labelClass}`}>{t(label)}</span>
             </NavLink>
           ))}
         </nav>
 
-        <div className="flex flex-col gap-3 border-t border-primary-700 p-4">
+        <div className="flex flex-col gap-3 border-t border-neutral-200 p-3">
           <LanguageToggle className={isCollapsed ? 'md:hidden' : ''} />
           {user && (
-            <p className={`truncate text-sm ${labelClass}`}>
-              {user.email} ({t(user.customerType === 'MENTOR' ? 'roles.MENTOR' : 'roles.MENTEE')})
-            </p>
+            <div className={`flex items-center gap-3 px-1 ${isCollapsed ? 'md:justify-center' : ''}`}>
+              {user.customerType && <RoleBird role={user.customerType} size="sm" />}
+              <p className={`min-w-0 text-sm leading-tight ${labelClass}`}>
+                <span className="block truncate text-neutral-900">{user.email}</span>
+                {user.customerType && (
+                  <span className="block text-neutral-600">{t(`roles.${user.customerType}`)}</span>
+                )}
+              </p>
+            </div>
           )}
-          <Button variant="outline" size="sm" onClick={handleLogout} fullWidth title={t('dashboard.logout')}>
-            {isCollapsed && <span aria-hidden="true" className="hidden md:inline">🚪</span>}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            fullWidth
+            title={t('dashboard.logout')}
+            leftIcon={<LogoutIcon />}
+            className={isCollapsed ? '' : 'md:justify-start'}
+          >
             <span className={labelClass}>{t('dashboard.logout')}</span>
           </Button>
         </div>

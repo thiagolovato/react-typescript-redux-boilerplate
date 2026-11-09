@@ -13,21 +13,22 @@ interface ButtonProps extends React.ComponentProps<'button'> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'border-transparent bg-primary-bold text-white shadow-primary-bold hover:brightness-110',
-  secondary: 'border-transparent bg-secondary-bold text-white shadow-secondary-bold hover:brightness-110',
-  outline: 'border-primary-300 bg-white text-primary-600 hover:border-primary-400 hover:bg-primary-50 ' +
-    'hover:text-primary-700 active:bg-primary-100',
-  ghost: 'border-transparent bg-transparent text-primary-600 hover:bg-primary-50 hover:text-primary-700 active:bg-primary-100',
-  success: 'border-transparent bg-success-main text-white hover:bg-success-dark',
-  warning: 'border-transparent bg-warning-main text-white hover:bg-warning-dark',
-  error: 'border-transparent bg-error-main text-white hover:bg-error-dark',
+  primary: 'border-transparent bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800',
+  secondary: 'border-transparent bg-secondary-700 text-white hover:bg-secondary-800 active:bg-secondary-900',
+  outline: 'border-neutral-300 bg-white text-neutral-800 hover:border-primary-400 hover:text-primary-700 ' +
+    'active:bg-primary-50',
+  ghost: 'border-transparent bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 ' +
+    'active:bg-neutral-200',
+  success: 'border-transparent bg-success-dark text-white hover:bg-secondary-800',
+  warning: 'border-transparent bg-warning-dark text-white hover:brightness-90',
+  error: 'border-transparent bg-error-dark text-white hover:brightness-90',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: 'h-8 rounded-md px-3 text-sm',
-  md: 'h-10 rounded-lg px-4 text-base',
-  lg: 'h-12 rounded-xl px-6 text-lg',
-  xl: 'h-14 rounded-2xl px-8 text-xl',
+  md: 'h-10 rounded-lg px-4 text-sm',
+  lg: 'h-12 rounded-lg px-6 text-base',
+  xl: 'h-14 rounded-xl px-8 text-lg',
 };
 
 export function Button({

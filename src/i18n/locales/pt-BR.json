@@ -127,20 +127,135 @@
     "hasMentorshipExperience": "Possuo experiência prévia em mentoria",
     "hasRuralTraining": "Possuo experiência em treinamento rural",
     "languages": "Idiomas",
-    "language": "Idioma",
-    "addLanguage": "Adicionar Idioma",
+    "addLanguage": "Adicionar idioma",
     "contacts": "Informações de Contato",
     "contactType": "Tipo de Contato",
     "contactValue": "Valor do Contato",
     "preferentialContact": "Método de Contato Preferido",
-    "addContact": "Adicionar Contato",
+    "addContact": "Adicionar contato",
     "errors": {
       "loadProfile": "Falha ao carregar perfil",
       "saveProfile": "Falha ao salvar perfil"
+    },
+    "searchLanguage": "Digite para buscar um idioma",
+    "removeLanguage": "Remover {{language}}",
+    "removeContact": "Remover contato {{index}}",
+    "selectGender": "Selecione",
+    "genderSelfDescribe": "Como você descreve seu gênero?",
+    "genders": {
+      "WOMAN": "Mulher",
+      "MAN": "Homem",
+      "NON_BINARY": "Não binárie",
+      "TRANS_WOMAN": "Mulher trans",
+      "TRANS_MAN": "Homem trans",
+      "GENDERQUEER": "Genderqueer",
+      "GENDERFLUID": "Gênero fluido",
+      "AGENDER": "Agênero",
+      "TWO_SPIRIT": "Dois espíritos (Two-Spirit)",
+      "PREFER_NOT_TO_SAY": "Prefiro não dizer",
+      "SELF_DESCRIBE": "Prefiro descrever"
+    },
+    "contactTypes": {
+      "EMAIL": "E-mail",
+      "PHONE": "Telefone"
     }
   },
   "roles": {
     "MENTOR": "Mentor",
     "MENTEE": "Estudante"
+  },
+  "designSystem": {
+    "title": "Design system",
+    "intro": "Todas as peças do app, com o código para usá-las. As cores vêm do logo: azul para mentores, verde para mentees.",
+    "navLabel": "Seções",
+    "sections": {
+      "colors": {
+        "title": "Cores",
+        "description": "Cada escala vem do logo. Use 600 ou mais escuro para texto e botões sobre branco, e os tons claros para fundos."
+      },
+      "roles": {
+        "title": "Cores por papel",
+        "description": "A cor diz de quem é a funcionalidade. Funcionalidades de mentor usam azul, de mentee verde, e as compartilhadas verde-azulado."
+      },
+      "perch": {
+        "title": "Poleiro",
+        "description": "O galho onde os dois pássaros pousam. É o único gradiente do app: use no máximo uma vez por tela."
+      },
+      "typography": {
+        "title": "Tipografia",
+        "description": "Uma família, Lexend. Só a primeira letra maiúscula, sem rótulos em caixa alta."
+      },
+      "buttons": {
+        "title": "Botões",
+        "description": "Cores sólidas, sem gradientes. O texto diz o que o botão faz: \"Salvar\", não \"Enviar\"."
+      },
+      "inputs": {
+        "title": "Campos",
+        "description": "O rótulo e a ajuda ficam ligados ao campo. A mensagem de erro diz o que está errado e como corrigir."
+      },
+      "textarea": {
+        "title": "Área de texto",
+        "description": "Mesmas opções do Input, sem ícones nem tamanhos. O usuário pode aumentar a altura."
+      },
+      "select": {
+        "title": "Seleção",
+        "description": "Um select nativo com rótulo obrigatório. Use para listas curtas e fixas."
+      },
+      "checkbox": {
+        "title": "Caixa de seleção",
+        "description": "Uma caixa de seleção nativa. Todo o rótulo é clicável."
+      },
+      "languageToggle": {
+        "title": "Seletor de idioma",
+        "description": "Troca o idioma da interface e lembra a escolha."
+      },
+      "roleBird": {
+        "title": "Pássaro do papel",
+        "description": "O pássaro de cada papel, recortado do logo. É decorativo: coloque sempre o nome do papel ao lado."
+      },
+      "icons": {
+        "title": "Ícones",
+        "description": "Ícones de linha com traço 1.75. Use no lugar de emoji."
+      }
+    },
+    "roles": {
+      "mentor": "Mentor",
+      "mentee": "Mentee",
+      "shared": "Compartilhado",
+      "other": "Todo o resto"
+    },
+    "type": {
+      "pageTitle": "Título da página",
+      "pageTitleSample": "Encontre um mentor que já trilhou seu caminho",
+      "sectionTitle": "Título de seção",
+      "sectionTitleSample": "Informações profissionais",
+      "cardTitle": "Título de cartão",
+      "cardTitleSample": "Sessões de mentoria",
+      "body": "Corpo",
+      "bodySample": "Conte ao seu mentor o que você quer aprender e com que frequência gostaria de se encontrar. Expectativas claras facilitam a primeira sessão.",
+      "secondary": "Texto secundário",
+      "secondarySample": "Atualizado há 2 dias"
+    },
+    "demo": {
+      "addContact": "Adicionar contato",
+      "disabled": "Desativado",
+      "disabledValue": "Não editável",
+      "email": "Email",
+      "emailPlaceholder": "voce@exemplo.com",
+      "emailHelper": "Nunca compartilhamos seu email.",
+      "invalidEmail": "ana@",
+      "errorHelper": "Digite o email completo, como ana@exemplo.com.",
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar idiomas",
+      "city": "Cidade",
+      "cityValue": "Porto Alegre",
+      "successHelper": "Cidade encontrada.",
+      "age": "Idade",
+      "warningHelper": "Mentees precisam ter 16 anos ou mais.",
+      "expectations": "Expectativas",
+      "expectationsPlaceholder": "O que você espera da mentoria?",
+      "expectationsHelper": "Seu mentor lê isto antes da primeira sessão.",
+      "contactType": "Tipo de contato"
+    }
   }
 }

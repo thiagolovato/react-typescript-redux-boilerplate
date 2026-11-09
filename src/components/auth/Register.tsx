@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Button, Checkbox, Input } from '../ui';
+import { Button, Checkbox, Input, RoleBird } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, registerUser } from '../../redux/reducers/auth';
@@ -15,9 +15,20 @@ type RegisterErrors = {
   termsAccepted?: string;
 };
 
+// Each role wears its bird's color when picked.
 const customerTypes = [
-  { value: 'MENTOR', icon: '🎓', title: 'auth.register.mentor', description: 'auth.register.mentorDescription' },
-  { value: 'MENTEE', icon: '📚', title: 'auth.register.mentee', description: 'auth.register.menteeDescription' },
+  {
+    value: 'MENTOR',
+    title: 'auth.register.mentor',
+    description: 'auth.register.mentorDescription',
+    checkedClass: 'has-checked:border-primary-500 has-checked:bg-primary-50',
+  },
+  {
+    value: 'MENTEE',
+    title: 'auth.register.mentee',
+    description: 'auth.register.menteeDescription',
+    checkedClass: 'has-checked:border-secondary-500 has-checked:bg-secondary-50',
+  },
 ] as const;
 
 export function Register() {
@@ -146,13 +157,13 @@ export function Register() {
           className="flex flex-col gap-2"
         >
           <legend className="mb-2 text-sm font-medium">{t('auth.register.userType')}</legend>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3">
             {customerTypes.map((option) => (
               <label
                 key={option.value}
-                className="flex cursor-pointer items-start gap-3 rounded-lg border border-neutral-300 p-3
-                  transition-colors hover:border-primary-400 has-checked:border-primary-500 has-checked:bg-primary-50
-                  has-focus-visible:ring-3 has-focus-visible:ring-primary-200"
+                className={`flex cursor-pointer items-center gap-4 rounded-lg border border-neutral-300 p-3
+                  transition-colors hover:border-neutral-400 has-focus-visible:ring-3 has-focus-visible:ring-primary-100
+                  ${option.checkedClass}`}
               >
                 <input
                   type="radio"
@@ -162,9 +173,9 @@ export function Register() {
                   onChange={() => handleUserTypeSelect(option.value)}
                   className="sr-only"
                 />
-                <span aria-hidden="true" className="text-2xl">{option.icon}</span>
+                <RoleBird role={option.value} />
                 <span>
-                  <span className="block font-semibold text-neutral-900">{t(option.title)}</span>
+                  <span className="block font-medium text-neutral-900">{t(option.title)}</span>
                   <span className="block text-sm text-neutral-600">{t(option.description)}</span>
                 </span>
               </label>
@@ -199,9 +210,9 @@ export function Register() {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-neutral-600">
+      <p className="text-sm text-neutral-600">
         {t('auth.register.hasAccount')}{' '}
-        <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700 hover:underline">
+        <Link to="/login" className="font-medium text-primary-700 underline-offset-2 hover:underline">
           {t('auth.register.loginHere')}
         </Link>
       </p>

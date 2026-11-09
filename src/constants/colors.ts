@@ -1,80 +1,84 @@
 // Source of truth for the brand palette. src/index.css mirrors these values in the Tailwind theme.
-// Design System Color Palette - Inspired by blue-violet flowers and olive green
+// Every hue comes from the logo: the larger blue bird is the mentor, the smaller green bird is the mentee,
+// and the teal where their gradients meet is the bridge between them.
 export const colors = {
-  // Primary Colors - Blue-Violet Range
+  // Primary - mentor blue (larger bird). 600 is the lightest shade that passes AA with white text.
   primary: {
-    50: '#F8F9FF', // Very light lilac
-    100: '#E8EBFF', // Light lilac
-    200: '#D2D9FB', // Pale blue-violet
-    300: '#B8C4F7', // Light lavender blue
-    400: '#8EA0FD', // Pale blue-violet
-    500: '#4C62CF', // Light lavender blue
-    600: '#0024BE', // Rich ultramarine blue
-    700: '#001A9A', // Darker ultramarine
-    800: '#001377', // Deep blue
-    900: '#000D54', // Very deep blue
+    50: '#F1F7FD',
+    100: '#DFECFA',
+    200: '#BFD8F4',
+    300: '#91BCEC',
+    400: '#66A2E6',
+    500: '#448DE0', // Bird head
+    600: '#2F74C8', // Buttons, links
+    700: '#275FA6',
+    800: '#1F4A80',
+    900: '#17375D',
   },
 
-  // Secondary Colors - Olive Green Range
+  // Secondary - mentee green (smaller bird), from leaf green to the chartreuse tail.
   secondary: {
-    50: '#F7F8F0',
-    100: '#EDEFC7',
-    200: '#E1E59E',
-    300: '#D4DB75',
-    400: '#C7D14C',
-    500: '#9CB22A', // Rich olive green
-    600: '#7A8A21',
-    700: '#586218',
-    800: '#363A0F',
-    900: '#1C1D08',
+    50: '#F3FAEE',
+    100: '#E2F3D6',
+    200: '#CDEBA9',
+    300: '#ABCE31', // Tail
+    400: '#79C878', // Head
+    500: '#5DB063',
+    600: '#3F8A4A', // Large text only on white
+    700: '#357A40', // Text on white
+    800: '#2B5F33',
+    900: '#1F4425',
   },
 
-  // Neutral Colors
+  // Teal - where the two gradients meet. Used by the perch gradient.
+  teal: {
+    100: '#DDF3EC',
+    400: '#4EBCA3',
+    700: '#1F7F6E',
+  },
+
+  // Neutral - warm paper of the logo background to the slate ink of the eyes and wordmark.
   neutral: {
     0: '#FFFFFF',
-    50: '#F9FAFB',
-    100: '#F3F4F6',
-    200: '#E5E7EB',
-    300: '#D1D5DB',
-    400: '#9CA3AF',
-    500: '#6B7280',
-    600: '#4B5563',
-    700: '#374151',
-    800: '#1F2937',
-    900: '#111827',
-    1000: '#000000',
+    50: '#FCFAF6', // Paper, page background
+    100: '#F2F1EE',
+    200: '#E3E5E6', // Borders
+    300: '#CBD1D5',
+    400: '#9AA5AD',
+    500: '#6B7A84', // Placeholders
+    600: '#55656F', // Secondary text
+    700: '#3E505C',
+    800: '#2A3F4E', // Ink, body text
+    900: '#1C2B36', // Headings
   },
 
-  // Semantic Colors
+  // Semantic colors
   success: {
-    light: '#D1FAE5',
-    main: '#10B981',
-    dark: '#047857',
+    light: '#E2F3D6',
+    main: '#5DB063',
+    dark: '#357A40',
   },
 
   warning: {
-    light: '#FEF3C7',
-    main: '#F59E0B',
-    dark: '#D97706',
+    light: '#FDF0D5',
+    main: '#E8A33D',
+    dark: '#B4570F',
   },
 
   error: {
-    light: '#FEE2E2',
-    main: '#EF4444',
-    dark: '#DC2626',
+    light: '#FBE4E2',
+    main: '#D9544B',
+    dark: '#A8332D',
   },
 
   info: {
-    light: '#DBEAFE',
-    main: '#3B82F6',
-    dark: '#1D4ED8',
+    light: '#DFECFA',
+    main: '#448DE0',
+    dark: '#275FA6',
   },
 } as const;
 
-// Gradients
+// The perch: mentor blue to mentee green, the same direction as the logo.
 export const gradients = {
-  primarySoft: 'linear-gradient(135deg, #D2D9FB 0%, #8EA0FD 100%)',
-  primaryBold: 'linear-gradient(135deg, #4C62CF 0%, #0024BE 100%)',
-  secondaryBold: 'linear-gradient(135deg, #9CB22A 0%, #7A8A21 100%)',
-  accent: 'linear-gradient(135deg, #8EA0FD 0%, #9CB22A 100%)',
+  perch: 'linear-gradient(90deg, #448DE0 0%, #4EBCA3 50%, #ABCE31 100%)',
 } as const;

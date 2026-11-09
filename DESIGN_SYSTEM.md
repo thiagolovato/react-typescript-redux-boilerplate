@@ -1,105 +1,82 @@
-# 🎨 Design System - Blue Violet & Olive
+# Design System - Two Birds
 
-Um design system completo inspirado na elegante beleza das flores azul-violeta florescendo em hastes verdes, criando uma sensação de frescor, sofisticação e naturalidade.
+Every color comes from the logo. The larger blue bird is the mentor. The smaller green bird is the mentee.
+The teal where their gradients meet is the bridge between them. The page is the logo's paper, the text is the
+slate ink of the birds' eyes.
 
-## 🎨 Paleta de Cores
+## Live reference
 
-### Cores Primárias (Blue-Violet Range)
-Nossa paleta primária baseia-se em tons de azul-violeta que simbolizam profundidade, expressividade e elegância.
+Run `npm run dev` and open `/design-system`. It shows every token and component with the code to use it.
+The page lives in `src/components/designSystem/` and exists only in dev builds. Add a section there when you add a
+component to `ui/`.
 
-```typescript
-primary: {
-  50: '#F8F9FF',   // Very light lilac
-  100: '#E8EBFF',  // Light lilac  
-  200: '#D2D9FB',  // Pale blue-violet
-  300: '#B8C4F7',  // Light lavender blue
-  400: '#8EA0FD',  // Pale blue-violet
-  500: '#4C62CF',  // Light lavender blue
-  600: '#0024BE',  // Rich ultramarine blue (principal)
-  700: '#001A9A',  // Darker ultramarine
-  800: '#001377',  // Deep blue
-  900: '#000D54',  // Very deep blue
-}
-```
+## Palette
 
-### Cores Secundárias (Olive Green Range)
-As cores secundárias em tons de verde oliva representam frescor e naturalidade.
+| Token | Hex | Role |
+| --- | --- | --- |
+| `primary-500` | `#448DE0` | Mentor bird. Tints and icons. |
+| `primary-600` | `#2F74C8` | Buttons and links. Lightest blue with AA contrast on white text. |
+| `secondary-400` | `#79C878` | Mentee bird. Tints and icons. |
+| `secondary-700` | `#357A40` | Green text and green buttons. |
+| `secondary-300` | `#ABCE31` | Chartreuse tail. Gradient end only. |
+| `teal-400` | `#4EBCA3` | Bridge. Shared features (sessions). |
+| `neutral-50` | `#FCFAF6` | Paper. Page and sidebar background. Matches the logo, so the image needs no frame. |
+| `neutral-800` | `#2A3F4E` | Ink. Body text. |
+| `neutral-900` | `#1C2B36` | Headings. |
 
-```typescript
-secondary: {
-  50: '#F7F8F0',
-  100: '#EDEFC7',
-  200: '#E1E59E', 
-  300: '#D4DB75',
-  400: '#C7D14C',
-  500: '#9CB22A',  // Rich olive green (principal)
-  600: '#7A8A21',
-  700: '#586218',
-  800: '#363A0F',
-  900: '#1C1D08',
-}
-```
+Full scales (50 to 900) and semantic colors (`success`, `warning`, `error`, `info`) are in `src/constants/colors.ts`.
 
-### Gradientes
-```typescript
-gradients: {
-  primarySoft: 'linear-gradient(135deg, #D2D9FB 0%, #8EA0FD 100%)',
-  primaryBold: 'linear-gradient(135deg, #4C62CF 0%, #0024BE 100%)',
-  secondaryBold: 'linear-gradient(135deg, #9CB22A 0%, #7A8A21 100%)',
-  accent: 'linear-gradient(135deg, #8EA0FD 0%, #9CB22A 100%)',
-}
-```
+### Role colors
 
-## 🏗️ Tokens de Design
+Color tells the user whose feature it is:
 
-### Espaçamento (Grid 8px)
-```typescript
-spacing: {
-  0: '0',        // 0px
-  1: '0.25rem',  // 4px
-  2: '0.5rem',   // 8px  
-  3: '0.75rem',  // 12px
-  4: '1rem',     // 16px
-  5: '1.25rem',  // 20px
-  6: '1.5rem',   // 24px
-  8: '2rem',     // 32px
-  10: '2.5rem',  // 40px
-  12: '3rem',    // 48px
-  16: '4rem',    // 64px
-  20: '5rem',    // 80px
-  24: '6rem',    // 96px
-  32: '8rem',    // 128px
-}
-```
+- Mentor: `primary` (blue). Example: "Find mentors" card for a mentee.
+- Mentee: `secondary` (green). Example: "Find mentees" card for a mentor.
+- Shared: `teal`. Example: sessions.
+- Everything else: `neutral`.
 
-## Onde a paleta vive
+`RoleBird` shows the matching bird, cropped from the logo, next to a role (register form, sidebar user).
 
-- `src/constants/colors.ts` é a fonte da verdade dos valores hex.
-- `src/index.css` replica esses valores no tema do Tailwind CSS v4 (`@theme`). Ao mudar uma cor, altere os dois arquivos.
+### The perch
 
-Classes disponíveis:
+`bg-perch` is the blue to teal to chartreuse gradient, the branch both birds stand on. Use it once per screen at
+most. Today it only appears under the birds on the login and register screens. No other gradients.
 
-- Cores: `primary-50` a `primary-900`, `secondary-50` a `secondary-900`, `neutral-50` a `neutral-900`,
-  `success-{light,main,dark}`, `warning-*`, `error-*`, `info-*`. Exemplo: `bg-primary-800`, `text-error-dark`.
-- Gradientes: `bg-primary-bold`, `bg-secondary-bold`, `bg-accent`.
-- Sombras de marca: `shadow-primary-bold`, `shadow-secondary-bold`.
+## Typography
 
-## Componentes
+- One family: Lexend (Google Fonts, weights 300 to 600), a geometric sans close to the logo wordmark.
+- Headings: `font-semibold tracking-tight` for page titles, `font-medium` for section and card titles.
+- Sentence case everywhere. No all-caps labels.
 
-Ficam em `src/components/ui/` e usam só classes Tailwind.
+## Surfaces
+
+- Page: paper (`bg-neutral-50`). No background gradients or images.
+- Content: white with `border-neutral-200`. No shadows.
+- Radius by hierarchy: `rounded-2xl` page panels, `rounded-xl` cards, `rounded-lg` buttons, inputs and list rows.
+
+## Where the palette lives
+
+- `src/constants/colors.ts` is the source of truth for hex values.
+- `src/index.css` mirrors them in the Tailwind CSS v4 theme (`@theme`). Change both files together.
+- Logo crops use `src/assets/mentor-mentee-birds-640.jpg` (65 KB). Blend it with `mix-blend-multiply` on paper or
+  white so its background disappears. The full-size PNGs stay as source art.
+
+## Components
+
+They live in `src/components/ui/` and use Tailwind classes only.
 
 - `Button`: `variant` (`primary`, `secondary`, `outline`, `ghost`, `success`, `warning`, `error`),
-  `size` (`sm`, `md`, `lg`, `xl`), `isLoading`, `leftIcon`, `rightIcon`, `fullWidth`. O tipo padrão é `button`.
+  `size` (`sm`, `md`, `lg`, `xl`), `isLoading`, `leftIcon`, `rightIcon`, `fullWidth`. Default type is `button`.
+  Solid fills, no gradients.
 - `Input`: `size`, `variant` (`default`, `success`, `warning`, `error`), `label`, `helperText`, `isRequired`,
-  `leftIcon`, `rightIcon`, `fullWidth`. Liga label e mensagem ao campo por `id`.
-- `TextArea`: mesmas opções de `Input`, sem ícones e tamanhos.
-- `Checkbox`: checkbox nativo com `label`.
-- `LanguageToggle`: `select` nativo para trocar o idioma.
+  `leftIcon`, `rightIcon`, `fullWidth`. Links label and message to the field by `id`.
+- `TextArea`: same options as `Input`, without icons and sizes.
+- `Select`, `Checkbox`, `LanguageToggle`.
+- `RoleBird`: `role` (`MENTOR`, `MENTEE`), `size` (`sm`, `md`). Decorative.
+- Icons in `icons.tsx`: line icons, 1.75 stroke. Use them instead of emoji.
 
-Labels herdam a cor do texto do contêiner. Assim os campos funcionam em cartões claros e em superfícies `primary-800`.
+## Rules
 
-## Regras
-
-- Sem keyframes decorativos. A única animação é o spinner de `isLoading` (`animate-spin`).
-- Foco visível global em `src/index.css` (`outline-primary-400`).
-- Escreva classes completas no código. O Tailwind não detecta nomes montados em tempo de execução.
+- No decorative keyframes. The only animation is the `isLoading` spinner (`animate-spin`).
+- Global visible focus in `src/index.css` (`outline-primary-500`).
+- Write full class names in code. Tailwind does not detect names built at runtime.

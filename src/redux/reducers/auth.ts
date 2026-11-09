@@ -130,14 +130,15 @@ export const authSlice = createSlice({
         const decoded = tokenUtils.decode(token) as {
           sub?: string;
           email?: string;
-          customerType?: 'MENTOR' | 'MENTEE'
+          // Claim name set by JwtTokenUtil.CLAIM_TYPE in auth-service.
+          type?: 'MENTOR' | 'MENTEE'
         };
         if (decoded) {
           // Keep userId from login/register. The token payload does not carry it.
           state.user = {
             ...state.user,
             email: decoded.sub || decoded.email,
-            customerType: decoded.customerType,
+            customerType: decoded.type,
           };
         }
       }

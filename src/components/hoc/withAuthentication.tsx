@@ -49,7 +49,7 @@ const withAuthentication = <P extends object>(
     // Show loading state while validating
     if (isValidating || loading) {
       return (
-        <div role="status" className="flex min-h-[50vh] items-center justify-center text-lg text-white">
+        <div role="status" className="flex min-h-[50vh] items-center justify-center text-lg text-neutral-600">
           {t('common.loading')}
         </div>
       );

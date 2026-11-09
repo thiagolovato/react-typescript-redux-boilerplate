@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
-import type { Profile } from '../../types/profile';
+import type { Profile, ProfileRequest } from '../../types/profile';
 
 const GATEWAY_BASE_URL = 'http://localhost:8765';
 
@@ -319,42 +319,37 @@ export const authApi = authService;
 export const post = httpClient.post;
 export const get = httpClient.get;
 
+// Core answers errors as problem details (RFC 9457): the human text is in `detail`.
+const coreErrorMessage = (error: unknown): string | undefined => {
+  if (!axios.isAxiosError(error)) return undefined;
+  const data = error.response?.data as { detail?: string } | string | undefined;
+  return typeof data === 'string' ? data : data?.detail;
+};
+
+const authHeader = () => ({ headers: { Authorization: `Bearer ${tokenUtils.get()}` } });
+
 export const profileService = {
-  save: async (profile: Profile): Promise<Profile> => {
+  /** The caller's own profile, or null when they have not created one yet. */
+  getMine: async (): Promise<Profile | null> => {
     try {
-      const token = tokenUtils.get();
-      const response = await httpClient.post<Profile>(
-          `${API_ROUTES.core}/customers`,
-          profile,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
+      return await httpClient.get<Profile>(`${API_ROUTES.core}/customers/me`, authHeader());
     } catch (error) {
-      const apiError = error as ApiError;
-      if (apiError.response?.data) {
-        const errorData = apiError.response.data;
-        const errorMessage = typeof errorData === 'string' ? errorData : errorData.message;
-        throw new Error(errorMessage || 'Erro ao salvar perfil');
-      }
-      throw new Error('Erro ao salvar perfil. Tente novamente.');
+      if (axios.isAxiosError(error) && error.response?.status === 404) return null;
+      throw new Error(coreErrorMessage(error));
     }
   },
-  get: async (userId: number): Promise<Profile> => {
+  create: async (profile: ProfileRequest): Promise<Profile> => {
     try {
-      const token = tokenUtils.get();
-      const response = await httpClient.get<Profile>(
-          `${API_ROUTES.core}/customers/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
+      return await httpClient.post<Profile>(`${API_ROUTES.core}/customers`, profile, authHeader());
     } catch (error) {
-      const apiError = error as ApiError;
-      if (apiError.response?.data) {
-        const errorData = apiError.response.data;
-        const errorMessage = typeof errorData === 'string' ? errorData : errorData.message;
-        throw new Error(errorMessage || 'Erro ao buscar perfil');
-      }
-      throw new Error('Erro ao buscar perfil. Tente novamente.');
+      throw new Error(coreErrorMessage(error));
+    }
+  },
+  update: async (profile: ProfileRequest): Promise<Profile> => {
+    try {
+      return await httpClient.put<Profile>(`${API_ROUTES.core}/customers/me`, profile, authHeader());
+    } catch (error) {
+      throw new Error(coreErrorMessage(error));
     }
   },
 };

@@ -1,47 +1,37 @@
+// Mirrors CustomerRequest / CustomerResponse in mentor-mentee-core.
+
 export interface Address {
-  id?: number;
   city: string;
   region: string;
   country: string;
 }
 
 export interface CustomerContact {
-  id?: number;
   contactType: 'PHONE' | 'EMAIL';
   contactValue: string;
   isPreferentialContact: boolean;
 }
 
-export interface CustomerLanguage {
-  languageId: string;
-  language?: {
-    id: string;
-    value: string;
-  };
-}
-
-export interface CustomerInterestArea {
-  id?: number;
-  interestAreaId: number;
-}
-
-export interface Profile {
-  id?: number;
-  userId: number;
+/** Body of POST /customers and PUT /customers/me. User id and type come from the token. */
+export interface ProfileRequest {
   name: string;
   age: number;
   gender: string;
-  languages: CustomerLanguage[];
+  /** Codes from the core `language` table, e.g. `en`. */
+  languages: string[];
   profession: string;
   generation: string;
   contacts: CustomerContact[];
   address: Address;
   hasRuralTraining: boolean;
   expectations: string;
-  interestAreas: CustomerInterestArea[];
+  interestAreaIds: number[];
   isGraduated: boolean;
   hasMentorshipTraining: boolean;
   hasMentorshipExperience: boolean;
 }
 
-export type ProfileFormData = Omit<Profile, 'id' | 'userId'>;
+export interface Profile extends ProfileRequest {
+  userId: number;
+  type: 'MENTOR' | 'MENTEE';
+}

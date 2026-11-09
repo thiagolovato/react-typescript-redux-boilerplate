@@ -14,7 +14,7 @@ export function AuthLayout() {
   return (
     <div className="min-h-screen">
       <Sidebar isCollapsed={isCollapsed} onToggleCollapsed={() => setIsCollapsed((value) => !value)} />
-      <main className={`p-4 sm:p-6 ${isCollapsed ? 'md:ml-20' : 'md:ml-70'}`}>
+      <main className={`px-4 py-8 sm:px-8 sm:py-10 ${isCollapsed ? 'md:ml-20' : 'md:ml-70'}`}>
         <Outlet />
       </main>
     </div>

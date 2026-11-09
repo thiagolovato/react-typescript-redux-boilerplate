@@ -100,9 +100,9 @@ export function Login() {
         </Button>
       </form>
 
-      <p className="text-center text-sm text-neutral-600">
+      <p className="text-sm text-neutral-600">
         {t('auth.login.noAccount')}{' '}
-        <Link to="/register" className="font-medium text-primary-600 hover:text-primary-700 hover:underline">
+        <Link to="/register" className="font-medium text-primary-700 underline-offset-2 hover:underline">
           {t('auth.login.createAccount')}
         </Link>
       </p>
