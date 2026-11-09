@@ -80,20 +80,26 @@ Faltam no `Customer`: ano de formatura (hoje só `isGraduated` e `generation`, s
 
 Princípio: cada fase entrega algo que a coordenação usa de verdade e substitui uma parte do Google Forms.
 
-### Fase 0 — Base (1 a 2 semanas)
+### Fase 0 — Base (1 a 2 semanas) — feita em 2026-11-10
+
 
 - CI em cada repositório: build, `test`, `integrationTest`, lint do app.
 - Corrigir nomes de idiomas (migração nova, sem alterar V1).
 - Fechar `/matches` e `GET /customers/{userId}` até existir o papel de coordenador.
 - Substituir `systemdesign.md` por decisões reais (ou remover).
 
-### Fase 1 — Cadastro completo e consentimento (2 a 3 semanas)
+Feito: workflow `.github/workflows/ci.yml` em cada repositório; migração V4 corrige 38 nomes em Twi; `/matches` e `GET /customers/{userId}` removidos (`MatchScorer` fica para a Fase 2, já com preferência de gênero no lugar de gênero igual); `systemdesign.md` reescrito. Pendente: o CI do core precisa do segredo `AUTH_REPO_TOKEN` se o repositório auth for privado.
+
+### Fase 1 — Cadastro completo e consentimento (2 a 3 semanas) — feita em 2026-11-10
+
 
 - Adicionar ao perfil os campos da seção 3.2. Separar campos de mentor e de mentee na validação.
 - Data de nascimento no lugar de idade. Ano de formatura no lugar de `isGraduated`/`generation`.
 - Aceite de termos de uso, privacidade e (opcional) pesquisa, com versão e data.
 - Telas do app para os novos campos, em inglês e português.
 - Importar os cadastros existentes da planilha (script único, com consentimento dos participantes).
+
+Feito: migração V5 com os campos dos formulários e a tabela `customer_consent` (histórico de aceites); `GET /interest-groups`; formulário do perfil reescrito por papel, com áreas de interesse e aceite; página `/privacy`. Importação não foi necessária: as abas de inscrição da planilha estão vazias. Pendente: a coordenação revisar o texto de termos e privacidade (rascunho em `privacy` nos arquivos de idioma do app).
 
 ### Fase 2 — Coordenação e proposta de par (3 semanas)
 
