@@ -47,9 +47,10 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 4. Ano de formatura entre 1940 e 2100. **[feito]**
 5. Link profissional, se informado, começa com `http://` ou `https://`. **[feito]**
 6. Idiomas e áreas de interesse precisam existir nas tabelas de referência. Itens repetidos contam uma vez. **[feito]**
-7. Campos só de mentor (experiência e treinamento em mentoria, formação que aceita mentorar) e só de mentee (preferência de gênero do mentor) são ignorados quando enviados pelo outro papel. **[feito]**
+7. Campos só de mentor (experiência e treinamento em mentoria, formação que aceita mentorar) e só de mentee (gêneros de mentor aceitos) são ignorados quando enviados pelo outro papel. **[feito]**
 8. O e-mail de login fica guardado no perfil a cada salvamento, tirado do token. Ele é usado para enviar e-mails, não aparece na resposta e não pode ser enviado pelo usuário. **[feito]**
 9. Contatos (telefone, e-mail) e nome nunca aparecem para a outra parte antes do aceite do par (seção 7). **[feito]** para o perfil próprio; **[planejado: fase 2]** para a visão do par.
+10. O mentee pode aceitar vários gêneros de mentor. Nenhum marcado significa sem preferência. Itens repetidos contam uma vez. **[feito]**
 
 ## 4. Consentimento
 
@@ -76,7 +77,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 2. Um candidato só aparece se **[planejado: fase 2]**:
    - os dois aceitaram a versão vigente dos termos;
    - os dois têm pelo menos um idioma em comum;
-   - o mentor atende a preferência de gênero do mentee, ou o mentee não tem preferência;
+   - o gênero do mentor está entre os que o mentee aceita, ou o mentee não tem preferência;
    - o mentee não tem par aberto (proposto, aceito ou ativo);
    - o mentor está abaixo do limite de mentees do ciclo.
 3. Entre os candidatos, a ordem vem de uma nota de 0 a 100, com o detalhe de cada critério: áreas de interesse em comum, localização, profissão e experiência do mentor em mentoria. Os pesos são configuráveis. **[feito]** para a nota; **[planejado: fase 2]** para o endpoint.
