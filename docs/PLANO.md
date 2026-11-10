@@ -103,20 +103,213 @@ Feito: migração V5 com os campos dos formulários e a tabela `customer_consent
 
 ### Fase 2 — Coordenação e proposta de par (3 semanas)
 
-- Papel `COORDINATOR` no auth.
-- Ciclo (`cohort`): ano, datas, limite de 20 pares.
-- Matching só para coordenador, com filtros duros: idioma comum, preferência de gênero, sem par ativo, nível de formação aceito.
-- Entidade `Mentorship` com estados: `PROPOSED → ACCEPTED_BY_MENTEE / ACCEPTED_BY_MENTOR → ACTIVE → COMPLETED / TERMINATED`, ou `DECLINED`.
-- Proposta anônima: cada parte vê o perfil da outra sem nome e contato até os dois aceitarem.
-- E-mail de apresentação automático quando o par fica ativo.
-- Painel do coordenador: inscritos sem par, propostas pendentes, pares ativos.
+Resumo: papel de coordenador, ciclo anual, matching só para o coordenador, proposta anônima com aceite ou recusa dos dois, e-mail de apresentação e painel. Fases 2 e 3 juntas substituem os passos 2 a 6 do fluxo da seção 1.
+
+#### 2.1 Papel `COORDINATOR` (auth)
+
+- Novo valor em `CustomerType` do auth. O token passa a ter `type = COORDINATOR` e `ROLE_COORDINATOR`.
+- **Risco:** hoje `POST /users/register` aceita `customerType` vindo do corpo. Só adicionar o valor ao enum deixaria qualquer pessoa se cadastrar como coordenador. `RegisterResource` deve aceitar só `MENTOR` e `MENTEE` (validação + teste).
+- Conta de coordenador: a pessoa se cadastra normalmente e um script promove (`scripts/promote-coordinator.sh <email>`, `UPDATE users SET customer_type = 'COORDINATOR'`). Sem endpoint de promoção: são poucas contas, e endpoint novo é superfície de ataque.
+- Coordenador não tem perfil em `customer`. O core já recusa `/customers/me` para tipo diferente de MENTOR/MENTEE (`TOKEN_WITHOUT_USER_TYPE`); manter e testar.
+- Endpoints de coordenação no core: `@PreAuthorize("hasRole('COORDINATOR')")` (o `auth-shared` já liga `@EnableMethodSecurity`).
+
+#### 2.2 Ciclo (`cohort`)
+
+- `cohort`: `id`, `name`, `starts_on`, `ends_on`, `max_pairs` (padrão 20), `max_mentees_per_mentor` (padrão 1, decisão 1 em aberto; por ciclo, porque é a coordenação quem decide), `created_at`.
+- Um ciclo aberto por vez (o que contém a data de hoje). Propostas só no ciclo aberto.
+- Limite de pares: conta pares do ciclo fora de `DECLINED`. Checado com `SELECT ... FOR UPDATE` na linha do ciclo, para duas propostas simultâneas não passarem de 20. O mesmo bloqueio protege o limite por mentor.
+- Coordenador cria e edita ciclos (`/coordination/cohorts`). Não apaga ciclo com pares.
+
+#### 2.3 Matching só para coordenador
+
+`GET /coordination/candidates/{customerId}/matches` devolve os candidatos do outro papel, ordenados pelo `MatchScorer` (que já existe), com o detalhamento por critério.
+
+Filtros duros (o candidato nem aparece):
+
+- Termos aceitos na versão vigente, nos dois lados.
+- Idioma em comum. Sai do peso e vira filtro (problema 3 da seção 3.3); o peso `languages` é removido de `MatchingWeights`.
+- Preferência de gênero do mentee atendida, ou sem preferência. Também sai do peso.
+- Mentee sem par aberto (`PROPOSED`, `ACCEPTED` ou `ACTIVE`).
+- Mentor abaixo de `max_mentees_per_mentor` no ciclo.
+
+Nível de formação: `academicBackground` e `acceptedBackgrounds` são texto livre hoje, então não dá para filtrar. O painel mostra os dois lado a lado e o coordenador decide. Virar filtro exige transformar os dois em lista fixa de opções (mudança no perfil, fora desta fase).
+
+`GET /coordination/candidates?role=&unmatched=true` lista inscritos sem par aberto.
+
+#### 2.4 Par (`Mentorship`) e proposta
+
+Tabela `mentorship`: `id`, `cohort_id`, `mentor_id`, `mentee_id` (FK para `customer`), `status`, `proposed_by_user_id`, `proposed_at`, `mentor_accepted_at`, `mentee_accepted_at`, `declined_at`, `declined_by_role`, `decline_reason`, `started_at`, `ends_at`, `version`.
+
+Estados: `PROPOSED → ACCEPTED → ACTIVE → COMPLETED / TERMINATED`, ou `PROPOSED → DECLINED`.
+
+- `PROPOSED`: coordenador cria. Mentor e mentee recebem e-mail ("você tem uma proposta"), sem dados da outra parte.
+- `ACCEPTED`: quando a segunda parte aceita. Dispara o e-mail de apresentação.
+- `DECLINED`: qualquer parte recusa (motivo opcional, só o coordenador vê), ou o coordenador retira a proposta.
+- `ACTIVE`, `COMPLETED`, `TERMINATED`: Fase 3 (acordo assinado e encerramento).
+- Índice único parcial: um par aberto por mentee (`status IN ('PROPOSED','ACCEPTED','ACTIVE')`). O banco garante mesmo se a checagem do serviço falhar.
+- `@Version` contra aceite e recusa simultâneos.
+
+API:
+
+| Método | Caminho | Quem |
+|---|---|---|
+| POST | `/coordination/mentorships` | Coordenador propõe (`mentorId`, `menteeId`) |
+| DELETE | `/coordination/mentorships/{id}` | Coordenador retira proposta (`PROPOSED` só) |
+| GET | `/mentorships/mine` | Mentor ou mentee: propostas e par atual |
+| POST | `/mentorships/{id}/accept` | Mentor ou mentee do par |
+| POST | `/mentorships/{id}/decline` | Mentor ou mentee do par (`reason` opcional) |
+
+Fora do par e sem papel de coordenador: 404.
+
+#### 2.5 Proposta anônima
+
+Enquanto o par está `PROPOSED`, cada parte vê da outra só:
+
+- papel, país e região (sem cidade: em vila pequena a cidade identifica), profissão, ano de formatura, formação acadêmica, idiomas, áreas de interesse, motivação, objetivos, experiência e treinamento em mentoria.
+
+Nunca: nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.
+
+Campos de texto livre podem conter o nome. O coordenador vê a mesma visão anônima antes de propor e pode desistir. Depois de `ACCEPTED`, cada parte vê o perfil completo da outra, com contatos.
+
+Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResponse` com campos nulos: assim um campo novo no perfil não vaza por engano.
+
+#### 2.6 E-mail
+
+- E-mail do participante: o core ainda não guarda. Nova coluna `customer.email`, preenchida com o `username` do token (o e-mail do login, já normalizado no auth) ao criar o perfil e em cada `GET`/`PUT /customers/me`. Isso cobre perfis antigos sem pedir nada ao usuário.
+- E-mail da coordenação: `mentormentee.coordination.email` (caixa compartilhada, muda por ambiente).
+- Envio com `spring-boot-starter-mail` (SMTP). Em dev, Mailpit no `docker-compose.yml` para ver os e-mails sem enviar de verdade.
+- Tabela `email_outbox` (`id`, `to`, `subject`, `body`, `created_at`, `sent_at`, `attempts`, `last_error`), gravada na mesma transação da mudança de estado. Tarefa `@Scheduled` envia e tenta de novo em caso de falha. Assim um SMTP fora do ar não desfaz o aceite nem perde o e-mail. Com várias réplicas: `SELECT ... FOR UPDATE SKIP LOCKED`.
+- Texto em inglês e português no mesmo e-mail (o perfil não guarda o idioma da interface). Modelos em arquivos de recurso do core.
+- E-mails desta fase: proposta recebida (para cada parte), proposta recusada (para a coordenação), apresentação (para os dois e cópia para a coordenação, com nome e e-mail de cada um).
+
+#### 2.7 App
+
+- Cadastro continua oferecendo só mentor e mentee.
+- Coordenador: menu próprio, sem página de perfil. Painel com três listas: inscritos sem par, propostas pendentes (quem já aceitou), pares em andamento. A Fase 3 acrescenta assinaturas e progresso.
+- Tela de candidatos: perfil anônimo do inscrito, lista de candidatos com nota e detalhamento, botão "propor".
+- Mentor e mentee: aviso no dashboard quando há proposta; tela com o perfil anônimo e botões aceitar e recusar. Depois do aceite, perfil completo da outra parte.
+- Textos em inglês e português.
+
+#### 2.8 Ordem de entrega
+
+1. Auth: `COORDINATOR`, bloqueio no cadastro, script de promoção. Testes: cadastro com `COORDINATOR` recusado, token do coordenador com `ROLE_COORDINATOR`. **Feito em 2026-11-10:** `RegisterResource.SignUpType` só aceita MENTOR e MENTEE; `scripts/promote-coordinator.sh`; teste no core de que coordenador não cria perfil. O app ainda não conhece o papel (passo 6).
+2. Core: migração com `cohort`, `mentorship`, `customer.email` e `email_outbox`. Endpoints de ciclo. Testes: só coordenador acessa `/coordination/**`.
+3. Matching com filtros duros e lista de inscritos sem par. Testes unitários dos filtros; integração da consulta de disponibilidade.
+4. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima.
+5. Outbox, envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite.
+6. App: painel do coordenador, tela de candidatos, tela de proposta.
+
+Critério de pronto: coordenador cria o ciclo, abre um mentee, vê só candidatos com idioma comum e preferência atendida, propõe; mentor e mentee veem o perfil anônimo, aceitam, e os dois recebem o e-mail de apresentação no Mailpit.
 
 ### Fase 3 — Acordo e encontros (2 a 3 semanas)
 
-- Acordo revisado (seção 3.4) como texto versionado. Aceite digital pelos três, com data.
-- Registro de encontro: data, duração, formato, áreas discutidas, marcado como satisfatório por cada parte.
-- Visão do par e do coordenador: encontros feitos, quanto falta para 5 satisfatórios.
-- Encerramento antecipado com aviso de 2 semanas e motivo.
+Resumo: acordo revisado (seção 3.4) como texto versionado, assinado pelos três; registro de encontros com avaliação de cada parte; progresso até 5 encontros satisfatórios; encerramento com aviso de 2 semanas.
+
+#### 3.0 Pré-requisitos
+
+- **Fase 2 pronta.** A Fase 3 usa `Mentorship` (já com `version`, `started_at` e `ends_at`), o papel `COORDINATOR`, o ciclo e a `email_outbox`. As migrações da Fase 3 vêm depois das da Fase 2.
+- **Texto do acordo revisado pela coordenação** (seção 3.4). Sem isso, publicar só como rascunho em ambiente de teste.
+- **Decisões 2, 3 e 5 da seção 5.** O plano abaixo assume os padrões marcados em 3.7; mudar depois é barato.
+
+#### 3.1 Ciclo de vida do par
+
+```
+ACCEPTED ──(3ª assinatura)──▶ ACTIVE ──(fim do ciclo de 1 ano)──▶ COMPLETED
+                                │
+                                └─(pedido de encerramento + 14 dias)──▶ TERMINATED
+```
+
+- `ACTIVE` começa na terceira assinatura. `startedAt` = data dessa assinatura; `endsAt` = `startedAt` + 1 ano (ou fim do ciclo, o que vier antes).
+- Encontros só podem ser registrados em `ACTIVE`.
+- Durante o aviso de 2 semanas o par continua `ACTIVE`: os encontros seguem valendo.
+- Transições por data (`ACTIVE → TERMINATED` e `ACTIVE → COMPLETED`) rodam em tarefa diária `@Scheduled` no core. O `UPDATE ... WHERE status = 'ACTIVE' AND <data> <= now()` é idempotente, então várias réplicas não causam problema. A Fase 4 reaproveita essa tarefa.
+- O `@Version` de `Mentorship` (Fase 2) protege assinaturas simultâneas.
+- `endsAt` usa `cohort.ends_on` quando o ciclo acaba antes de 1 ano.
+
+#### 3.2 Acordo versionado e assinatura
+
+Modelo:
+
+- `agreement_version`: `id`, `version`, `locale`, `body` (markdown), `sha256` do texto, `published_at`. Linhas nunca mudam. Texto novo = migração nova, igual ao seed de idiomas.
+- `mentorship_signature`: `mentorship_id`, `role` (`MENTOR`/`MENTEE`/`COORDINATOR`), `user_id`, `agreement_version_id`, `full_name` digitado, `signed_at`. `UNIQUE (mentorship_id, role)`.
+
+Regras:
+
+- Assinatura = aceite eletrônico simples: a pessoa lê o texto, digita o nome completo e confirma. Guarda usuário do token, versão, hash e data. Não é assinatura com certificado digital (ICP-Brasil); para um programa gratuito isso basta, mas a coordenação deve confirmar.
+- Os três assinam a mesma `version`, cada um no idioma que escolher. Se sair versão nova antes da terceira assinatura, as assinaturas antigas continuam válidas (o par assina a versão vigente no momento da primeira assinatura).
+- Mentor e mentee só assinam o próprio par. Coordenador assina qualquer par do ciclo.
+- Consentimento de pesquisa fica fora do acordo: já existe separado em `customer_consent` (Fase 1).
+
+#### 3.3 Encontros
+
+Modelo:
+
+- `meeting`: `id`, `mentorship_id`, `held_at` (timestamptz), `duration_minutes`, `format` (`VIDEO`, `PHONE`, `IN_PERSON`, `OTHER`), `notes` (opcional), `created_by_user_id`, `created_at`, `version`.
+- `meeting_interest_area`: áreas discutidas, reaproveitando `interest_area` (mesma lista do perfil e da avaliação).
+- `meeting_rating`: `meeting_id`, `role` (`MENTOR`/`MENTEE`), `satisfactory` (boolean), `comment` (opcional), `rated_at`. `UNIQUE (meeting_id, role)`.
+
+Regras:
+
+- Mentor ou mentee registra o encontro. `held_at` no futuro = encontro agendado; isso cobre "mentor informa data e hora à coordenação" e serve aos lembretes da Fase 4.
+- Avaliar só depois de `held_at`. Cada parte avalia uma vez e pode corrigir enquanto o par está `ACTIVE`.
+- Quem criou pode editar ou apagar o encontro até a outra parte avaliar. Depois disso, só o coordenador corrige.
+- Comentário da avaliação: visível para o coordenador, não para a outra parte (incentiva resposta sincera).
+- Duração mínima de 1 hora não bloqueia o registro (decisão 2 em aberto). O app avisa quando for menor.
+
+#### 3.4 Progresso
+
+- Encontro satisfatório = avaliado como satisfatório pelos dois.
+- Meta fixa de 5 (regra do programa, constante no código, não configuração).
+- Resposta do par inclui: encontros feitos, agendados, satisfatórios, aguardando minha avaliação, aguardando a outra parte, e quanto falta para 5.
+- Cálculo em uma consulta agregada por par; o painel do coordenador usa a mesma consulta para todos os pares do ciclo.
+
+#### 3.5 Encerramento antecipado
+
+- `mentorship_termination` (ou colunas em `mentorship`): `requested_by_user_id`, `requested_role`, `reason` (obrigatório), `requested_at`, `effective_at` = `requested_at` + 14 dias, `withdrawn_at`.
+- Mentor, mentee ou coordenador podem pedir. O pedido é o "aviso por escrito": e-mail (pela `email_outbox`) para a outra parte e para a coordenação.
+- Quem pediu pode desistir antes de `effective_at`.
+- Um pedido aberto por par.
+
+#### 3.6 API (core)
+
+Todas exigem participante do par (comparando `userId` do token) ou `COORDINATOR`. Fora disso: 404, para não revelar que o par existe.
+
+| Método | Caminho | Uso |
+|---|---|---|
+| GET | `/agreements/current?locale=` | Texto vigente para assinar |
+| GET | `/mentorships/mine` | Par do usuário com assinaturas e progresso |
+| GET | `/mentorships/{id}` | Detalhe (participante ou coordenador) |
+| POST | `/mentorships/{id}/signatures` | Assinar (`agreementVersion`, `fullName`) |
+| GET/POST | `/mentorships/{id}/meetings` | Listar e registrar encontros |
+| PUT/DELETE | `/mentorships/{id}/meetings/{meetingId}` | Editar ou apagar (regras de 3.3) |
+| PUT | `/mentorships/{id}/meetings/{meetingId}/rating` | Minha avaliação |
+| POST/DELETE | `/mentorships/{id}/termination` | Pedir ou desistir do encerramento |
+| GET | `/coordination/mentorships?status=` | Painel: assinaturas pendentes e progresso |
+
+Erros novos em `ErrorCodes`: estado inválido para a ação, já assinado, versão do acordo desatualizada, avaliação antes do encontro, encontro já avaliado pela outra parte, pedido de encerramento já aberto.
+
+#### 3.7 Padrões assumidos para as decisões em aberto
+
+- Decisão 2 (frequência): registro livre; lembrete mensal fica na Fase 4. Duração menor que 1 hora só gera aviso.
+- Decisão 3 (quem avalia): cada parte avalia; conta como satisfatório quando os dois marcam.
+- Decisão 5 (código de ética): o texto do acordo linka um só; a escolha entra na revisão do texto, sem impacto no código.
+
+#### 3.8 App
+
+- Página "Minha mentoria": etapa de assinatura (texto, nome completo, confirmar) até `ACTIVE`; depois lista de encontros, formulário de registro, avaliação pendente em destaque, barra de progresso "X de 5", botão de encerramento com motivo e data efetiva.
+- Painel do coordenador (da Fase 2): colunas de assinaturas pendentes e progresso; detalhe com comentários das avaliações; assinatura do coordenador.
+- Textos em inglês e português, como o resto do app.
+
+#### 3.9 Ordem de entrega
+
+1. Migração com `agreement_version` (rascunho do texto em inglês e português) e `mentorship_signature`. Endpoints de acordo e assinatura. Testes de integração: assinatura duplicada, versão desatualizada, terceira assinatura ativa o par.
+2. Migração de encontros e avaliações. CRUD e avaliação com as regras de 3.3. Testes: não participante recebe 404, avaliação antes do encontro, edição bloqueada após avaliação da outra parte.
+3. Progresso (consulta agregada) e endpoint do coordenador. Teste unitário do cálculo e de integração da consulta.
+4. Encerramento e tarefa diária de transições, com e-mails. Testes: pedido duplicado, desistência, transição idempotente em `TERMINATED` e `COMPLETED`.
+5. App: página do par e colunas do painel.
+6. Revisão do texto do acordo pela coordenação, migração com a versão final, publicação.
+
+Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assinaturas, registra 5 encontros avaliados pelos dois, e o painel mostra 5 de 5; outro par pede encerramento e vira `TERMINATED` 14 dias depois.
 
 ### Fase 4 — Check-ins, avaliações e certificado (2 a 3 semanas)
 
