@@ -94,10 +94,11 @@ export const authService = {
     }
   },
 
-  login: async (email: string, password: string): Promise<RegisterResponse> => {
+  /** Coordinators must use the coordinator login, and mentors and mentees the normal one. The server refuses the other. */
+  login: async (email: string, password: string, coordinator = false): Promise<RegisterResponse> => {
     try {
       const response = await authAxios.post<RegisterResponse>(
-          `${API_ROUTES.auth}/users/login`,
+          `${API_ROUTES.auth}/users/${coordinator ? 'coordinator/' : ''}login`,
           { email, password },
       );
       return response.data;

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authService, tokenUtils } from '../../service/request/api';
-import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
+import { CustomerType, RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import type { ApiError } from '../../types/api';
 import { ApiRequestError, toApiError } from '../../service/request/apiError';
 
@@ -11,7 +11,7 @@ interface AuthState {
   user: {
     userId?: number;
     email?: string;
-    customerType?: 'MENTOR' | 'MENTEE';
+    customerType?: CustomerType;
   } | null;
   loading: boolean;
   error: ApiError | null;
@@ -20,6 +20,8 @@ interface AuthState {
 interface LoginCredentials {
   email: string;
   password: string;
+  /** Uses the coordinator login, which only accepts coordinator accounts. */
+  coordinator?: boolean;
 }
 
 // Async thunks
@@ -31,7 +33,7 @@ export const loginUser = createAsyncThunk<
     'auth/login',
     async (credentials, thunkAPI) => {
       try {
-        const response = await authService.login(credentials.email, credentials.password);
+        const response = await authService.login(credentials.email, credentials.password, credentials.coordinator);
         return response;
       } catch (error) {
         return thunkAPI.rejectWithValue(toApiError(error));
@@ -113,7 +115,7 @@ export const authSlice = createSlice({
           sub?: string;
           email?: string;
           // Claim name set by JwtTokenUtil.CLAIM_TYPE in auth-service.
-          type?: 'MENTOR' | 'MENTEE'
+          type?: CustomerType
         };
         if (decoded) {
           // Keep userId from login/register. The token payload does not carry it.
@@ -142,7 +144,7 @@ export const authSlice = createSlice({
           state.user = {
             userId: action.payload.userId,
             email: action.payload.username,
-            customerType: action.payload.type as 'MENTOR' | 'MENTEE',
+            customerType: action.payload.type,
           };
 
           tokenUtils.save(action.payload.jwt);
@@ -170,7 +172,7 @@ export const authSlice = createSlice({
           state.user = {
             userId: action.payload.userId,
             email: action.payload.username,
-            customerType: action.payload.type as 'MENTOR' | 'MENTEE',
+            customerType: action.payload.type,
           };
 
           tokenUtils.save(action.payload.jwt);

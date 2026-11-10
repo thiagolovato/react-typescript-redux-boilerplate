@@ -5,12 +5,18 @@ import { useI18n } from '../../hooks/useI18n';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, loginUser } from '../../redux/reducers/auth';
 import { AuthCard } from './AuthCard';
+import { homePathFor } from '../../constants/auth';
 
-export function Login() {
+interface LoginProps {
+  /** The coordinator login: other texts, no sign-up link, and the server only accepts coordinator accounts. */
+  coordinator?: boolean;
+}
+
+export function Login({ coordinator = false }: LoginProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { t } = useI18n();
-  const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -22,9 +28,9 @@ export function Login() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate(homePathFor(user?.customerType));
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user?.customerType, navigate]);
 
   // Clear errors when component mounts
   useEffect(() => {
@@ -60,6 +66,7 @@ export function Login() {
       await dispatch(loginUser({
         email: userName.trim(),
         password,
+        coordinator,
       })).unwrap();
     } catch (error) {
       console.error('Login error:', error);
@@ -67,7 +74,10 @@ export function Login() {
   };
 
   return (
-    <AuthCard title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
+    <AuthCard
+      title={t(coordinator ? 'auth.coordinatorLogin.title' : 'auth.login.title')}
+      subtitle={t(coordinator ? 'auth.coordinatorLogin.subtitle' : 'auth.login.subtitle')}
+    >
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
           label={t('auth.login.email')}
@@ -100,12 +110,14 @@ export function Login() {
         </Button>
       </form>
 
-      <p className="text-sm text-neutral-600">
-        {t('auth.login.noAccount')}{' '}
-        <Link to="/register" className="font-medium text-primary-700 underline-offset-2 hover:underline">
-          {t('auth.login.createAccount')}
-        </Link>
-      </p>
+      {!coordinator && (
+        <p className="text-sm text-neutral-600">
+          {t('auth.login.noAccount')}{' '}
+          <Link to="/register" className="font-medium text-primary-700 underline-offset-2 hover:underline">
+            {t('auth.login.createAccount')}
+          </Link>
+        </p>
+      )}
     </AuthCard>
   );
 }

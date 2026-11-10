@@ -1,7 +1,13 @@
+/** Types a person can pick at sign-up. Same as RegisterResource.SignUpType in mentor-mentee-auth. */
+export type SignUpType = 'MENTOR' | 'MENTEE';
+
+/** Role carried by the token. COORDINATOR accounts come from scripts/create-coordinator.sh, never from sign-up. */
+export type CustomerType = SignUpType | 'COORDINATOR';
+
 export interface RegisterRequest {
   email: string;
   password: string;
-  customerType: 'MENTOR' | 'MENTEE';
+  customerType: SignUpType;
 }
 
 export interface RegisterResponse {
@@ -11,5 +17,3 @@ export interface RegisterResponse {
   type: CustomerType;
   authorities: null;
 }
-
-export type CustomerType = 'MENTOR' | 'MENTEE';

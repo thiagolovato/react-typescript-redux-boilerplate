@@ -2,13 +2,29 @@ import { useState } from 'react';
 import { Navigate, Outlet } from 'react-router';
 import { useAppSelector } from '../../redux/hooks';
 import { Sidebar } from './Sidebar';
+import { COORDINATOR_LOGIN_PATH, homePathFor, LOGIN_PATH } from '../../constants/auth';
+import type { CustomerType } from '../../types/auth/register';
 
-export function AuthLayout() {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+interface AuthLayoutProps {
+  /** Roles allowed on the pages inside. Anyone else goes to their own home page. */
+  roles: CustomerType[];
+}
+
+// Hides pages from the wrong role. The server still checks the role on every request.
+export function AuthLayout({ roles }: AuthLayoutProps) {
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const forCoordinators = roles.includes('COORDINATOR');
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to={forCoordinators ? COORDINATOR_LOGIN_PATH : LOGIN_PATH} replace />;
+  }
+
+  // A session without a role (older token) keeps the mentor and mentee pages, as before.
+  const type = user?.customerType;
+  const allowed = type ? roles.includes(type) : !forCoordinators;
+  if (!allowed) {
+    return <Navigate to={homePathFor(type)} replace />;
   }
 
   return (

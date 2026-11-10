@@ -5,7 +5,7 @@ import { useI18n } from '../../hooks/useI18n';
 import { useFieldErrorText } from '../../hooks/useFieldErrorText';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, registerUser } from '../../redux/reducers/auth';
-import { CustomerType } from '../../types/auth/register';
+import type { SignUpType } from '../../types/auth/register';
 import { fieldErrorOf } from '../../service/request/apiError';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../constants/auth';
 import { AuthCard } from './AuthCard';
@@ -46,7 +46,7 @@ export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [customerType, setCustomerType] = useState<CustomerType | ''>('');
+  const [customerType, setCustomerType] = useState<SignUpType | ''>('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [formErrors, setFormErrors] = useState<RegisterErrors>({});
   const fieldErrorText = useFieldErrorText();
@@ -117,14 +117,14 @@ export function Register() {
       await dispatch(registerUser({
         email: email.trim(),
         password,
-        customerType: customerType as CustomerType,
+        customerType: customerType as SignUpType,
       })).unwrap();
     } catch (error) {
       console.error('Registration error:', error);
     }
   };
 
-  const handleUserTypeSelect = (type: CustomerType) => {
+  const handleUserTypeSelect = (type: SignUpType) => {
     setCustomerType(type);
     setFormErrors((prev) => ({ ...prev, customerType: undefined }));
   };

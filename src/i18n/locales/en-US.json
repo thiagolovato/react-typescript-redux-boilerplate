@@ -10,7 +10,8 @@
     "profile": "Profile",
     "mainMenu": "Main menu",
     "collapse": "Collapse menu",
-    "expand": "Expand menu"
+    "expand": "Expand menu",
+    "coordination": "Coordination"
   },
   "auth": {
     "login": {
@@ -32,6 +33,10 @@
         "general": "Login failed. Please try again.",
         "tokenNotReceived": "Token not received from server"
       }
+    },
+    "coordinatorLogin": {
+      "title": "Coordination sign in",
+      "subtitle": "For the program coordination team only."
     },
     "register": {
       "title": "Create new account",
@@ -84,6 +89,10 @@
     "findMenteesButton": "Find Mentees",
     "myProfileButton": "View Profile",
     "viewConversations": "View Conversations"
+  },
+  "coordination": {
+    "title": "Coordination",
+    "subtitle": "Candidates, proposals and pairs will appear here."
   },
   "common": {
     "loading": "Loading...",
@@ -226,7 +235,8 @@
   },
   "roles": {
     "MENTOR": "Mentor",
-    "MENTEE": "Student"
+    "MENTEE": "Student",
+    "COORDINATOR": "Coordinator"
   },
   "designSystem": {
     "title": "Design system",

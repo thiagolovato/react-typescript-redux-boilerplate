@@ -10,7 +10,8 @@
     "profile": "Perfil",
     "mainMenu": "Menu principal",
     "collapse": "Recolher menu",
-    "expand": "Expandir menu"
+    "expand": "Expandir menu",
+    "coordination": "Coordenação"
   },
   "auth": {
     "login": {
@@ -32,6 +33,10 @@
         "general": "Erro ao fazer login. Tente novamente.",
         "tokenNotReceived": "Token não recebido do servidor"
       }
+    },
+    "coordinatorLogin": {
+      "title": "Acesso da coordenação",
+      "subtitle": "Somente para a equipe de coordenação do programa."
     },
     "register": {
       "title": "Criar nova conta",
@@ -84,6 +89,10 @@
     "findMenteesButton": "Encontrar Mentees",
     "myProfileButton": "Ver Perfil",
     "viewConversations": "Ver Conversas"
+  },
+  "coordination": {
+    "title": "Coordenação",
+    "subtitle": "Inscritos, propostas e pares vão aparecer aqui."
   },
   "common": {
     "loading": "Carregando...",
@@ -226,7 +235,8 @@
   },
   "roles": {
     "MENTOR": "Mentor",
-    "MENTEE": "Estudante"
+    "MENTEE": "Estudante",
+    "COORDINATOR": "Coordenação"
   },
   "designSystem": {
     "title": "Design system",

@@ -5,15 +5,20 @@ import { clearAuth } from '../../redux/reducers/auth';
 import { useI18n } from '../../hooks/useI18n';
 import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
+import { loginPathFor } from '../../constants/auth';
 
 interface SidebarProps {
   isCollapsed: boolean;
   onToggleCollapsed: () => void;
 }
 
-const navItems = [
+const participantNavItems = [
   { to: '/dashboard', Icon: HomeIcon, label: 'navigation.dashboard' },
   { to: '/profile', Icon: UserIcon, label: 'navigation.profile' },
+] as const;
+
+const coordinatorNavItems = [
+  { to: '/coordination', Icon: HomeIcon, label: 'navigation.coordination' },
 ] as const;
 
 export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
@@ -23,9 +28,13 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
 
+  const isCoordinator = user?.customerType === 'COORDINATOR';
+  const navItems = isCoordinator ? coordinatorNavItems : participantNavItems;
+
   const handleLogout = () => {
+    const loginPath = loginPathFor(user?.customerType);
     dispatch(clearAuth());
-    navigate('/login');
+    navigate(loginPath);
   };
 
   // Labels hide only on desktop when collapsed. The mobile panel always shows them.
@@ -94,7 +103,7 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
           <LanguageToggle className={isCollapsed ? 'md:hidden' : ''} />
           {user && (
             <div className={`flex items-center gap-3 px-1 ${isCollapsed ? 'md:justify-center' : ''}`}>
-              {user.customerType && <RoleBird role={user.customerType} size="sm" />}
+              {user.customerType && user.customerType !== 'COORDINATOR' && <RoleBird role={user.customerType} size="sm" />}
               <p className={`min-w-0 text-sm leading-tight ${labelClass}`}>
                 <span className="block truncate text-neutral-900">{user.email}</span>
                 {user.customerType && (
