@@ -378,7 +378,8 @@
       "auth": {
         "password": {
           "Size": {
-            "min": "Password must be at least {{min}} characters"
+            "min": "Password must be at least {{min}} characters",
+            "range": "Password must have between {{min}} and {{max}} characters"
           }
         }
       },
@@ -406,6 +407,12 @@
       "auth": {
         "validation": {
           "failed": "Please fix the highlighted fields."
+        },
+        "request": {
+          "invalid": "Invalid request. Please try again."
+        },
+        "password": {
+          "tooLong": "Password is too long. Use fewer special characters or a shorter password."
         },
         "credentials": {
           "invalid": "Wrong email or password."

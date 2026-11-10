@@ -9,6 +9,8 @@ services:
     build:
       context: ..
       dockerfile: .docker/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8765}
     image: mentor-mentee-app:latest
     ports:
       - "8080:8080"

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { logoutUser } from '../../redux/reducers/auth';
+import { clearAuth } from '../../redux/reducers/auth';
 import { useI18n } from '../../hooks/useI18n';
 import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
@@ -23,12 +23,8 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
 
-  const handleLogout = async () => {
-    try {
-      await dispatch(logoutUser()).unwrap();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+  const handleLogout = () => {
+    dispatch(clearAuth());
     navigate('/login');
   };
 

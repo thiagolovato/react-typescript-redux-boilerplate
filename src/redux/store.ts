@@ -1,28 +1,24 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/es/storage';
-import { combineReducers } from '@reduxjs/toolkit';
 import authReducer from './reducers/auth';
 
-// Persist configuration
-const persistConfig = {
-  key: 'root',
+// Only the session itself survives a reload. `loading` and `error` would otherwise come back
+// stuck from a request that was cut off by closing the tab.
+const authPersistConfig = {
+  key: 'auth',
   storage,
-  whitelist: ['auth'], // Only persist auth state
+  whitelist: ['isAuthenticated', 'token', 'user'],
   version: 1,
 };
 
-// Combine reducers
 const rootReducer = combineReducers({
-  auth: authReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
 });
-
-// Create persisted reducer
-const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure store
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

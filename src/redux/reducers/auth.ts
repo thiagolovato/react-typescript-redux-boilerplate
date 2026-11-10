@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authService, tokenUtils } from '../../service/request/api';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import type { ApiError } from '../../types/api';
-import { toApiError } from '../../service/request/apiError';
+import { ApiRequestError, toApiError } from '../../service/request/apiError';
 
 // Types for auth state
 interface AuthState {
@@ -58,7 +58,7 @@ export const registerUser = createAsyncThunk<
 export const validateToken = createAsyncThunk<
   boolean,
   string,
-  { rejectValue: string }
+  { rejectValue: { unauthorized: boolean } }
 >(
     'auth/validateToken',
     async (token, thunkAPI) => {
@@ -67,27 +67,9 @@ export const validateToken = createAsyncThunk<
         await authService.authenticate(token);
         return true;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Token inválido';
-        return thunkAPI.rejectWithValue(message);
-      }
-    },
-);
-
-export const logoutUser = createAsyncThunk<
-  void,
-  void,
-  { rejectValue: string }
->(
-    'auth/logout',
-    async () => {
-      try {
-        const token = tokenUtils.get();
-        if (token) {
-          await authService.logout(token);
-        }
-      } catch (error) {
-      // Continue with logout even if server request fails
-        console.warn('Logout failed on server:', error);
+        // Only a 401 means the token is bad. A network error or 5xx keeps the session.
+        const unauthorized = error instanceof ApiRequestError && error.details.status === 401;
+        return thunkAPI.rejectWithValue({ unauthorized });
       }
     },
 );
@@ -211,8 +193,9 @@ export const authSlice = createSlice({
           state.isAuthenticated = true;
           state.error = null;
         })
-        .addCase(validateToken.rejected, (state) => {
+        .addCase(validateToken.rejected, (state, action) => {
           state.loading = false;
+          if (!action.payload?.unauthorized) return;
           state.isAuthenticated = false;
           state.token = null;
           state.user = null;
@@ -220,31 +203,10 @@ export const authSlice = createSlice({
           tokenUtils.remove();
         });
 
-    // Logout
-    builder
-        .addCase(logoutUser.pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(logoutUser.fulfilled, (state) => {
-          state.loading = false;
-          state.isAuthenticated = false;
-          state.token = null;
-          state.user = null;
-          state.error = null;
-          tokenUtils.remove();
-        })
-        .addCase(logoutUser.rejected, (state) => {
-        // Even if logout fails on server, clear local state
-          state.loading = false;
-          state.isAuthenticated = false;
-          state.token = null;
-          state.user = null;
-          state.error = null;
-          tokenUtils.remove();
-        });
   },
 });
 
+// Tokens are stateless, so logging out only forgets the token here.
 export const { clearError, setToken, clearAuth, initializeAuth } = authSlice.actions;
 
 export default authSlice.reducer;

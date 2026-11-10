@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, registerUser } from '../../redux/reducers/auth';
 import { CustomerType } from '../../types/auth/register';
 import { fieldErrorOf } from '../../service/request/apiError';
-import { MIN_PASSWORD_LENGTH } from '../../constants/auth';
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../constants/auth';
 import { AuthCard } from './AuthCard';
 
 type RegisterErrors = {
@@ -149,6 +149,7 @@ export function Register() {
           type="password"
           autoComplete="new-password"
           placeholder={t('auth.register.passwordPlaceholder')}
+          maxLength={MAX_PASSWORD_LENGTH}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           variant={passwordError ? 'error' : 'default'}

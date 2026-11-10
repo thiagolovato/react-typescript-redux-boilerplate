@@ -1,10 +1,14 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import { toApiRequestError } from './apiError';
 import type { InterestGroup, Profile, ProfileRequest } from '../../types/profile';
 
-const GATEWAY_BASE_URL = 'http://localhost:8765';
+// Set per environment: .env.development for `npm run dev`, a build arg for the Docker image.
+const GATEWAY_BASE_URL = import.meta.env.VITE_API_URL;
+if (!GATEWAY_BASE_URL) {
+  throw new Error('VITE_API_URL is not set. Add it to .env.development or pass it to the build.');
+}
 
 const API_ROUTES = {
   auth: '/auth',
@@ -14,18 +18,12 @@ const API_ROUTES = {
 axios.defaults.baseURL = GATEWAY_BASE_URL;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
+// Only idempotent requests (GET, PUT, DELETE...) are retried, on network errors, 429 and 5xx.
+// Retrying a POST could register a user twice or count one login as several attempts.
 axiosRetry(axios, {
   retries: 3,
   retryDelay: axiosRetry.exponentialDelay,
-  retryCondition: (error: AxiosError) => {
-    return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
-           error.response?.status === 503 ||
-           error.response?.status === 502 ||
-           error.response?.status === 504;
-  },
-  onRetry: (retryCount, _error, requestConfig) => {
-    console.log(`Retry attempt ${retryCount} for ${requestConfig.url}`);
-  },
+  retryCondition: axiosRetry.isIdempotentRequestError,
 });
 
 const authAxios = axios.create({
@@ -35,19 +33,8 @@ const authAxios = axios.create({
 
 axiosRetry(authAxios, {
   retries: 5,
-  retryDelay: (retryCount) => {
-    return retryCount * 500;
-  },
-  retryCondition: (error: AxiosError) => {
-    return axiosRetry.isNetworkOrIdempotentRequestError(error) ||
-           error.response?.status === 503 ||
-           error.response?.status === 502 ||
-           error.response?.status === 504 ||
-           error.response?.status === 500;
-  },
-  onRetry: (retryCount, _error, requestConfig) => {
-    console.log(`Auth retry attempt ${retryCount} for ${requestConfig.url}`);
-  },
+  retryDelay: (retryCount) => retryCount * 500,
+  retryCondition: axiosRetry.isIdempotentRequestError,
 });
 
 // Generic HTTP methods
@@ -65,7 +52,6 @@ export const httpClient = {
   post: async <T>(path: string, data?: object | string, config?: { headers?: Record<string, string> }) => {
     try {
       const response = await axios.post<T>(path, data, config);
-      console.log('API POST Response:', response);
       return response.data;
     } catch (error) {
       console.error('API POST Error:', error);
@@ -131,120 +117,6 @@ export const authService = {
       throw toApiRequestError(error);
     }
   },
-
-  refreshToken: async (refreshToken: string): Promise<RegisterResponse> => {
-    try {
-      const response = await authAxios.post<RegisterResponse>(
-          `${API_ROUTES.auth}/users/refresh`,
-          { refreshToken },
-      );
-      return response.data;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  // Logout
-  logout: async (token: string): Promise<void> => {
-    try {
-      await httpClient.post(
-          `${API_ROUTES.auth}/users/logout`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-    } catch (error) {
-      console.warn('Erro ao fazer logout no servidor:', error);
-      // Continue with local logout even if server logout fails
-    }
-  },
-};
-
-// Core Service - Routes through /mmc/** gateway (for future use)
-export const coreService = {
-  // User profile management
-  getProfile: async (userId: string): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const response = await httpClient.get(
-          `${API_ROUTES.core}/users/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  updateProfile: async (userId: string, profileData: Record<string, unknown>): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const response = await httpClient.put(
-          `${API_ROUTES.core}/users/${userId}`,
-          profileData,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  // Mentorship management
-  findMentors: async (filters?: Record<string, string>): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const queryParams = filters ? `?${new URLSearchParams(filters)}` : '';
-      const response = await httpClient.get(
-          `${API_ROUTES.core}/mentors${queryParams}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  findMentees: async (filters?: Record<string, string>): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const queryParams = filters ? `?${new URLSearchParams(filters)}` : '';
-      const response = await httpClient.get(
-          `${API_ROUTES.core}/mentees${queryParams}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  // Mentorship sessions
-  getMentorshipSessions: async (): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const response = await httpClient.get(
-          `${API_ROUTES.core}/sessions`,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
-
-  createMentorshipSession: async (sessionData: Record<string, unknown>): Promise<unknown> => {
-    try {
-      const token = tokenUtils.get();
-      const response = await httpClient.post(
-          `${API_ROUTES.core}/sessions`,
-          sessionData,
-          { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return response;
-    } catch (error) {
-      throw toApiRequestError(error);
-    }
-  },
 };
 
 // Token management utilities
@@ -290,11 +162,6 @@ export const tokenUtils = {
 
 
 };
-
-// Legacy exports for backward compatibility
-export const authApi = authService;
-export const post = httpClient.post;
-export const get = httpClient.get;
 
 const authHeader = () => ({ headers: { Authorization: `Bearer ${tokenUtils.get()}` } });
 
