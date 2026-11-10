@@ -76,6 +76,16 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 - No user-facing text in code. Add keys to both `i18n/locales/pt-BR.json` and `en-US.json` and read them with `useI18n` / `t()`.
 
+## Techniques in use
+
+- **Pages by role.** `AuthLayout roles={[...]}` wraps each group of routes in `App.tsx`. A signed-out user goes to the login of that group (`/login` or `/coordination/login`); a user with another role goes to their own home (`homePathFor`). This only hides pages: the server checks the role on every request.
+- **Hidden coordinator login.** `/coordination/login` reuses `Login` with `coordinator`. Nothing links to it, and the sign-up page offers only mentor and mentee.
+- **Retries only for idempotent requests.** `axios-retry` retries `GET`, `PUT` and `DELETE` on network errors, `429` and `5xx`, never `POST` (a retried sign-up could create two accounts, a retried login count twice).
+- **Persisted session, flushed on logout.** redux-persist keeps only `isAuthenticated`, `token` and `user`, never `loading` or `error`. Logout awaits `persistor.flush()` before leaving the page; without it, a reload right after logout restores the old session.
+- **Same limits as the server.** Limits shared with the backend live in `src/constants/` (`auth.ts`, `profileOptions.ts`, `legal.ts`), each with a comment naming the backend rule. The end-to-end tests import the same constants, so a change shows up in one place.
+- **Terms version in two places.** `TERMS_VERSION` in `constants/legal.ts` must equal `mentormentee.consent.terms-version` in core. Changing it asks everyone to accept again on their next save.
+- **Dev-only pages.** `/design-system` exists only when `import.meta.env.DEV` is true; production builds drop the route and its chunk.
+
 ## How to add a page
 
 1. Add the types in `types/`.
@@ -87,13 +97,13 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 ## Tests
 
-There is no test runner yet. When you add one, use Vitest with React Testing Library:
+End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in REGRAS_DE_NEGOCIO.md.
+
+There is no unit test runner yet. When you add one, use Vitest with React Testing Library:
 
 - Test behaviour the user sees (text, roles, clicks), not implementation details.
 - Mock HTTP at the network level (MSW), not by mocking `api.ts` internals.
 - Name tests after the behaviour: `shows an error when login fails`.
-
-Until then, check changes by hand with `npm run dev` against the running backend.
 
 ## Before you finish
 

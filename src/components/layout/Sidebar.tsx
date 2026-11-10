@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearAuth } from '../../redux/reducers/auth';
+import { persistor } from '../../redux/store';
 import { useI18n } from '../../hooks/useI18n';
 import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
@@ -31,9 +32,12 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const isCoordinator = user?.customerType === 'COORDINATOR';
   const navItems = isCoordinator ? coordinatorNavItems : participantNavItems;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     const loginPath = loginPathFor(user?.customerType);
     dispatch(clearAuth());
+    // redux-persist writes storage a moment later. Without the flush, a reload right after logout
+    // would bring the old session back.
+    await persistor.flush();
     navigate(loginPath);
   };
 

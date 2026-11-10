@@ -37,6 +37,13 @@ Lint:
 npm run lint
 ```
 
+End-to-end tests (Playwright, needs the backend running in Docker). Details in [e2e/README.md](e2e/README.md):
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
 ## Docker
 
 `.docker/` holds a two-stage Dockerfile (Node build, nginx serve) and a compose file. It serves the production build on http://localhost:8080.
