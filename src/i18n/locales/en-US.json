@@ -56,7 +56,7 @@
         "emailRequired": "Email is required",
         "emailInvalid": "Invalid email",
         "passwordRequired": "Password is required",
-        "passwordMinLength": "Password must be at least 6 characters",
+        "passwordMinLength": "Password must be at least {{min}} characters",
         "confirmPasswordRequired": "Password confirmation is required",
         "passwordsNotMatch": "Passwords do not match",
         "userTypeRequired": "User type is required",
@@ -354,6 +354,91 @@
       "conduct": {
         "title": "Taking part",
         "body": "Mentor and mentee treat each other with respect and keep their conversations confidential. Either can end the mentorship with two weeks' written notice."
+      }
+    }
+  },
+  "apiErrors": {
+    "checkFields": "Please fix the highlighted fields.",
+    "codes": {
+      "NotBlank": "This field is required",
+      "NotNull": "This field is required",
+      "NotEmpty": "Choose at least one option",
+      "Email": "Invalid email",
+      "Pattern": "Invalid format",
+      "Size": {
+        "min": "Must have at least {{min}}",
+        "max": "Must have at most {{max}}",
+        "range": "Must have between {{min}} and {{max}}"
+      },
+      "Min": "Must be at least {{value}}",
+      "Max": "Must be at most {{value}}",
+      "AssertTrue": "Invalid value"
+    },
+    "fields": {
+      "auth": {
+        "password": {
+          "Size": {
+            "min": "Password must be at least {{min}} characters"
+          }
+        }
+      },
+      "core": {
+        "professionalLink": {
+          "Pattern": "Use a link that starts with http:// or https://"
+        },
+        "birthDateInRange": {
+          "AssertTrue": "Age must be between 16 and 120"
+        },
+        "address": {
+          "knownCountry": {
+            "AssertTrue": "Choose a country from the list"
+          }
+        },
+        "languages": {
+          "NotEmpty": "Add at least one language"
+        },
+        "interestAreaIds": {
+          "NotEmpty": "Choose at least one area of interest"
+        }
+      }
+    },
+    "problems": {
+      "auth": {
+        "validation": {
+          "failed": "Please fix the highlighted fields."
+        },
+        "credentials": {
+          "invalid": "Wrong email or password."
+        },
+        "account": {
+          "locked": "Too many attempts. Account temporarily locked, try again later."
+        },
+        "token": {
+          "expired": "Your session expired. Please log in again.",
+          "invalid": "Invalid session. Please log in again."
+        },
+        "user": {
+          "alreadyExists": "An account with this email already exists."
+        }
+      },
+      "core": {
+        "validation": {
+          "failed": "Please fix the highlighted fields."
+        },
+        "request": {
+          "conflict": "Your data changed somewhere else. Reload the page and try again."
+        },
+        "profile": {
+          "alreadyExists": "You already have a profile.",
+          "notFound": "Profile not found.",
+          "termsNotAccepted": "Accept the terms of use to save your profile.",
+          "unknownLanguage": "One of the chosen languages does not exist.",
+          "unknownInterestArea": "One of the chosen areas of interest does not exist."
+        },
+        "token": {
+          "missingUserId": "Invalid session. Please log in again.",
+          "invalidUserType": "Invalid session. Please log in again."
+        }
       }
     }
   }

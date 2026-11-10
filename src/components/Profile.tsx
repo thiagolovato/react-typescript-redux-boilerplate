@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAppSelector } from '../redux/hooks';
-import { Button, Checkbox, Input, Select, TextArea } from './ui';
+import { ApiErrorAlert, Button, Checkbox, Input, Select, TextArea } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import withAuthentication from './hoc/withAuthentication';
 import { profileService } from '../service/request/api';
+import { fieldErrorOf, toApiError } from '../service/request/apiError';
+import { useFieldErrorText } from '../hooks/useFieldErrorText';
 import { LanguagePicker } from './profile/LanguagePicker';
 import { InterestAreaPicker } from './profile/InterestAreaPicker';
 import { ContactsField } from './profile/ContactsField';
@@ -13,11 +15,13 @@ import {
   CONTACT_PREFERENCES,
   GENDER_OPTIONS,
   GENDER_SELF_DESCRIBE,
+  MAX_AGE,
   MAX_GRADUATION_YEARS_AHEAD,
   MIN_AGE,
   MIN_GRADUATION_YEAR,
   PREFERRED_MENTOR_GENDER_OPTIONS,
 } from '../constants/profileOptions';
+import type { ApiError } from '../types/api';
 import type { ContactPreference, CustomerType, Profile as ProfileData, ProfileRequest } from '../types/profile';
 
 // Numbers and choices are kept as typed text so the fields can be empty; they are converted on submit.
@@ -27,6 +31,16 @@ type ProfileForm = Omit<ProfileRequest, 'graduationYear' | 'contactPreference' |
 };
 
 const MAX_TEXT = 5000;
+// Same rule as the @Pattern on CustomerRequest.professionalLink. The browser anchors it to the whole value.
+const PROFESSIONAL_LINK_PATTERN = String.raw`https?://\S+`;
+
+// Request fields shown next to their input. Server errors for other fields go in the list under the form.
+const INLINE_FIELDS = [
+  'name', 'birthDate', 'birthDateInRange', 'profession', 'graduationYear', 'academicBackground', 'professionalLink',
+  'address.city', 'address.region', 'motivation', 'expectations', 'goals', 'acceptedBackgrounds',
+  'otherPartyPreferences', 'additionalInfo',
+] as const;
+type InlineField = typeof INLINE_FIELDS[number];
 
 const emptyForm: ProfileForm = {
   name: '',
@@ -88,10 +102,10 @@ function genderChoiceOf(gender: string): string {
   return (GENDER_OPTIONS as readonly string[]).includes(gender) ? gender : GENDER_SELF_DESCRIBE;
 }
 
-/** Latest birth date allowed by the minimum age, as `YYYY-MM-DD`. */
-function latestBirthDate(): string {
+/** Today minus `years`, as `YYYY-MM-DD`. */
+function yearsAgo(years: number): string {
   const date = new Date();
-  date.setFullYear(date.getFullYear() - MIN_AGE);
+  date.setFullYear(date.getFullYear() - years);
   return date.toISOString().slice(0, 10);
 }
 
@@ -120,7 +134,10 @@ function Profile() {
   const [profileExists, setProfileExists] = useState(false);
   const [termsAlreadyAccepted, setTermsAlreadyAccepted] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [error, setError] = useState<{ message?: string; fallbackKey: string } | null>(null);
+  // `error` is a check made here; `apiError` is what the server answered.
+  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<{ error: ApiError; fallbackKey: string } | null>(null);
+  const fieldErrorText = useFieldErrorText();
   const [formData, setFormData] = useState<ProfileForm>(emptyForm);
   const [genderChoice, setGenderChoice] = useState('');
 
@@ -139,7 +156,7 @@ function Profile() {
           setTermsAlreadyAccepted(profile.termsAccepted);
         }
       } catch (err) {
-        setError({ message: err instanceof Error ? err.message : undefined, fallbackKey: 'profile.errors.loadProfile' });
+        setApiError({ error: toApiError(err), fallbackKey: 'profile.errors.loadProfile' });
       } finally {
         setLoading(false);
       }
@@ -171,12 +188,13 @@ function Profile() {
     e.preventDefault();
 
     // Lists have no native "required"; check them here.
+    setApiError(null);
     if (formData.languages.length === 0) {
-      setError({ fallbackKey: 'profile.errors.languagesRequired' });
+      setError('profile.errors.languagesRequired');
       return;
     }
     if (formData.interestAreaIds.length === 0) {
-      setError({ fallbackKey: 'profile.errors.interestAreasRequired' });
+      setError('profile.errors.interestAreasRequired');
       return;
     }
 
@@ -192,10 +210,21 @@ function Profile() {
       await (profileExists ? profileService.update(request) : profileService.create(request));
       navigate('/dashboard');
     } catch (err) {
-      setError({ message: err instanceof Error ? err.message : undefined, fallbackKey: 'profile.errors.saveProfile' });
+      setApiError({ error: toApiError(err), fallbackKey: 'profile.errors.saveProfile' });
     } finally {
       setSaving(false);
     }
+  };
+
+  /** Error look and text for an inline input (one or more request fields); `help` shows when it is fine. */
+  const fieldProps = (fields: InlineField | InlineField[], help?: string) => {
+    const serverError = [fields].flat()
+        .map((field) => fieldErrorOf(apiError?.error, field))
+        .find((fieldError) => fieldError !== undefined);
+    return {
+      variant: serverError ? 'error' as const : 'default' as const,
+      helperText: serverError ? fieldErrorText(serverError, apiError?.error.service) : help,
+    };
   };
 
   if (loading) {
@@ -219,6 +248,7 @@ function Profile() {
             <Input
               label={t('profile.name')}
               name="name"
+              {...fieldProps('name')}
               value={formData.name}
               onChange={handleInputChange}
               maxLength={150}
@@ -229,8 +259,10 @@ function Profile() {
             <Input
               label={t('profile.birthDate')}
               name="birthDate"
+              {...fieldProps(['birthDate', 'birthDateInRange'])}
               type="date"
-              max={latestBirthDate()}
+              min={yearsAgo(MAX_AGE)}
+              max={yearsAgo(MIN_AGE)}
               value={formData.birthDate}
               onChange={handleInputChange}
               autoComplete="bday"
@@ -273,6 +305,7 @@ function Profile() {
             <Input
               label={t('profile.city')}
               name="city"
+              {...fieldProps('address.city')}
               value={formData.address.city}
               onChange={handleAddressChange}
               maxLength={100}
@@ -283,6 +316,7 @@ function Profile() {
             <Input
               label={t('profile.region')}
               name="region"
+              {...fieldProps('address.region')}
               value={formData.address.region}
               onChange={handleAddressChange}
               maxLength={100}
@@ -301,6 +335,7 @@ function Profile() {
             <Input
               label={t(`profile.profession.${role}`)}
               name="profession"
+              {...fieldProps('profession')}
               value={formData.profession}
               onChange={handleInputChange}
               maxLength={100}
@@ -310,6 +345,7 @@ function Profile() {
             <Input
               label={t(`profile.graduationYear.${role}`)}
               name="graduationYear"
+              {...fieldProps('graduationYear')}
               type="number"
               min={MIN_GRADUATION_YEAR}
               max={maxGraduationYear}
@@ -321,7 +357,7 @@ function Profile() {
           </div>
           <Input
             label={t('profile.academicBackground')}
-            helperText={t('profile.academicBackgroundHelp')}
+            {...fieldProps('academicBackground', t('profile.academicBackgroundHelp'))}
             name="academicBackground"
             value={formData.academicBackground}
             onChange={handleInputChange}
@@ -331,13 +367,14 @@ function Profile() {
           />
           <Input
             label={t('profile.professionalLink')}
-            helperText={t('profile.professionalLinkHelp')}
+            {...fieldProps('professionalLink', t('profile.professionalLinkHelp'))}
             name="professionalLink"
             type="url"
             placeholder="https://"
             value={formData.professionalLink}
             onChange={handleInputChange}
             maxLength={300}
+            pattern={PROFESSIONAL_LINK_PATTERN}
             fullWidth
           />
           <div className="flex flex-col gap-3">
@@ -377,6 +414,7 @@ function Profile() {
           <TextArea
             label={t(`profile.motivation.${role}`)}
             name="motivation"
+            {...fieldProps('motivation')}
             value={formData.motivation}
             onChange={handleInputChange}
             maxLength={MAX_TEXT}
@@ -387,6 +425,7 @@ function Profile() {
           <TextArea
             label={t(`profile.expectations.${role}`)}
             name="expectations"
+            {...fieldProps('expectations')}
             value={formData.expectations}
             onChange={handleInputChange}
             maxLength={MAX_TEXT}
@@ -397,6 +436,7 @@ function Profile() {
           <TextArea
             label={t(`profile.goals.${role}`)}
             name="goals"
+            {...fieldProps('goals')}
             value={formData.goals}
             onChange={handleInputChange}
             maxLength={MAX_TEXT}
@@ -434,7 +474,7 @@ function Profile() {
           {isMentor && (
             <Input
               label={t('profile.acceptedBackgrounds')}
-              helperText={t('profile.acceptedBackgroundsHelp')}
+              {...fieldProps('acceptedBackgrounds', t('profile.acceptedBackgroundsHelp'))}
               name="acceptedBackgrounds"
               value={formData.acceptedBackgrounds}
               onChange={handleInputChange}
@@ -445,6 +485,7 @@ function Profile() {
           <TextArea
             label={t(`profile.otherPartyPreferences.${role}`)}
             name="otherPartyPreferences"
+            {...fieldProps('otherPartyPreferences')}
             value={formData.otherPartyPreferences}
             onChange={handleInputChange}
             maxLength={2000}
@@ -461,6 +502,7 @@ function Profile() {
           <TextArea
             aria-label={t('profile.additionalInfo')}
             name="additionalInfo"
+            {...fieldProps('additionalInfo')}
             value={formData.additionalInfo}
             onChange={handleInputChange}
             maxLength={MAX_TEXT}
@@ -501,9 +543,14 @@ function Profile() {
 
         {error && (
           <p role="alert" className="rounded-lg border border-error-main/40 bg-error-light p-4 text-sm text-error-dark">
-            {error.message || t(error.fallbackKey)}
+            {t(error)}
           </p>
         )}
+        <ApiErrorAlert
+          error={apiError?.error}
+          fallback={apiError ? t(apiError.fallbackKey) : ''}
+          inlineFields={INLINE_FIELDS}
+        />
 
         <div className="flex justify-end gap-4">
           <Button variant="outline" onClick={() => navigate('/dashboard')} disabled={saving}>

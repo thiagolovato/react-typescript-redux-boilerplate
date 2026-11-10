@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
+import { toApiRequestError } from './apiError';
 import type { InterestGroup, Profile, ProfileRequest } from '../../types/profile';
 
 const GATEWAY_BASE_URL = 'http://localhost:8765';
@@ -48,18 +49,6 @@ axiosRetry(authAxios, {
     console.log(`Auth retry attempt ${retryCount} for ${requestConfig.url}`);
   },
 });
-
-// API Error types
-interface ApiErrorResponse {
-  message?: string;
-  data?: string;
-}
-
-interface ApiError {
-  response?: {
-    data?: ApiErrorResponse | string;
-  };
-}
 
 // Generic HTTP methods
 export const httpClient = {
@@ -115,13 +104,7 @@ export const authService = {
       );
       return response.data;
     } catch (error) {
-      const apiError = error as ApiError;
-      if (apiError.response?.data) {
-        const errorData = apiError.response.data;
-        const errorMessage = typeof errorData === 'string' ? errorData : errorData.message;
-        throw new Error(errorMessage || 'Erro ao criar conta');
-      }
-      throw new Error('Erro ao criar conta. Tente novamente.');
+      throw toApiRequestError(error);
     }
   },
 
@@ -133,13 +116,7 @@ export const authService = {
       );
       return response.data;
     } catch (error) {
-      const apiError = error as ApiError;
-      if (apiError.response?.data) {
-        const errorData = apiError.response.data;
-        const errorMessage = typeof errorData === 'string' ? errorData : errorData.message;
-        throw new Error(errorMessage || 'Erro ao fazer login');
-      }
-      throw new Error('Erro ao fazer login. Verifique suas credenciais.');
+      throw toApiRequestError(error);
     }
   },
 
@@ -150,8 +127,8 @@ export const authService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response.data;
-    } catch {
-      throw new Error('Token inválido');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -162,8 +139,8 @@ export const authService = {
           { refreshToken },
       );
       return response.data;
-    } catch {
-      throw new Error('Erro ao renovar token');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -193,8 +170,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao buscar perfil do usuário');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -207,8 +184,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao atualizar perfil');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -222,8 +199,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao buscar mentores');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -236,8 +213,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao buscar mentees');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -250,8 +227,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao buscar sessões de mentoria');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 
@@ -264,8 +241,8 @@ export const coreService = {
           { headers: { Authorization: `Bearer ${token}` } },
       );
       return response;
-    } catch {
-      throw new Error('Erro ao criar sessão de mentoria');
+    } catch (error) {
+      throw toApiRequestError(error);
     }
   },
 };
@@ -319,13 +296,6 @@ export const authApi = authService;
 export const post = httpClient.post;
 export const get = httpClient.get;
 
-// Core answers errors as problem details (RFC 9457): the human text is in `detail`.
-const coreErrorMessage = (error: unknown): string | undefined => {
-  if (!axios.isAxiosError(error)) return undefined;
-  const data = error.response?.data as { detail?: string } | string | undefined;
-  return typeof data === 'string' ? data : data?.detail;
-};
-
 const authHeader = () => ({ headers: { Authorization: `Bearer ${tokenUtils.get()}` } });
 
 export const profileService = {
@@ -335,21 +305,21 @@ export const profileService = {
       return await httpClient.get<Profile>(`${API_ROUTES.core}/customers/me`, authHeader());
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) return null;
-      throw new Error(coreErrorMessage(error));
+      throw toApiRequestError(error);
     }
   },
   create: async (profile: ProfileRequest): Promise<Profile> => {
     try {
       return await httpClient.post<Profile>(`${API_ROUTES.core}/customers`, profile, authHeader());
     } catch (error) {
-      throw new Error(coreErrorMessage(error));
+      throw toApiRequestError(error);
     }
   },
   update: async (profile: ProfileRequest): Promise<Profile> => {
     try {
       return await httpClient.put<Profile>(`${API_ROUTES.core}/customers/me`, profile, authHeader());
     } catch (error) {
-      throw new Error(coreErrorMessage(error));
+      throw toApiRequestError(error);
     }
   },
 };
@@ -360,7 +330,7 @@ export const referenceDataService = {
     try {
       return await httpClient.get<InterestGroup[]>(`${API_ROUTES.core}/interest-groups`, authHeader());
     } catch (error) {
-      throw new Error(coreErrorMessage(error));
+      throw toApiRequestError(error);
     }
   },
 };

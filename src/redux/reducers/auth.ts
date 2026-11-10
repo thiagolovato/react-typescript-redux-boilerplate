@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authService, tokenUtils } from '../../service/request/api';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
+import type { ApiError } from '../../types/api';
+import { toApiError } from '../../service/request/apiError';
 
 // Types for auth state
 interface AuthState {
@@ -12,7 +14,7 @@ interface AuthState {
     customerType?: 'MENTOR' | 'MENTEE';
   } | null;
   loading: boolean;
-  error: string | null;
+  error: ApiError | null;
 }
 
 interface LoginCredentials {
@@ -24,7 +26,7 @@ interface LoginCredentials {
 export const loginUser = createAsyncThunk<
   RegisterResponse,
   LoginCredentials,
-  { rejectValue: string }
+  { rejectValue: ApiError }
 >(
     'auth/login',
     async (credentials, thunkAPI) => {
@@ -32,8 +34,7 @@ export const loginUser = createAsyncThunk<
         const response = await authService.login(credentials.email, credentials.password);
         return response;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Erro ao fazer login';
-        return thunkAPI.rejectWithValue(message);
+        return thunkAPI.rejectWithValue(toApiError(error));
       }
     },
 );
@@ -41,7 +42,7 @@ export const loginUser = createAsyncThunk<
 export const registerUser = createAsyncThunk<
   RegisterResponse,
   RegisterRequest,
-  { rejectValue: string }
+  { rejectValue: ApiError }
 >(
     'auth/register',
     async (userData, thunkAPI) => {
@@ -49,8 +50,7 @@ export const registerUser = createAsyncThunk<
         const response = await authService.register(userData);
         return response;
       } catch (error) {
-        const message = error instanceof Error ? error.message : 'Erro ao criar conta';
-        return thunkAPI.rejectWithValue(message);
+        return thunkAPI.rejectWithValue(toApiError(error));
       }
     },
 );
@@ -170,7 +170,7 @@ export const authSlice = createSlice({
           state.isAuthenticated = false;
           state.token = null;
           state.user = null;
-          state.error = action.payload || 'Erro ao fazer login';
+          state.error = action.payload ?? toApiError(action.error);
         });
 
     // Register
@@ -198,7 +198,7 @@ export const authSlice = createSlice({
           state.isAuthenticated = false;
           state.token = null;
           state.user = null;
-          state.error = action.payload || 'Erro ao criar conta';
+          state.error = action.payload ?? toApiError(action.error);
         });
 
     // Validate Token

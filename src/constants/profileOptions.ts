@@ -33,3 +33,7 @@ export const MAX_GRADUATION_YEARS_AHEAD = 10;
 
 // Same limit as CustomerRequest.MIN_AGE in mentor-mentee-core.
 export const MIN_AGE = 16;
+// Same limit as CustomerRequest.MAX_AGE.
+export const MAX_AGE = 120;
+// Same limit as @Size(max = 10) on CustomerRequest.contacts.
+export const MAX_CONTACTS = 10;

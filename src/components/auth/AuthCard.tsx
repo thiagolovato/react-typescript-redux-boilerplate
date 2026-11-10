@@ -46,11 +46,3 @@ export function AuthCard({ title, subtitle, children }: AuthCardProps) {
     </main>
   );
 }
-
-export function FormError({ children }: { children: React.ReactNode }) {
-  return (
-    <p role="alert" className="rounded-lg border border-error-main/40 bg-error-light p-3 text-sm text-error-dark">
-      {children}
-    </p>
-  );
-}

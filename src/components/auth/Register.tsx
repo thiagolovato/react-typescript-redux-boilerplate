@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Button, Checkbox, Input, RoleBird } from '../ui';
+import { ApiErrorAlert, Button, Checkbox, Input, RoleBird } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
+import { useFieldErrorText } from '../../hooks/useFieldErrorText';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, registerUser } from '../../redux/reducers/auth';
 import { CustomerType } from '../../types/auth/register';
-import { AuthCard, FormError } from './AuthCard';
+import { fieldErrorOf } from '../../service/request/apiError';
+import { MIN_PASSWORD_LENGTH } from '../../constants/auth';
+import { AuthCard } from './AuthCard';
 
 type RegisterErrors = {
   email?: string;
@@ -14,6 +17,9 @@ type RegisterErrors = {
   customerType?: string;
   termsAccepted?: string;
 };
+
+// Request fields this form shows next to their input.
+const INLINE_FIELDS = ['email', 'password', 'customerType'] as const;
 
 // Each role wears its bird's color when picked.
 const customerTypes = [
@@ -43,6 +49,16 @@ export function Register() {
   const [customerType, setCustomerType] = useState<CustomerType | ''>('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [formErrors, setFormErrors] = useState<RegisterErrors>({});
+  const fieldErrorText = useFieldErrorText();
+
+  // The app's own checks first; then what the server rejected.
+  const errorFor = (field: typeof INLINE_FIELDS[number]) => {
+    const serverError = fieldErrorOf(error, field);
+    return formErrors[field] ?? (serverError && fieldErrorText(serverError, error?.service));
+  };
+  const emailError = errorFor('email');
+  const passwordError = errorFor('password');
+  const customerTypeError = errorFor('customerType');
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -67,8 +83,8 @@ export function Register() {
 
     if (!password) {
       newErrors.password = t('validation.required');
-    } else if (password.length < 6) {
-      newErrors.password = t('auth.register.errors.passwordMinLength');
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      newErrors.password = t('auth.register.errors.passwordMinLength', { min: MIN_PASSWORD_LENGTH });
     }
 
     if (!confirmPassword) {
@@ -123,8 +139,8 @@ export function Register() {
           placeholder={t('auth.register.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          variant={formErrors.email ? 'error' : 'default'}
-          helperText={formErrors.email}
+          variant={emailError ? 'error' : 'default'}
+          helperText={emailError}
           fullWidth
         />
 
@@ -135,8 +151,8 @@ export function Register() {
           placeholder={t('auth.register.passwordPlaceholder')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          variant={formErrors.password ? 'error' : 'default'}
-          helperText={formErrors.password}
+          variant={passwordError ? 'error' : 'default'}
+          helperText={passwordError}
           fullWidth
         />
 
@@ -153,7 +169,7 @@ export function Register() {
         />
 
         <fieldset
-          aria-describedby={formErrors.customerType ? 'customer-type-error' : undefined}
+          aria-describedby={customerTypeError ? 'customer-type-error' : undefined}
           className="flex flex-col gap-2"
         >
           <legend className="mb-2 text-sm font-medium">{t('auth.register.userType')}</legend>
@@ -181,8 +197,8 @@ export function Register() {
               </label>
             ))}
           </div>
-          {formErrors.customerType && (
-            <span id="customer-type-error" className="text-sm text-error-dark">{formErrors.customerType}</span>
+          {customerTypeError && (
+            <span id="customer-type-error" className="text-sm text-error-dark">{customerTypeError}</span>
           )}
         </fieldset>
 
@@ -210,7 +226,7 @@ export function Register() {
           )}
         </div>
 
-        {error && <FormError>{error}</FormError>}
+        <ApiErrorAlert error={error} fallback={t('auth.register.errors.general')} inlineFields={INLINE_FIELDS} />
 
         <Button type="submit" size="lg" isLoading={loading} fullWidth>
           {t('auth.register.registerButton')}

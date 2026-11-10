@@ -28,6 +28,16 @@ src/
 - Type every request and response in `types/`. No `unknown` or `any` in new code.
 - Send the token with `Authorization: Bearer <token>`. Read it with `tokenUtils`.
 
+## Errors
+
+Every service answers errors as a problem detail with a list of field errors (`types/api.ts`, contract in the auth and core AGENTS.md).
+
+- In `api.ts`, end every catch with `throw toApiRequestError(error)`. It parses any failure into an `ApiError`. Thunks reject with `toApiError(error)`.
+- Show it with `ApiErrorAlert`. It translates the server `code` (`<service>.<context>.<error>`) from `apiErrors.problems`; `fallback` covers network errors, server errors and codes without a translation.
+- Show field errors next to their input: `fieldErrorOf(error, 'address.city')` and `useFieldErrorText()`, which looks up `apiErrors.fields.<service>.<field>.<code>` (pass `error.service`, the first segment of the problem `code`), then `apiErrors.codes.<code>`, fills `params` (`{{min}}`, `{{max}}`) and falls back to the server text. `Size` uses `Size.min`, `Size.max` or `Size.range`. Pass those fields as `inlineFields` so the alert does not repeat them.
+- A new backend code needs its text in both locales.
+- Check the same rules as the backend before sending. Shared limits live in `constants/` with a comment naming the backend rule.
+
 ## TypeScript standards
 
 ### Types

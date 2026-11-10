@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Button, Input } from '../ui';
+import { ApiErrorAlert, Button, Input } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, loginUser } from '../../redux/reducers/auth';
-import { AuthCard, FormError } from './AuthCard';
+import { AuthCard } from './AuthCard';
 
 export function Login() {
   const navigate = useNavigate();
@@ -93,7 +93,7 @@ export function Login() {
           fullWidth
         />
 
-        {error && <FormError>{error}</FormError>}
+        <ApiErrorAlert error={error} fallback={t('auth.login.errors.general')} />
 
         <Button type="submit" size="lg" isLoading={loading} fullWidth>
           {t('auth.login.loginButton')}

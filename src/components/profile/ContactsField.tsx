@@ -1,6 +1,7 @@
 import { Button, Checkbox, Input, PlusIcon, Select, TrashIcon } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import type { CustomerContact } from '../../types/profile';
+import { MAX_CONTACTS } from '../../constants/profileOptions';
 
 interface ContactsFieldProps {
   value: CustomerContact[];
@@ -53,7 +54,7 @@ export function ContactsField({ value, onChange }: ContactsFieldProps) {
             >
               <TrashIcon />
             </Button>
-            {index === value.length - 1 && (
+            {index === value.length - 1 && value.length < MAX_CONTACTS && (
               <Button variant="outline" aria-label={t('profile.addContact')} title={t('profile.addContact')} onClick={add}>
                 <PlusIcon />
               </Button>

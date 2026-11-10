@@ -56,7 +56,7 @@
         "emailRequired": "Email é obrigatório",
         "emailInvalid": "Email inválido",
         "passwordRequired": "Senha é obrigatória",
-        "passwordMinLength": "Senha deve ter pelo menos 6 caracteres",
+        "passwordMinLength": "Senha deve ter pelo menos {{min}} caracteres",
         "confirmPasswordRequired": "Confirmação de senha é obrigatória",
         "passwordsNotMatch": "Senhas não coincidem",
         "userTypeRequired": "Tipo de usuário é obrigatório",
@@ -354,6 +354,91 @@
       "conduct": {
         "title": "Participação",
         "body": "Mentor e mentee tratam um ao outro com respeito e mantêm em sigilo o que é conversado. Qualquer um pode encerrar a mentoria avisando por escrito com duas semanas de antecedência."
+      }
+    }
+  },
+  "apiErrors": {
+    "checkFields": "Corrija os campos destacados.",
+    "codes": {
+      "NotBlank": "Este campo é obrigatório",
+      "NotNull": "Este campo é obrigatório",
+      "NotEmpty": "Escolha pelo menos uma opção",
+      "Email": "Email inválido",
+      "Pattern": "Formato inválido",
+      "Size": {
+        "min": "Deve ter pelo menos {{min}}",
+        "max": "Deve ter no máximo {{max}}",
+        "range": "Deve ter entre {{min}} e {{max}}"
+      },
+      "Min": "Deve ser pelo menos {{value}}",
+      "Max": "Deve ser no máximo {{value}}",
+      "AssertTrue": "Valor inválido"
+    },
+    "fields": {
+      "auth": {
+        "password": {
+          "Size": {
+            "min": "Senha deve ter pelo menos {{min}} caracteres"
+          }
+        }
+      },
+      "core": {
+        "professionalLink": {
+          "Pattern": "Use um link que comece com http:// ou https://"
+        },
+        "birthDateInRange": {
+          "AssertTrue": "Idade deve estar entre 16 e 120 anos"
+        },
+        "address": {
+          "knownCountry": {
+            "AssertTrue": "Escolha um país da lista"
+          }
+        },
+        "languages": {
+          "NotEmpty": "Adicione pelo menos um idioma"
+        },
+        "interestAreaIds": {
+          "NotEmpty": "Escolha pelo menos uma área de interesse"
+        }
+      }
+    },
+    "problems": {
+      "auth": {
+        "validation": {
+          "failed": "Corrija os campos destacados."
+        },
+        "credentials": {
+          "invalid": "Email ou senha incorretos."
+        },
+        "account": {
+          "locked": "Muitas tentativas. Conta bloqueada temporariamente, tente mais tarde."
+        },
+        "token": {
+          "expired": "Sua sessão expirou. Entre novamente.",
+          "invalid": "Sessão inválida. Entre novamente."
+        },
+        "user": {
+          "alreadyExists": "Já existe uma conta com este email."
+        }
+      },
+      "core": {
+        "validation": {
+          "failed": "Corrija os campos destacados."
+        },
+        "request": {
+          "conflict": "Seus dados mudaram em outro lugar. Recarregue a página e tente de novo."
+        },
+        "profile": {
+          "alreadyExists": "Você já tem um perfil.",
+          "notFound": "Perfil não encontrado.",
+          "termsNotAccepted": "Aceite os termos de uso para salvar seu perfil.",
+          "unknownLanguage": "Um dos idiomas escolhidos não existe.",
+          "unknownInterestArea": "Uma das áreas de interesse escolhidas não existe."
+        },
+        "token": {
+          "missingUserId": "Sessão inválida. Entre novamente.",
+          "invalidUserType": "Sessão inválida. Entre novamente."
+        }
       }
     }
   }
