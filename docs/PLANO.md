@@ -109,7 +109,8 @@ Resumo: papel de coordenador, ciclo anual, matching só para o coordenador, prop
 
 - Novo valor em `CustomerType` do auth. O token passa a ter `type = COORDINATOR` e `ROLE_COORDINATOR`.
 - **Risco:** hoje `POST /users/register` aceita `customerType` vindo do corpo. Só adicionar o valor ao enum deixaria qualquer pessoa se cadastrar como coordenador. `RegisterResource` deve aceitar só `MENTOR` e `MENTEE` (validação + teste).
-- Conta de coordenador: a pessoa se cadastra normalmente e um script promove (`scripts/promote-coordinator.sh <email>`, `UPDATE users SET customer_type = 'COORDINATOR'`). Sem endpoint de promoção: são poucas contas, e endpoint novo é superfície de ataque.
+- Conta de coordenador: criada por `mentor-mentee-auth/scripts/create-coordinator.sh <email>` (pede a senha, grava o hash BCrypt). Em dev, o seed do perfil `local` cria `coordinator@test.com`. Sem endpoint de criação: são poucas contas, e endpoint novo é superfície de ataque.
+- Login separado: `POST /users/coordinator/login` só aceita coordenador; `/users/login` só aceita mentor e mentee. No app, `/coordination/login`, sem link em nenhuma página.
 - Coordenador não tem perfil em `customer`. O core já recusa `/customers/me` para tipo diferente de MENTOR/MENTEE (`TOKEN_WITHOUT_USER_TYPE`); manter e testar.
 - Endpoints de coordenação no core: `@PreAuthorize("hasRole('COORDINATOR')")` (o `auth-shared` já liga `@EnableMethodSecurity`).
 
@@ -175,7 +176,7 @@ Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResp
 
 #### 2.6 E-mail
 
-- E-mail do participante: o core ainda não guarda. Nova coluna `customer.email`, preenchida com o `username` do token (o e-mail do login, já normalizado no auth) ao criar o perfil e em cada `GET`/`PUT /customers/me`. Isso cobre perfis antigos sem pedir nada ao usuário.
+- E-mail do participante: coluna `customer.email`, preenchida com o `username` do token (o e-mail do login, já normalizado no auth) a cada `POST`/`PUT` do perfil. Perfis antigos ganham o e-mail no próximo salvamento, que a V5 já exige (e o matching só considera quem aceitou os termos vigentes, ou seja, quem salvou).
 - E-mail da coordenação: `mentormentee.coordination.email` (caixa compartilhada, muda por ambiente).
 - Envio com `spring-boot-starter-mail` (SMTP). Em dev, Mailpit no `docker-compose.yml` para ver os e-mails sem enviar de verdade.
 - Tabela `email_outbox` (`id`, `to`, `subject`, `body`, `created_at`, `sent_at`, `attempts`, `last_error`), gravada na mesma transação da mudança de estado. Tarefa `@Scheduled` envia e tenta de novo em caso de falha. Assim um SMTP fora do ar não desfaz o aceite nem perde o e-mail. Com várias réplicas: `SELECT ... FOR UPDATE SKIP LOCKED`.
@@ -192,11 +193,11 @@ Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResp
 
 #### 2.8 Ordem de entrega
 
-1. Auth: `COORDINATOR`, bloqueio no cadastro, script de promoção. Testes: cadastro com `COORDINATOR` recusado, token do coordenador com `ROLE_COORDINATOR`. **Feito em 2026-11-10:** `RegisterResource.SignUpType` só aceita MENTOR e MENTEE; `scripts/promote-coordinator.sh`; teste no core de que coordenador não cria perfil. O app ainda não conhece o papel (passo 6).
-2. Core: migração com `cohort`, `mentorship`, `customer.email` e `email_outbox`. Endpoints de ciclo. Testes: só coordenador acessa `/coordination/**`.
+1. Auth: `COORDINATOR`, bloqueio no cadastro, criação de conta. Testes: cadastro com `COORDINATOR` recusado, token do coordenador com `ROLE_COORDINATOR`. **Feito em 2026-11-10:** `RegisterResource.SignUpType` só aceita MENTOR e MENTEE; teste no core de que coordenador não cria perfil. Também feito: `POST /users/coordinator/login` só aceita coordenador, e `/users/login` recusa coordenador; contas criadas por `mentor-mentee-auth/scripts/create-coordinator.sh` e, em dev, pelo seed `coordinator@test.com`; app com página `/coordination/login` sem link, rotas por papel (`AuthLayout roles`) e página `/coordination` provisória.
+2. Core: migração com `cohort` e `customer.email`. Endpoints de ciclo. Testes: só coordenador acessa `/coordination/**`. **Feito em 2026-11-10:** V7 com `cohort` (sem sobreposição de datas garantida por restrição de exclusão no banco, limite de 20 pares por `CHECK`) e `customer.email`; `/coordination/cohorts` (listar, ver, criar, editar; sem apagar); 403 com `core.access.denied` para mentor e mentee. As tabelas `mentorship` e `email_outbox` passaram para os passos 4 e 5, junto com o código que as usa. Tradução dos novos códigos de erro no app fica para o passo 6.
 3. Matching com filtros duros e lista de inscritos sem par. Testes unitários dos filtros; integração da consulta de disponibilidade.
-4. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima.
-5. Outbox, envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite.
+4. Migração com `mentorship`. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima.
+5. Migração com `email_outbox`. Envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite.
 6. App: painel do coordenador, tela de candidatos, tela de proposta.
 
 Critério de pronto: coordenador cria o ciclo, abre um mentee, vê só candidatos com idioma comum e preferência atendida, propõe; mentor e mentee veem o perfil anônimo, aceitam, e os dois recebem o e-mail de apresentação no Mailpit.
