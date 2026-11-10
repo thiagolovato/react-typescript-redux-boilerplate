@@ -27,6 +27,20 @@ const FILLED = {
 /** Text inputs by accessible name. Their label text also holds the required mark, so getByLabel(exact) misses. */
 const textboxByName = (page: Page, name: string) => page.getByRole('textbox', { name, exact: true });
 
+/** The research consent checkbox. The research text in force shows above it. */
+const researchCheckbox = (page: Page) => page.getByLabel(profileText.consent.researchAgree);
+
+/** The mentee's "mentor genders you accept" checkbox group. */
+const preferredMentorGenders = (page: Page) =>
+  page.getByRole('group', { name: profileText.preferredMentorGenders });
+
+/** One gender of the group above, by its gender option (WOMAN, NON_BINARY...). */
+const preferredMentorGender = (page: Page, gender: keyof typeof profileText.genders) =>
+  preferredMentorGenders(page).getByLabel(profileText.genders[gender], { exact: true });
+
+// A mentee in the tests accepts these mentor genders (3.10).
+const ACCEPTED_MENTOR_GENDERS = ['WOMAN', 'NON_BINARY'] as const;
+
 const clickSave = (page: Page) => page.getByRole('button', { name: en.common.save }).click();
 
 const removeLanguageButton = (page: Page, language: string) =>
@@ -75,7 +89,7 @@ test.describe('profile form', () => {
   test('mentee form shows mentee fields only (3.7)', async ({ page }) => {
     await signUpAndOpenProfile(page, 'MENTEE');
     await expect(page.getByText(profileText.intro.MENTEE)).toBeVisible();
-    await expect(page.getByLabel(profileText.preferredMentorGender)).toBeVisible();
+    await expect(preferredMentorGenders(page)).toBeVisible();
     await expect(page.getByLabel(profileText.hasMentorshipExperience)).toHaveCount(0);
     await expect(page.getByLabel(profileText.hasMentorshipTraining)).toHaveCount(0);
     await expect(page.getByLabel(profileText.acceptedBackgrounds)).toHaveCount(0);
@@ -87,13 +101,15 @@ test.describe('profile form', () => {
     await expect(page.getByLabel(profileText.hasMentorshipExperience)).toBeVisible();
     await expect(page.getByLabel(profileText.hasMentorshipTraining)).toBeVisible();
     await expect(page.getByLabel(profileText.acceptedBackgrounds)).toBeVisible();
-    await expect(page.getByLabel(profileText.preferredMentorGender)).toHaveCount(0);
+    await expect(preferredMentorGenders(page)).toHaveCount(0);
   });
 
-  test('mentee needs a language, an interest area and the terms; then saves and sees it again (3.2, 4.1)', async ({ page }) => {
+  test('mentee needs a language, an interest area and the terms; then saves and sees it again (3.2, 3.10, 4.1)', async ({ page }) => {
     await signUpAndOpenProfile(page, 'MENTEE');
     await fillRequiredFieldsExceptLists(page, 'MENTEE');
-    await page.getByLabel(profileText.preferredMentorGender).selectOption(FILLED.gender);
+    for (const gender of ACCEPTED_MENTOR_GENDERS) {
+      await preferredMentorGender(page, gender).check();
+    }
     await page.getByLabel(profileText.consent.acceptTerms).check();
 
     await clickSave(page);
@@ -112,11 +128,14 @@ test.describe('profile form', () => {
     await page.goto(PROFILE_PATH);
     await expect(textboxByName(page, profileText.name)).toHaveValue(FILLED.name);
     await expect(textboxByName(page, profileText.city)).toHaveValue(FILLED.city);
-    await expect(page.getByLabel(profileText.preferredMentorGender)).toHaveValue(FILLED.gender);
+    for (const gender of ACCEPTED_MENTOR_GENDERS) {
+      await expect(preferredMentorGender(page, gender)).toBeChecked();
+    }
+    await expect(preferredMentorGender(page, 'MAN')).not.toBeChecked();
     await expect(removeLanguageButton(page, 'English')).toBeVisible();
     await expect(page.getByLabel(area)).toBeChecked();
     await expect(page.getByLabel(profileText.consent.acceptTerms)).toHaveCount(0);
-    await expect(page.getByLabel(profileText.consent.research)).not.toBeChecked();
+    await expect(researchCheckbox(page)).not.toBeChecked();
   });
 
   test('mentor saves with research consent and edits the profile later (3.2, 4.3)', async ({ page }) => {
@@ -126,13 +145,13 @@ test.describe('profile form', () => {
     await addLanguage(page, 'Spanish');
     await checkFirstInterestArea(page);
     await page.getByLabel(profileText.consent.acceptTerms).check();
-    await page.getByLabel(profileText.consent.research).check();
+    await researchCheckbox(page).check();
     await clickSave(page);
     await expectOnDashboard(page);
 
     await page.goto(PROFILE_PATH);
     await expect(page.getByLabel(profileText.hasMentorshipExperience)).toBeChecked();
-    await expect(page.getByLabel(profileText.consent.research)).toBeChecked();
+    await expect(researchCheckbox(page)).toBeChecked();
     const newProfession = 'Surgeon';
     await textboxByName(page, profileText.profession.MENTOR).fill(newProfession);
     await clickSave(page);

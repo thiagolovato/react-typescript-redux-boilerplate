@@ -9,7 +9,8 @@
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "seed:dev": "playwright test --config e2e/seed/seed.config.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.14.0",

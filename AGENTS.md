@@ -14,7 +14,7 @@ src/
   service/request/     All HTTP calls (api.ts)
   redux/               Store, typed hooks, reducers (slices)
   types/               API and domain types
-  constants/           Shared constants (colors)
+  constants/           Shared constants (colors, limits, error codes the app reacts to)
   i18n/                i18next setup and locales (pt-BR.json, en-US.json)
   hooks/               Shared hooks
 .docker/               Dockerfile, nginx.conf and docker-compose.yml
@@ -36,6 +36,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 - Show it with `ApiErrorAlert`. It translates the server `code` (`<service>.<context>.<error>`) from `apiErrors.problems`; `fallback` covers network errors, server errors and codes without a translation.
 - Show field errors next to their input: `fieldErrorOf(error, 'address.city')` and `useFieldErrorText()`, which looks up `apiErrors.fields.<service>.<field>.<code>` (pass `error.service`, the first segment of the problem `code`), then `apiErrors.codes.<code>`, fills `params` (`{{min}}`, `{{max}}`) and falls back to the server text. `Size` uses `Size.min`, `Size.max` or `Size.range`. Pass those fields as `inlineFields` so the alert does not repeat them.
 - A new backend code needs its text in both locales.
+- A code the app reacts to (beyond showing it) goes in `constants/errorCodes.ts`; the end-to-end tests import it from there.
 - Check the same rules as the backend before sending. Shared limits live in `constants/` with a comment naming the backend rule.
 
 ## TypeScript standards
@@ -83,7 +84,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 - **Retries only for idempotent requests.** `axios-retry` retries `GET`, `PUT` and `DELETE` on network errors, `429` and `5xx`, never `POST` (a retried sign-up could create two accounts, a retried login count twice).
 - **Persisted session, flushed on logout.** redux-persist keeps only `isAuthenticated`, `token` and `user`, never `loading` or `error`. Logout awaits `persistor.flush()` before leaving the page; without it, a reload right after logout restores the old session.
 - **Same limits as the server.** Limits shared with the backend live in `src/constants/` (`auth.ts`, `profileOptions.ts`, `legal.ts`), each with a comment naming the backend rule. The end-to-end tests import the same constants, so a change shows up in one place.
-- **Terms version in two places.** `TERMS_VERSION` in `constants/legal.ts` must equal `mentormentee.consent.terms-version` in core. Changing it asks everyone to accept again on their next save.
+- **Consent texts from the server.** Terms and research texts come from `GET /mmc/consents/current` (`useConsentDocuments`), in the core language code mapped from the interface language (`CONSENT_LANGUAGE_BY_UI_LANGUAGE`). The profile shows the research text above its checkbox. The save sends the ids of the documents shown; on `core.consent.outdated` or `core.profile.termsNotAccepted` (a new version came into force while the page was open) it loads the new text and asks again. Never put consent text in the locale files.
 - **Dev-only pages.** `/design-system` exists only when `import.meta.env.DEV` is true; production builds drop the route and its chunk.
 
 ## How to add a page
@@ -97,7 +98,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 ## Tests
 
-End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in REGRAS_DE_NEGOCIO.md.
+End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. `npm run seed:dev` fills the local stack with mentors and mentees to try by hand. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in REGRAS_DE_NEGOCIO.md.
 
 There is no unit test runner yet. When you add one, use Vitest with React Testing Library:
 

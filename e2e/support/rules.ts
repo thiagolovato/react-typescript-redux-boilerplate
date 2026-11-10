@@ -2,7 +2,6 @@
 // The app already has some of them; the others mirror backend constants named next to each one.
 export { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../src/constants/auth';
 export { MAX_AGE, MIN_AGE, MIN_GRADUATION_YEAR } from '../../src/constants/profileOptions';
-export { TERMS_VERSION } from '../../src/constants/legal';
 
 /** LoginAttemptService.MAX_ATTEMPTS_PER_ACCOUNT in mentor-mentee-auth. */
 export const MAX_FAILED_LOGINS_PER_ACCOUNT = 5;

@@ -41,8 +41,8 @@ export interface ProfileRequest {
   expectations: string;
   goals: string;
   contactPreference: ContactPreference;
-  /** Mentee only. Empty means no preference. */
-  preferredMentorGender: string;
+  /** Mentee only: genders of mentor the mentee accepts. Empty means no preference. */
+  preferredMentorGenders: string[];
   otherPartyPreferences: string;
   /** Mentor only. */
   acceptedBackgrounds: string;
@@ -52,9 +52,13 @@ export interface ProfileRequest {
   hasMentorshipTraining: boolean;
   /** Mentor only. */
   hasMentorshipExperience: boolean;
-  /** Required on create and whenever `termsAccepted` comes back false. */
-  acceptTerms: boolean;
+  /** Id of the terms document accepted with this save. Required on create and whenever `termsAccepted` is false. */
+  acceptedTermsDocumentId: number | null;
   researchConsent: boolean;
+  /** Id of the research consent document the person answered. */
+  researchDocumentId: number;
+  /** Core language code of the consent texts the person read, such as `pt_BR`. */
+  consentLanguage: string;
 }
 
 /**
@@ -79,14 +83,14 @@ export interface Profile {
   expectations: string;
   goals: string | null;
   contactPreference: ContactPreference | null;
-  preferredMentorGender: string | null;
+  preferredMentorGenders: string[];
   otherPartyPreferences: string | null;
   acceptedBackgrounds: string | null;
   additionalInfo: string | null;
   interestAreaIds: number[];
   hasMentorshipTraining: boolean;
   hasMentorshipExperience: boolean;
-  /** False when the person has not accepted the current terms version. */
+  /** False when the person has not accepted the terms document in force. */
   termsAccepted: boolean;
   researchConsent: boolean;
 }

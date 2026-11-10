@@ -3,6 +3,7 @@ import axiosRetry from 'axios-retry';
 import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import { toApiRequestError } from './apiError';
 import type { InterestGroup, Profile, ProfileRequest } from '../../types/profile';
+import type { ConsentDocument } from '../../types/consent';
 
 // Set per environment: .env.development for `npm run dev`, a build arg for the Docker image.
 const GATEWAY_BASE_URL = import.meta.env.VITE_API_URL;
@@ -197,6 +198,19 @@ export const referenceDataService = {
   getInterestGroups: async (): Promise<InterestGroup[]> => {
     try {
       return await httpClient.get<InterestGroup[]>(`${API_ROUTES.core}/interest-groups`, authHeader());
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+};
+
+export const consentService = {
+  /** Terms and research consent in force, in a core language code (`pt_BR`). Public: no token needed. */
+  getCurrent: async (language: string): Promise<ConsentDocument[]> => {
+    try {
+      return await httpClient.get<ConsentDocument[]>(
+          `${API_ROUTES.core}/consents/current?${new URLSearchParams({ language })}`,
+      );
     } catch (error) {
       throw toApiRequestError(error);
     }

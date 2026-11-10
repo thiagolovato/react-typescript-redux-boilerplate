@@ -1,5 +1,7 @@
 import { expect, type APIRequestContext } from '@playwright/test';
-import { DEFAULT_PASSWORD, GATEWAY_URL, TEST_EMAIL_DOMAIN } from './env';
+import { DEFAULT_PASSWORD, GATEWAY_URL, TEST_EMAIL_DOMAIN, TEST_LOCALE } from './env';
+import { CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/legal';
+import type { ConsentDocument } from '../../src/types/consent';
 import { HTTP_STATUS } from './http';
 import { ADULT_AGE, birthDateForAge } from './dates';
 import { randomSuffix } from './random';
@@ -75,8 +77,48 @@ export async function fetchInterestAreaIds(
   return groups.flatMap((group) => group.areas.map((area) => area.id)).slice(0, count);
 }
 
-/** A complete, valid profile request. Override fields to break one rule at a time. */
-export function profileRequest(areaIds: number[], overrides: Record<string, unknown> = {}) {
+/** Core language code of the consent texts the tests read (the English interface). */
+export const CONSENT_LANGUAGE = CONSENT_LANGUAGE_BY_UI_LANGUAGE[TEST_LOCALE];
+
+/** Calls the public endpoint for the consent documents in force and returns the raw response. */
+export function requestCurrentConsents(request: APIRequestContext, language: string) {
+  return request.get(`${CORE}/consents/current`, { params: { language } });
+}
+
+/** Fetches the terms and research consent documents in force, by kind. */
+export async function fetchCurrentConsents(request: APIRequestContext, language = CONSENT_LANGUAGE) {
+  const response = await requestCurrentConsents(request, language);
+  expect(response.status(), await response.text()).toBe(HTTP_STATUS.OK);
+  const documents: ConsentDocument[] = await response.json();
+  const byKind = (kind: ConsentDocument['kind']) => {
+    const document = documents.find((candidate) => candidate.kind === kind);
+    if (!document) throw new Error(`No ${kind} document in force`);
+    return document;
+  };
+  return { terms: byKind('TERMS'), research: byKind('RESEARCH') };
+}
+
+/** What every valid profile request needs from the server: interest area ids and the consent documents in force. */
+export interface ProfileReferences {
+  areaIds: number[];
+  termsDocumentId: number;
+  researchDocumentId: number;
+}
+
+export async function fetchProfileReferences(request: APIRequestContext, token: string): Promise<ProfileReferences> {
+  const { terms, research } = await fetchCurrentConsents(request);
+  return {
+    areaIds: await fetchInterestAreaIds(request, token),
+    termsDocumentId: terms.id,
+    researchDocumentId: research.id,
+  };
+}
+
+/**
+ * A complete, valid profile request that accepts the terms in force, read in English.
+ * Override fields to break one rule at a time.
+ */
+export function profileRequest(references: ProfileReferences, overrides: Record<string, unknown> = {}) {
   return {
     name: 'E2E Participant',
     birthDate: birthDateForAge(ADULT_AGE),
@@ -93,8 +135,10 @@ export function profileRequest(areaIds: number[], overrides: Record<string, unkn
     expectations: 'Guidance',
     goals: 'Grow',
     contactPreference: 'VIDEO_CALL',
-    interestAreaIds: areaIds,
-    acceptTerms: true,
+    interestAreaIds: references.areaIds,
+    acceptedTermsDocumentId: references.termsDocumentId,
+    researchDocumentId: references.researchDocumentId,
+    consentLanguage: CONSENT_LANGUAGE,
     ...overrides,
   };
 }

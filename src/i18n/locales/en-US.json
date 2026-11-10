@@ -147,7 +147,8 @@
       "saveProfile": "Failed to save profile",
       "loadInterestAreas": "Could not load the interest areas.",
       "languagesRequired": "Add at least one language.",
-      "interestAreasRequired": "Pick at least one interest area."
+      "interestAreasRequired": "Pick at least one interest area.",
+      "loadConsents": "Could not load the terms and the research consent. Reload the page to save."
     },
     "searchLanguage": "Type to search a language",
     "removeLanguage": "Remove {{language}}",
@@ -215,8 +216,8 @@
       "EMAIL": "E-mail",
       "NO_PREFERENCE": "No preference"
     },
-    "preferredMentorGender": "Mentor gender preference",
-    "noPreference": "No preference",
+    "preferredMentorGenders": "Mentor genders you accept",
+    "preferredMentorGendersHelp": "Tick every gender you would be comfortable with. Leave all unticked for no preference.",
     "acceptedBackgrounds": "Which backgrounds do you feel comfortable mentoring? (optional)",
     "acceptedBackgroundsHelp": "For example: nursing students, newly qualified doctors.",
     "otherPartyPreferences": {
@@ -230,7 +231,7 @@
       "readTerms": "Read the terms of use and privacy notice",
       "acceptTerms": "I have read and accept the terms of use and privacy notice",
       "termsChanged": "The terms changed since your last save. Accept the new version to save.",
-      "research": "I allow my answers to be used anonymously in research (optional, you can change it later)"
+      "researchAgree": "I agree to take part in the research described above"
     }
   },
   "roles": {
@@ -333,39 +334,10 @@
     }
   },
   "privacy": {
-    "title": "Terms of use and privacy",
     "version": "Version {{version}}",
     "back": "Back",
-    "sections": {
-      "programme": {
-        "title": "The programme",
-        "body": "Mentor-Mentee is a free, voluntary mentoring programme for health professionals and students. The coordination forms the pairs, follows the mentorships and issues the certificates."
-      },
-      "data": {
-        "title": "Data we collect",
-        "body": "Your account e-mail and password, and your profile answers: name, date of birth, gender, country and city, languages, education, profession, interest areas, contacts, preferences and open answers."
-      },
-      "use": {
-        "title": "How we use it",
-        "body": "To form pairs, contact you about the programme, follow the mentorships and issue certificates. We do not sell or share your data with third parties."
-      },
-      "access": {
-        "title": "Who sees your data",
-        "body": "Only the coordination sees your full profile. Your name and contacts are given to your pair only after you both accept the mentorship."
-      },
-      "research": {
-        "title": "Research (optional)",
-        "body": "If you allow it, your answers and evaluations may be used in research, always without identifying you. Without your permission, nothing of yours goes into research. You can change this choice in your profile at any time."
-      },
-      "rights": {
-        "title": "Your rights",
-        "body": "You can see and correct your data in your profile, and ask the coordination to delete it or end your participation."
-      },
-      "conduct": {
-        "title": "Taking part",
-        "body": "Mentor and mentee treat each other with respect and keep their conversations confidential. Either can end the mentorship with two weeks' written notice."
-      }
-    }
+    "loading": "Loading the terms...",
+    "loadError": "Could not load the terms. Try again later."
   },
   "apiErrors": {
     "checkFields": "Please fix the highlighted fields.",
@@ -455,6 +427,11 @@
         "token": {
           "missingUserId": "Invalid session. Please log in again.",
           "invalidUserType": "Invalid session. Please log in again."
+        },
+        "consent": {
+          "notFound": "The terms are not available right now. Try again later.",
+          "outdated": "The terms changed while you were on this page. Read the new version and accept it to save.",
+          "languageUnavailable": "The terms are not available in this language yet."
         }
       }
     }

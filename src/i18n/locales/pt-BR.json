@@ -147,7 +147,8 @@
       "saveProfile": "Falha ao salvar perfil",
       "loadInterestAreas": "Não foi possível carregar as áreas de interesse.",
       "languagesRequired": "Adicione pelo menos um idioma.",
-      "interestAreasRequired": "Escolha pelo menos uma área de interesse."
+      "interestAreasRequired": "Escolha pelo menos uma área de interesse.",
+      "loadConsents": "Não foi possível carregar os termos e o consentimento de pesquisa. Recarregue a página para salvar."
     },
     "searchLanguage": "Digite para buscar um idioma",
     "removeLanguage": "Remover {{language}}",
@@ -215,8 +216,8 @@
       "EMAIL": "E-mail",
       "NO_PREFERENCE": "Sem preferência"
     },
-    "preferredMentorGender": "Preferência de gênero do mentor",
-    "noPreference": "Sem preferência",
+    "preferredMentorGenders": "Gêneros de mentor que você aceita",
+    "preferredMentorGendersHelp": "Marque todos os gêneros com que você se sentiria à vontade. Deixe tudo desmarcado se não tiver preferência.",
     "acceptedBackgrounds": "Que formação você se sente confortável em mentorar? (opcional)",
     "acceptedBackgroundsHelp": "Por exemplo: estudantes de enfermagem, médicos recém-formados.",
     "otherPartyPreferences": {
@@ -230,7 +231,7 @@
       "readTerms": "Ler termos de uso e privacidade",
       "acceptTerms": "Li e aceito os termos de uso e a política de privacidade",
       "termsChanged": "Os termos mudaram desde a última vez. Aceite a nova versão para salvar.",
-      "research": "Autorizo o uso anônimo das minhas respostas em pesquisa (opcional, pode mudar depois)"
+      "researchAgree": "Concordo em participar da pesquisa descrita acima"
     }
   },
   "roles": {
@@ -333,39 +334,10 @@
     }
   },
   "privacy": {
-    "title": "Termos de uso e privacidade",
     "version": "Versão {{version}}",
     "back": "Voltar",
-    "sections": {
-      "programme": {
-        "title": "O programa",
-        "body": "O Mentor-Mentee é um programa de mentoria voluntário e gratuito para profissionais e estudantes de saúde. A coordenação forma os pares, acompanha as mentorias e emite os certificados."
-      },
-      "data": {
-        "title": "Dados que coletamos",
-        "body": "E-mail e senha da conta, e as respostas do perfil: nome, data de nascimento, gênero, país e cidade, idiomas, formação, profissão, áreas de interesse, contatos, preferências e respostas abertas."
-      },
-      "use": {
-        "title": "Para que usamos",
-        "body": "Para formar pares, falar com você sobre o programa, acompanhar as mentorias e emitir certificados. Não vendemos nem compartilhamos seus dados com terceiros."
-      },
-      "access": {
-        "title": "Quem vê seus dados",
-        "body": "Só a coordenação vê seu perfil completo. Seu nome e contatos só são passados ao seu par depois que vocês dois aceitarem a mentoria."
-      },
-      "research": {
-        "title": "Pesquisa (opcional)",
-        "body": "Se você autorizar, suas respostas e avaliações podem ser usadas em pesquisa, sempre sem identificar você. Sem autorização, nada seu entra na pesquisa. Você pode mudar essa escolha no perfil a qualquer momento."
-      },
-      "rights": {
-        "title": "Seus direitos",
-        "body": "Você pode ver e corrigir seus dados no perfil, e pedir à coordenação que os exclua ou que encerre sua participação."
-      },
-      "conduct": {
-        "title": "Participação",
-        "body": "Mentor e mentee tratam um ao outro com respeito e mantêm em sigilo o que é conversado. Qualquer um pode encerrar a mentoria avisando por escrito com duas semanas de antecedência."
-      }
-    }
+    "loading": "Carregando os termos...",
+    "loadError": "Não foi possível carregar os termos. Tente mais tarde."
   },
   "apiErrors": {
     "checkFields": "Corrija os campos destacados.",
@@ -455,6 +427,11 @@
         "token": {
           "missingUserId": "Sessão inválida. Entre novamente.",
           "invalidUserType": "Sessão inválida. Entre novamente."
+        },
+        "consent": {
+          "notFound": "Os termos não estão disponíveis agora. Tente mais tarde.",
+          "outdated": "Os termos mudaram enquanto você estava nesta página. Leia a nova versão e aceite para salvar.",
+          "languageUnavailable": "Os termos ainda não estão disponíveis neste idioma."
         }
       }
     }

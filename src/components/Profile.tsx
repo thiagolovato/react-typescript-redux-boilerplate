@@ -11,6 +11,9 @@ import { LanguagePicker } from './profile/LanguagePicker';
 import { InterestAreaPicker } from './profile/InterestAreaPicker';
 import { ContactsField } from './profile/ContactsField';
 import { CountrySelect } from './profile/CountrySelect';
+import { useConsentDocuments } from '../hooks/useConsentDocuments';
+import { ConsentText } from './legal/ConsentText';
+import { API_ERROR_CODES } from '../constants/errorCodes';
 import {
   CONTACT_PREFERENCES,
   GENDER_OPTIONS,
@@ -25,7 +28,8 @@ import type { ApiError } from '../types/api';
 import type { ContactPreference, CustomerType, Profile as ProfileData, ProfileRequest } from '../types/profile';
 
 // Numbers and choices are kept as typed text so the fields can be empty; they are converted on submit.
-type ProfileForm = Omit<ProfileRequest, 'graduationYear' | 'contactPreference' | 'acceptTerms'> & {
+type ConsentFields = 'acceptedTermsDocumentId' | 'researchDocumentId' | 'consentLanguage';
+type ProfileForm = Omit<ProfileRequest, 'graduationYear' | 'contactPreference' | ConsentFields> & {
   graduationYear: string;
   contactPreference: ContactPreference | '';
 };
@@ -58,7 +62,7 @@ const emptyForm: ProfileForm = {
   expectations: '',
   goals: '',
   contactPreference: '',
-  preferredMentorGender: '',
+  preferredMentorGenders: [],
   otherPartyPreferences: '',
   acceptedBackgrounds: '',
   additionalInfo: '',
@@ -85,7 +89,7 @@ function toForm(profile: ProfileData): ProfileForm {
     expectations: profile.expectations,
     goals: profile.goals ?? '',
     contactPreference: profile.contactPreference ?? '',
-    preferredMentorGender: profile.preferredMentorGender ?? '',
+    preferredMentorGenders: profile.preferredMentorGenders,
     otherPartyPreferences: profile.otherPartyPreferences ?? '',
     acceptedBackgrounds: profile.acceptedBackgrounds ?? '',
     additionalInfo: profile.additionalInfo ?? '',
@@ -139,6 +143,7 @@ function Profile() {
   const [apiError, setApiError] = useState<{ error: ApiError; fallbackKey: string } | null>(null);
   const fieldErrorText = useFieldErrorText();
   const [formData, setFormData] = useState<ProfileForm>(emptyForm);
+  const consents = useConsentDocuments();
   const [genderChoice, setGenderChoice] = useState('');
 
   const role: CustomerType = user?.customerType === 'MENTOR' ? 'MENTOR' : 'MENTEE';
@@ -179,6 +184,14 @@ function Profile() {
     setFormData((prev) => ({ ...prev, address: { ...prev.address, [name]: value } }));
   };
 
+  const togglePreferredMentorGender = (gender: string, accepted: boolean) =>
+    setFormData((prev) => ({
+      ...prev,
+      preferredMentorGenders: accepted
+        ? [...prev.preferredMentorGenders, gender]
+        : prev.preferredMentorGenders.filter((chosen) => chosen !== gender),
+    }));
+
   const handleGenderChoice = (choice: string) => {
     setGenderChoice(choice);
     update('gender', choice === GENDER_SELF_DESCRIBE ? '' : choice);
@@ -189,6 +202,11 @@ function Profile() {
 
     // Lists have no native "required"; check them here.
     setApiError(null);
+    const { TERMS: terms, RESEARCH: research } = consents.documents;
+    if (!terms || !research) {
+      setError('profile.errors.loadConsents');
+      return;
+    }
     if (formData.languages.length === 0) {
       setError('profile.errors.languagesRequired');
       return;
@@ -205,12 +223,25 @@ function Profile() {
         ...formData,
         graduationYear: Number(formData.graduationYear),
         contactPreference: formData.contactPreference as ContactPreference,
-        acceptTerms: termsAlreadyAccepted || acceptTerms,
+        // Accepting means the terms shown on this page, which the server checks are still in force.
+        acceptedTermsDocumentId: !termsAlreadyAccepted && acceptTerms ? terms.id : null,
+        researchDocumentId: research.id,
+        consentLanguage: consents.language,
       };
       await (profileExists ? profileService.update(request) : profileService.create(request));
       navigate('/dashboard');
     } catch (err) {
-      setApiError({ error: toApiError(err), fallbackKey: 'profile.errors.saveProfile' });
+      const apiErr = toApiError(err);
+      const termsChangedMeanwhile = apiErr.code === API_ERROR_CODES.core.consentOutdated
+        || apiErr.code === API_ERROR_CODES.core.termsNotAccepted;
+      if (termsChangedMeanwhile) {
+        // A newer text came into force while the page was open (sent outdated, or none because the old one
+        // was already accepted): show the new text and ask for the acceptance again.
+        setTermsAlreadyAccepted(false);
+        setAcceptTerms(false);
+        await consents.reload();
+      }
+      setApiError({ error: apiErr, fallbackKey: 'profile.errors.saveProfile' });
     } finally {
       setSaving(false);
     }
@@ -457,20 +488,23 @@ function Profile() {
                 <option key={option} value={option}>{t(`profile.contactPreferences.${option}`)}</option>
               ))}
             </Select>
-            {!isMentor && (
-              <Select
-                label={t('profile.preferredMentorGender')}
-                name="preferredMentorGender"
-                value={formData.preferredMentorGender}
-                onChange={handleInputChange}
-              >
-                <option value="">{t('profile.noPreference')}</option>
-                {PREFERRED_MENTOR_GENDER_OPTIONS.map((option) => (
-                  <option key={option} value={option}>{t(`profile.genders.${option}`)}</option>
-                ))}
-              </Select>
-            )}
           </div>
+          {!isMentor && (
+            <fieldset className="flex flex-col gap-2">
+              <legend className="text-sm font-medium">{t('profile.preferredMentorGenders')}</legend>
+              <p className="text-sm text-neutral-600">{t('profile.preferredMentorGendersHelp')}</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {PREFERRED_MENTOR_GENDER_OPTIONS.map((option) => (
+                  <Checkbox
+                    key={option}
+                    label={t(`profile.genders.${option}`)}
+                    checked={formData.preferredMentorGenders.includes(option)}
+                    onChange={(e) => togglePreferredMentorGender(option, e.target.checked)}
+                  />
+                ))}
+              </div>
+            </fieldset>
+          )}
           {isMentor && (
             <Input
               label={t('profile.acceptedBackgrounds')}
@@ -533,11 +567,19 @@ function Profile() {
               />
             </div>
           )}
+          <ApiErrorAlert error={consents.error} fallback={t('profile.errors.loadConsents')} />
+          {consents.documents.RESEARCH && (
+            <div className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4">
+              <h3 className="font-medium">{consents.documents.RESEARCH.title}</h3>
+              <ConsentText body={consents.documents.RESEARCH.body} />
+            </div>
+          )}
           <Checkbox
-            label={t('profile.consent.research')}
+            label={t('profile.consent.researchAgree')}
             name="researchConsent"
             checked={formData.researchConsent}
             onChange={handleInputChange}
+            disabled={!consents.documents.RESEARCH}
           />
         </FormSection>
 

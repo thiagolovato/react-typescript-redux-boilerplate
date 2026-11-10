@@ -40,6 +40,15 @@ Limits of the backend that shape the tests:
 - The server counts logins still in progress against the 5-per-account limit. Five logins of one account at the same moment lock it, so tests never log the coordinator in from every test.
 - One run makes about 25 failed logins on purpose. `--repeat-each 2` or more goes over the per-IP limit of 50 and the later repeats fail with "locked". Repeat single files instead.
 
+## Dev seed
+
+`npm run seed:dev` creates mentors and mentees in different situations, for trying the app by hand: experienced or new mentors, research yes, no or changed, consent texts read in Portuguese or English, the youngest allowed mentee, mentor gender preferences, people abroad, people who signed up without a profile, a mentor and a mentee in the same city. The list, with what each one is for, is in `seed/participants.ts`; the run prints it.
+
+- Accounts are `<handle>@seed.test`, password `password123`. The test cleanup deletes only `@e2e.test`, so they stay.
+- It goes through the API, so the same rules as the app apply. Running it again logs in and leaves existing profiles as they are.
+- On the local stack it also makes sure `coordinator@test.com` (password `coordinator`) exists.
+- Another environment: `E2E_GATEWAY_URL=https://<gateway> npm run seed:dev`.
+
 Other addresses or container names: see `support/env.ts` (`E2E_APP_URL`, `E2E_GATEWAY_URL`, `E2E_*_CONTAINER`).
 
 ## Layout of `support/`
@@ -53,6 +62,8 @@ Other addresses or container names: see `support/env.ts` (`E2E_APP_URL`, `E2E_GA
 | `ui.ts` | Locale texts, app routes and UI steps (login, sign-up, logout) |
 | `db.ts`, `testData.ts` | psql and redis-cli in the containers; test data setup and cleanup |
 | `dates.ts`, `random.ts` | Date and random-text helpers |
+
+`seed/` holds the dev seed (not tests): `participants.ts` (who), `dev-seed.ts` (how), `seed.config.ts` (its Playwright config).
 
 ## Writing tests
 

@@ -32,6 +32,7 @@ export function deleteTestData(): void {
        DELETE FROM core.customer_contacts WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_languages WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_interest_areas WHERE customer_id IN (SELECT id FROM gone);
+       DELETE FROM core.customer_preferred_mentor_gender WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_consent WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer WHERE id IN (SELECT id FROM gone);
        DELETE FROM core.customer_address WHERE id IN (SELECT address_id FROM gone);`,
