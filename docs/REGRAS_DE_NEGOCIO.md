@@ -53,10 +53,10 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 4. Consentimento
 
-1. Para salvar o perfil, a pessoa aceita a versão vigente dos termos de uso e da política de privacidade. Quando a versão muda, o próximo salvamento exige novo aceite. **[feito]**
-2. A versão dos termos é a mesma no core (`mentormentee.consent.terms-version`) e no app (`TERMS_VERSION`). **[feito]**
-3. O uso dos dados em pesquisa é opcional e separado dos termos. Não informado, mantém a escolha anterior; num perfil novo, vale "não". **[feito]**
-4. Cada decisão (termos ou pesquisa) vira uma linha nova, com versão e data. Linhas nunca são alteradas: o histórico mostra cada decisão uma vez. **[feito]**
+1. Para salvar o perfil, a pessoa aceita o documento de termos de uso e privacidade em vigor. Quando entra uma versão nova, o próximo salvamento exige novo aceite. Aceitar um documento que não está mais em vigor é recusado (409, `core.consent.outdated`): a pessoa lê a versão nova e aceita de novo. **[feito]**
+2. Os textos são versionados no banco do core. Cada versão (termos ou pesquisa) é um documento, com o texto em cada idioma: por enquanto `pt_BR` e `en_US`, da tabela de idiomas. Vale a versão mais recente já publicada. Texto publicado nunca muda (o banco recusa): texto novo é versão nova, criada por migração. O app mostra o texto vindo do servidor; a página de termos é pública. **[feito]**
+3. O uso dos dados em pesquisa é opcional e separado dos termos, com documento próprio. Não informado, mantém a escolha anterior; num perfil novo, vale "não". **[feito]**
+4. Cada decisão (termos ou pesquisa) vira uma linha nova, que aponta para o documento aceito e o idioma em que a pessoa leu, com a data. O texto fica guardado uma vez só, no documento. Linhas nunca são alteradas: o histórico mostra cada decisão uma vez. **[feito]**
 5. O consentimento de pesquisa não faz parte do acordo de mentoria. **[feito]**
 
 ## 5. Ciclo (cohort)
@@ -172,4 +172,4 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 | 5 | Qual código de ética vale (GPS-Pean ou ICF)? | Definir na revisão do acordo |
 | 6 | Em quais idiomas a interface precisa existir? | Inglês e português |
 | 7 | O aceite eletrônico simples basta como assinatura do acordo? | Sim |
-| 8 | Os textos de termos e privacidade estão aprovados? | Rascunho no app |
+| 8 | Os textos de termos e privacidade estão aprovados? | Rascunho publicado como versão `2026-11-10`; a versão aprovada entra como versão nova |

@@ -99,7 +99,9 @@ Feito: workflow `.github/workflows/ci.yml` em cada repositório; migração V4 c
 - Telas do app para os novos campos, em inglês e português.
 - Importar os cadastros existentes da planilha (script único, com consentimento dos participantes).
 
-Feito: migração V5 com os campos dos formulários e a tabela `customer_consent` (histórico de aceites); `GET /interest-groups`; formulário do perfil reescrito por papel, com áreas de interesse e aceite; página `/privacy`. Importação não foi necessária: as abas de inscrição da planilha estão vazias. Pendente: a coordenação revisar o texto de termos e privacidade (rascunho em `privacy` nos arquivos de idioma do app).
+Feito: migração V5 com os campos dos formulários e a tabela `customer_consent` (histórico de aceites); `GET /interest-groups`; formulário do perfil reescrito por papel, com áreas de interesse e aceite; página `/privacy`. Importação não foi necessária: as abas de inscrição da planilha estão vazias. Pendente: a coordenação revisar o texto de termos e privacidade.
+
+Depois (2026-11-10): consentimentos versionados no banco. Migração V8 com `consent_document` (uma linha por versão, termos ou pesquisa) e `consent_document_text` (texto por idioma, `pt_BR` e `en_US`, com SHA-256), protegidas contra alteração por trigger. `customer_consent` aponta para o documento e o idioma lido, em vez de guardar uma versão em texto. `GET /consents/current?language=` público. O app lê os textos do servidor (página `/privacy` e consentimento de pesquisa); `TERMS_VERSION` e `mentormentee.consent.terms-version` deixaram de existir. O rascunho atual é a versão `2026-11-10`; o texto aprovado pela coordenação entra como versão nova, por migração. O acordo da Fase 3 pode usar a mesma estrutura em vez de `agreement_version`.
 
 ### Fase 2 — Coordenação e proposta de par (3 semanas)
 
