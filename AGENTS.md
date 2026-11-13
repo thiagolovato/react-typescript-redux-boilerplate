@@ -64,6 +64,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 - No magic strings or numbers. Name them in UPPER_SNAKE_CASE at module top (`GATEWAY_BASE_URL`, `API_ROUTES`), with `as const` for fixed maps.
 - Constants shared across modules go in `src/constants/`.
+- Page paths come from `APP_ROUTES` in `constants/routes.ts`, in routes, links, `navigate()` and redirects alike. Never type a path as a string.
 - Colors come from the design system (`constants/colors.ts`, Tailwind theme). No hex values in components.
 
 ### Components
@@ -93,7 +94,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 1. Add the types in `types/`.
 2. Add the API calls to the domain's `service/request/<domain>Service.ts` (new domain: new file, exported from `index.ts`).
 3. Add the component in `components/`, built from `components/ui/`.
-4. Add the route in `App.tsx`. Wrap it with `withAuthentication` if it needs login.
+4. Add the path to `APP_ROUTES` in `constants/routes.ts` and the route in `App.tsx`. Wrap it with `withAuthentication` if it needs login.
 5. Add every text key to both locale files.
 6. Run `npm run lint` and `npm run build`.
 

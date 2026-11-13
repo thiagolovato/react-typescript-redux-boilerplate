@@ -7,6 +7,7 @@ import { useI18n } from '../../hooks/useI18n';
 import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
 import { loginPathFor } from '../../constants/auth';
+import { APP_ROUTES } from '../../constants/routes';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -14,12 +15,12 @@ interface SidebarProps {
 }
 
 const participantNavItems = [
-  { to: '/dashboard', Icon: HomeIcon, label: 'navigation.dashboard' },
-  { to: '/profile', Icon: UserIcon, label: 'navigation.profile' },
+  { to: APP_ROUTES.dashboard, Icon: HomeIcon, label: 'navigation.dashboard' },
+  { to: APP_ROUTES.profile, Icon: UserIcon, label: 'navigation.profile' },
 ] as const;
 
 const coordinatorNavItems = [
-  { to: '/coordination', Icon: HomeIcon, label: 'navigation.coordination' },
+  { to: APP_ROUTES.coordination, Icon: HomeIcon, label: 'navigation.coordination' },
 ] as const;
 
 export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {

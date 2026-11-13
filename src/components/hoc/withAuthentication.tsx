@@ -3,6 +3,7 @@ import { Navigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { validateToken, initializeAuth } from '../../redux/reducers/auth';
 import { useI18n } from '../../hooks/useI18n';
+import { APP_ROUTES } from '../../constants/routes';
 
 interface WithAuthenticationProps {
   requireAuth?: boolean;
@@ -21,7 +22,7 @@ const withAuthentication = <P extends object>(
 
     const {
       requireAuth = true,
-      redirectTo = '/login',
+      redirectTo = APP_ROUTES.login,
     } = options;
 
     useEffect(() => {

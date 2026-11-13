@@ -1,18 +1,20 @@
 import { expect, type Page } from '@playwright/test';
 import en from '../../src/i18n/locales/en-US.json' with { type: 'json' };
-import { COORDINATOR_LOGIN_PATH, homePathFor, LOGIN_PATH } from '../../src/constants/auth';
+import { homePathFor } from '../../src/constants/auth';
+import { APP_ROUTES } from '../../src/constants/routes';
 import type { Role } from './api';
 
 // The tests read texts from the English locale, so a copy change does not break them.
 export { en };
 
-// App routes. The login paths and home pages come from the app; the others have no constant there.
-export { COORDINATOR_LOGIN_PATH, LOGIN_PATH };
+// App routes, from the app's APP_ROUTES and home pages.
+export const LOGIN_PATH = APP_ROUTES.login;
+export const COORDINATOR_LOGIN_PATH = APP_ROUTES.coordinatorLogin;
 export const DASHBOARD_PATH = homePathFor('MENTOR');
 export const COORDINATION_PATH = homePathFor('COORDINATOR');
-export const REGISTER_PATH = '/register';
-export const PROFILE_PATH = '/profile';
-export const PRIVACY_PATH = '/privacy';
+export const REGISTER_PATH = APP_ROUTES.register;
+export const PROFILE_PATH = APP_ROUTES.profile;
+export const PRIVACY_PATH = APP_ROUTES.privacy;
 
 /** Matches a URL whose path ends with `path`. */
 export function urlEndsWith(path: string): RegExp {

@@ -26,6 +26,7 @@ import {
 } from '../constants/profileOptions';
 import type { ApiError } from '../types/api';
 import type { ContactPreference, CustomerType, Profile as ProfileData, ProfileRequest } from '../types/profile';
+import { APP_ROUTES } from '../constants/routes';
 
 // Numbers and choices are kept as typed text so the fields can be empty; they are converted on submit.
 type ConsentFields = 'acceptedTermsDocumentId' | 'researchDocumentId' | 'consentLanguage';
@@ -229,7 +230,7 @@ function Profile() {
         consentLanguage: consents.language,
       };
       await (profileExists ? profileService.update(request) : profileService.create(request));
-      navigate('/dashboard');
+      navigate(APP_ROUTES.dashboard);
     } catch (err) {
       const apiErr = toApiError(err);
       const termsChangedMeanwhile = apiErr.code === API_ERROR_CODES.core.consentOutdated
@@ -549,7 +550,7 @@ function Profile() {
           <p className="text-sm text-neutral-600">
             {t('profile.consent.summary')}{' '}
             <Link
-              to="/privacy"
+              to={APP_ROUTES.privacy}
               target="_blank"
               className="font-medium text-primary-700 underline underline-offset-2"
             >
@@ -595,7 +596,7 @@ function Profile() {
         />
 
         <div className="flex justify-end gap-4">
-          <Button variant="outline" onClick={() => navigate('/dashboard')} disabled={saving}>
+          <Button variant="outline" onClick={() => navigate(APP_ROUTES.dashboard)} disabled={saving}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" isLoading={saving}>
@@ -609,5 +610,5 @@ function Profile() {
 
 export default withAuthentication(Profile, {
   requireAuth: true,
-  redirectTo: '/login',
+  redirectTo: APP_ROUTES.login,
 });

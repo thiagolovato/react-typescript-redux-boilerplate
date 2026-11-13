@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearError, loginUser } from '../../redux/reducers/auth';
 import { AuthCard } from './AuthCard';
 import { homePathFor } from '../../constants/auth';
+import { APP_ROUTES } from '../../constants/routes';
 
 interface LoginProps {
   /** The coordinator login: other texts, no sign-up link, and the server only accepts coordinator accounts. */
@@ -113,7 +114,7 @@ export function Login({ coordinator = false }: LoginProps) {
       {!coordinator && (
         <p className="text-sm text-neutral-600">
           {t('auth.login.noAccount')}{' '}
-          <Link to="/register" className="font-medium text-primary-700 underline-offset-2 hover:underline">
+          <Link to={APP_ROUTES.register} className="font-medium text-primary-700 underline-offset-2 hover:underline">
             {t('auth.login.createAccount')}
           </Link>
         </p>

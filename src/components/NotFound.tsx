@@ -4,6 +4,7 @@ import { Bird, LanguageToggle } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import { useAppSelector } from '../redux/hooks';
 import { homePathFor } from '../constants/auth';
+import { APP_ROUTES } from '../constants/routes';
 
 /**
  * Page for any unknown address. The mentee bird has flown off the branch and circles the 0; the mentor waits on
@@ -13,7 +14,7 @@ export function NotFound() {
   const { t } = useI18n();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [isBirdHome, setIsBirdHome] = useState(false);
-  const homePath = isAuthenticated ? homePathFor(user?.customerType) : '/';
+  const homePath = isAuthenticated ? homePathFor(user?.customerType) : APP_ROUTES.root;
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-16

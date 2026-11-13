@@ -4,6 +4,7 @@ import { Button, CalendarIcon, SearchIcon, UserIcon } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import { useAppSelector } from '../redux/hooks';
 import withAuthentication from './hoc/withAuthentication';
+import { APP_ROUTES } from '../constants/routes';
 
 type CardTone = 'neutral' | 'mentor' | 'mentee' | 'bridge';
 
@@ -55,7 +56,7 @@ function Dashboard() {
             title={t('dashboard.myProfile')}
             description={t('dashboard.myProfileDescription')}
           >
-            <Button variant="outline" onClick={() => navigate('/profile')}>
+            <Button variant="outline" onClick={() => navigate(APP_ROUTES.profile)}>
               {t('dashboard.myProfileButton')}
             </Button>
           </ActionCard>
@@ -99,7 +100,7 @@ function Dashboard() {
 
 const AuthDashboard = withAuthentication(Dashboard, {
   requireAuth: true,
-  redirectTo: '/login',
+  redirectTo: APP_ROUTES.login,
 });
 
 export { AuthDashboard as Dashboard };

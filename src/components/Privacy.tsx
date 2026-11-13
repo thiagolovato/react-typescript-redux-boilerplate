@@ -3,6 +3,7 @@ import { ApiErrorAlert, LanguageToggle } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import { useConsentDocuments } from '../hooks/useConsentDocuments';
 import { ConsentText } from './legal/ConsentText';
+import { APP_ROUTES } from '../constants/routes';
 
 /** Terms of use and privacy notice in force, from the server. Public: people read it before they register. */
 export function Privacy() {
@@ -26,7 +27,7 @@ export function Privacy() {
           </article>
         </>
       )}
-      <Link to="/" className="self-start font-medium text-primary-700 underline-offset-2 hover:underline">
+      <Link to={APP_ROUTES.root} className="self-start font-medium text-primary-700 underline-offset-2 hover:underline">
         {t('privacy.back')}
       </Link>
     </main>

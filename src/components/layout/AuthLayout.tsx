@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Navigate, Outlet } from 'react-router';
 import { useAppSelector } from '../../redux/hooks';
 import { Sidebar } from './Sidebar';
-import { COORDINATOR_LOGIN_PATH, homePathFor, LOGIN_PATH } from '../../constants/auth';
+import { homePathFor } from '../../constants/auth';
+import { APP_ROUTES } from '../../constants/routes';
 import type { CustomerType } from '../../types/auth/register';
 
 interface AuthLayoutProps {
@@ -17,7 +18,7 @@ export function AuthLayout({ roles }: AuthLayoutProps) {
   const forCoordinators = roles.includes('COORDINATOR');
 
   if (!isAuthenticated) {
-    return <Navigate to={forCoordinators ? COORDINATOR_LOGIN_PATH : LOGIN_PATH} replace />;
+    return <Navigate to={forCoordinators ? APP_ROUTES.coordinatorLogin : APP_ROUTES.login} replace />;
   }
 
   // A session without a role (older token) keeps the mentor and mentee pages, as before.

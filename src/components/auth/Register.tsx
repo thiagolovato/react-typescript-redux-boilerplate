@@ -9,6 +9,7 @@ import type { SignUpType } from '../../types/auth/register';
 import { fieldErrorOf } from '../../service/request/apiError';
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH } from '../../constants/auth';
 import { AuthCard } from './AuthCard';
+import { APP_ROUTES } from '../../constants/routes';
 
 type RegisterErrors = {
   email?: string;
@@ -63,7 +64,7 @@ export function Register() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate(APP_ROUTES.dashboard);
     }
   }, [isAuthenticated, navigate]);
 
@@ -216,7 +217,7 @@ export function Register() {
             }}
           />
           <Link
-            to="/privacy"
+            to={APP_ROUTES.privacy}
             target="_blank"
             className="ml-7 text-sm font-medium text-primary-700 underline-offset-2 hover:underline"
           >
@@ -236,7 +237,7 @@ export function Register() {
 
       <p className="text-sm text-neutral-600">
         {t('auth.register.hasAccount')}{' '}
-        <Link to="/login" className="font-medium text-primary-700 underline-offset-2 hover:underline">
+        <Link to={APP_ROUTES.login} className="font-medium text-primary-700 underline-offset-2 hover:underline">
           {t('auth.register.loginHere')}
         </Link>
       </p>

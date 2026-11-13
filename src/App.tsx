@@ -8,7 +8,7 @@ import { Privacy } from './components/Privacy';
 import { AuthLayout } from './components/layout/AuthLayout';
 import { Coordination } from './components/Coordination';
 import { NotFound } from './components/NotFound';
-import { COORDINATOR_LOGIN_PATH } from './constants/auth';
+import { APP_ROUTES } from './constants/routes';
 
 // Dev-only reference page. Vite replaces import.meta.env.DEV with false in production builds,
 // so the route and its lazy chunk are dropped from the bundle.
@@ -19,22 +19,22 @@ const DesignSystem = import.meta.env.DEV
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path={APP_ROUTES.root} element={<Login />} />
+      <Route path={APP_ROUTES.login} element={<Login />} />
+      <Route path={APP_ROUTES.register} element={<Register />} />
       {/* Not linked from anywhere. Coordinators get the address directly. */}
-      <Route path={COORDINATOR_LOGIN_PATH} element={<Login coordinator />} />
-      <Route path="/privacy" element={<Privacy />} />
+      <Route path={APP_ROUTES.coordinatorLogin} element={<Login coordinator />} />
+      <Route path={APP_ROUTES.privacy} element={<Privacy />} />
       {DesignSystem && (
-        <Route path="/design-system" element={<Suspense><DesignSystem /></Suspense>} />
+        <Route path={APP_ROUTES.designSystem} element={<Suspense><DesignSystem /></Suspense>} />
       )}
       {/* Authenticated Routes */}
       <Route element={<AuthLayout roles={['MENTOR', 'MENTEE']} />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path={APP_ROUTES.dashboard} element={<Dashboard />} />
+        <Route path={APP_ROUTES.profile} element={<Profile />} />
       </Route>
       <Route element={<AuthLayout roles={['COORDINATOR']} />}>
-        <Route path="/coordination" element={<Coordination />} />
+        <Route path={APP_ROUTES.coordination} element={<Coordination />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
