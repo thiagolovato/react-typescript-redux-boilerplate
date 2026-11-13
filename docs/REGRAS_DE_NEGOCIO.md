@@ -47,6 +47,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 4. Ano de formatura entre 1940 e 2100. **[feito]**
 5. Link profissional, se informado, começa com `http://` ou `https://`. **[feito]**
 6. Idiomas e áreas de interesse precisam existir nas tabelas de referência. Itens repetidos contam uma vez. **[feito]**
+7. As áreas de interesse têm nome em cada idioma da interface (inglês quando falta tradução) e mudam com o tempo. Uma área retirada sai do formulário e não pode ser escolhida de novo, mas continua no perfil de quem já a tinha e continua contando no matching. **[feito]**
 7. Campos só de mentor (experiência e treinamento em mentoria, formação que aceita mentorar) e só de mentee (gêneros de mentor aceitos) são ignorados quando enviados pelo outro papel. **[feito]**
 8. O e-mail de login fica guardado no perfil a cada salvamento, tirado do token. Ele é usado para enviar e-mails, não aparece na resposta e não pode ser enviado pelo usuário. **[feito]**
 9. Contatos (telefone, e-mail) e nome nunca aparecem para a outra parte antes do aceite do par (seção 7). **[feito]** para o perfil próprio; **[planejado: fase 2]** para a visão do par.
