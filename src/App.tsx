@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import { Privacy } from './components/Privacy';
 import { AuthLayout } from './components/layout/AuthLayout';
 import { Coordination } from './components/Coordination';
+import { NotFound } from './components/NotFound';
 import { COORDINATOR_LOGIN_PATH } from './constants/auth';
 
 // Dev-only reference page. Vite replaces import.meta.env.DEV with false in production builds,
@@ -35,6 +36,7 @@ function App() {
       <Route element={<AuthLayout roles={['COORDINATOR']} />}>
         <Route path="/coordination" element={<Coordination />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

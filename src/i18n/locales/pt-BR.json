@@ -435,5 +435,13 @@
         }
       }
     }
+  },
+  "notFound": {
+    "title": "Esta página voou do galho",
+    "description": "O endereço que você abriu não existe ou mudou de lugar. Volte ao início para continuar de onde parou.",
+    "back": "Voltar ao início",
+    "hint": "Toque no passarinho para chamá-lo de volta.",
+    "callBird": "Chamar o passarinho de volta ao galho",
+    "birdHome": "Ele voltou para o galho. Agora é a sua vez."
   }
 }

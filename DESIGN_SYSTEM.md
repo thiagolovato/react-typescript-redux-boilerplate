@@ -77,6 +77,8 @@ They live in `src/components/ui/` and use Tailwind classes only.
 
 ## Rules
 
-- No decorative keyframes. The only animation is the `isLoading` spinner (`animate-spin`).
+- No decorative keyframes. The only animation is the `isLoading` spinner (`animate-spin`). One exception: the 404
+  page (`NotFound.tsx`, `nf-*` classes in `src/index.css`), where the mentee bird circles the 0. It stops under
+  `prefers-reduced-motion`.
 - Global visible focus in `src/index.css` (`outline-primary-500`).
 - Write full class names in code. Tailwind does not detect names built at runtime.

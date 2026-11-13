@@ -435,5 +435,13 @@
         }
       }
     }
+  },
+  "notFound": {
+    "title": "This page flew off the branch",
+    "description": "The address you opened doesn't exist or has moved. Go back to the start to pick up where you left off.",
+    "back": "Go back to the start",
+    "hint": "Tap the little bird to call it back.",
+    "callBird": "Call the little bird back to the branch",
+    "birdHome": "It's back on the branch. Now it's your turn."
   }
 }
