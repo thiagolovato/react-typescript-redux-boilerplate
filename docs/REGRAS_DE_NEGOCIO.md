@@ -73,15 +73,16 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 6. Matching
 
-1. Só o coordenador vê sugestões de par. **[planejado: fase 2]**
-2. Um candidato só aparece se **[planejado: fase 2]**:
+1. Só o coordenador vê sugestões de par. **[feito]**
+2. Um candidato só aparece se **[feito]** para termos, idioma e gênero; **[planejado: fase 2]** para par aberto e limite do ciclo:
    - os dois aceitaram a versão vigente dos termos;
    - os dois têm pelo menos um idioma em comum;
    - o gênero do mentor está entre os que o mentee aceita, ou o mentee não tem preferência;
    - o mentee não tem par aberto (proposto, aceito ou ativo);
    - o mentor está abaixo do limite de mentees do ciclo.
-3. Entre os candidatos, a ordem vem de uma nota de 0 a 100, com o detalhe de cada critério: áreas de interesse em comum, localização, profissão e experiência do mentor em mentoria. Os pesos são configuráveis. **[feito]** para a nota; **[planejado: fase 2]** para o endpoint.
-4. Nível de formação não filtra: os campos são texto livre. O coordenador vê a formação do mentee e o que o mentor aceita, lado a lado, e decide. **[planejado: fase 2]**
+3. Entre os candidatos, a ordem vem de uma nota de 0 a 100, com o detalhe de cada critério: áreas de interesse em comum, localização, profissão e experiência do mentor em mentoria. Os pesos são configuráveis. **[feito]**
+4. Nível de formação não filtra: os campos são texto livre. O coordenador vê a formação do mentee e o que o mentor aceita, lado a lado, e decide. **[feito]**
+5. Na página de matching, o nome de cada mentor começa escondido, para a escolha partir do perfil. O coordenador pode mostrá-lo a qualquer momento. **[feito]**
 
 ## 7. Proposta e par
 
@@ -99,7 +100,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - **pode ver:** papel, país, região, profissão, ano de formatura, formação acadêmica, idiomas, áreas de interesse, motivação, objetivos, experiência e treinamento em mentoria;
    - **nunca vê:** nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.
 6. A cidade fica escondida porque, numa vila pequena, ela identifica a pessoa. **[planejado: fase 2]**
-7. A visão anônima vale só entre mentor e mentee. O coordenador vê o perfil completo, com nome, para saber quem é cada pessoa. Texto livre pode conter o nome: o coordenador confere antes de propor. **[feito]** para a lista de mentees sem mentor; **[planejado: fase 2]** para candidatos e proposta.
+7. A visão anônima vale só entre mentor e mentee. O coordenador vê o perfil completo, com nome, para saber quem é cada pessoa. Texto livre pode conter o nome: o coordenador confere antes de propor. **[feito]** para a lista de mentees sem mentor e os candidatos; **[planejado: fase 2]** para a proposta.
 8. Depois que os dois aceitam, cada um vê o perfil completo do outro, com contatos. **[planejado: fase 2]**
 
 ## 8. Acordo
