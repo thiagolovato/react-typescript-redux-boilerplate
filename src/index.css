@@ -88,6 +88,36 @@
   }
 }
 
+/* Bird (components/ui/Bird.tsx): wing beat while flying, and the loop the loading button shows. */
+@layer components {
+  .bird-flap {
+    transform-box: fill-box;
+    transform-origin: 85% 20%;
+    animation: bird-flap 160ms ease-in-out infinite alternate;
+  }
+
+  /* Counterclockwise circle. */
+  .bird-loop {
+    animation: bird-loop 1.1s linear infinite;
+  }
+}
+
+@keyframes bird-flap {
+  from { rotate: -10deg; }
+  to { rotate: 40deg; }
+}
+
+@keyframes bird-loop {
+  to { rotate: -360deg; }
+}
+
+/* The loop stays: it tells the user the button is working. Only the wing beat stops. */
+@media (prefers-reduced-motion: reduce) {
+  .bird-flap {
+    animation: none;
+  }
+}
+
 /*
  * 404 page (NotFound.tsx). The only decorative motion in the app: the mentee bird circles the 0 of 404 and the
  * mentor looks around on the branch. The orbit is two eased translations a quarter turn apart, which draws an
@@ -130,13 +160,7 @@
     animation: nf-face 3.2s step-end infinite;
   }
 
-  .nf-flap {
-    transform-box: fill-box;
-    transform-origin: 85% 20%;
-    animation: nf-flap 160ms ease-in-out infinite alternate;
-  }
-
-  .nf-flap-brief .nf-flap {
+  .nf-flap-brief .bird-flap {
     animation-iteration-count: 8;
   }
 
@@ -191,11 +215,6 @@
   from { opacity: 0; }
 }
 
-@keyframes nf-flap {
-  from { rotate: -10deg; }
-  to { rotate: 40deg; }
-}
-
 @keyframes nf-land {
   from { opacity: 0; translate: 2rem -9rem; }
 }
@@ -209,7 +228,6 @@
   .nf-orbit-x,
   .nf-orbit-y,
   .nf-face,
-  .nf-flap,
   .nf-land {
     animation: none;
   }

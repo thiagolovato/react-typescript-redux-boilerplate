@@ -73,12 +73,15 @@ They live in `src/components/ui/` and use Tailwind classes only.
 - `TextArea`: same options as `Input`, without icons and sizes.
 - `Select`, `Checkbox`, `LanguageToggle`.
 - `RoleBird`: `role` (`MENTOR`, `MENTEE`), `size` (`sm`, `md`). Decorative.
+- `Bird`: `role`, `flapping`. SVG bird drawn after the logo, for motion (`RoleBird` is a photo crop and shows its
+  paper square when it moves). Used by the loading button and the 404 page.
 - Icons in `icons.tsx`: line icons, 1.75 stroke. Use them instead of emoji.
 
 ## Rules
 
-- No decorative keyframes. The only animation is the `isLoading` spinner (`animate-spin`). One exception: the 404
-  page (`NotFound.tsx`, `nf-*` classes in `src/index.css`), where the mentee bird circles the 0. It stops under
-  `prefers-reduced-motion`.
+- No decorative keyframes. The only animation is the `isLoading` indicator: a bird flying a loop (`bird-loop`),
+  the mentee bird on every variant except `secondary` and `success`, which show the mentor bird (green on green
+  fades). One exception: the 404 page (`NotFound.tsx`, `nf-*` classes in `src/index.css`), where the mentee bird
+  circles the 0. It stops under `prefers-reduced-motion`.
 - Global visible focus in `src/index.css` (`outline-primary-500`).
 - Write full class names in code. Tailwind does not detect names built at runtime.

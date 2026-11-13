@@ -198,6 +198,8 @@ export function DesignSystem() {
             <div className="flex flex-wrap items-center gap-3">
               <Button leftIcon={<PlusIcon />}>{t('designSystem.demo.addContact')}</Button>
               <Button isLoading>{t('common.save')}</Button>
+              <Button variant="secondary" isLoading>{t('common.save')}</Button>
+              <Button variant="success" isLoading>{t('common.save')}</Button>
               <Button disabled>{t('designSystem.demo.disabled')}</Button>
               <Button variant="ghost" aria-label={t('common.remove')} title={t('common.remove')}>
                 <TrashIcon />

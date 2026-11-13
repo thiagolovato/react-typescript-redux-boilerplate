@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { LanguageToggle } from './ui';
-import { Bird } from './notFound/Bird';
+import { Bird, LanguageToggle } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import { useAppSelector } from '../redux/hooks';
 import { homePathFor } from '../constants/auth';

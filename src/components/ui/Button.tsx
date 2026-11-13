@@ -1,4 +1,5 @@
 import React from 'react';
+import { Bird } from './Bird';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'success' | 'warning' | 'error';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -50,12 +51,21 @@ export function Button({
       disabled={disabled || isLoading}
       aria-busy={isLoading || undefined}
       className={`inline-flex items-center justify-center gap-2 border font-medium
-        whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60
-        ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
+        whitespace-nowrap transition-colors disabled:cursor-not-allowed
+        ${isLoading ? '' : 'disabled:opacity-60'} ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...props}
     >
       {isLoading ? (
-        <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        // A bird doing a loop: it starts upright at the bottom and turns with the circle, counterclockwise, so it
+        // points up on the right, flies upside down on top and points down on the left. The mentee bird by default;
+        // the mentor bird on the green buttons (secondary, success), where green on green would fade.
+        <span aria-hidden="true" className="bird-loop relative size-6 shrink-0">
+          <Bird
+            role={variant === 'secondary' || variant === 'success' ? 'MENTOR' : 'MENTEE'}
+            flapping
+            className="absolute bottom-0 left-1/2 w-4 -translate-x-1/2"
+          />
+        </span>
       ) : leftIcon}
       {children}
       {!isLoading && rightIcon}
