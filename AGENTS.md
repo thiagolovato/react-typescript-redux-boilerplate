@@ -2,7 +2,7 @@
 
 Guide for anyone (human or agent) changing the web app. Read it before you write code.
 
-React 19, TypeScript (strict), Vite, Redux Toolkit with redux-persist, React Router, Tailwind CSS v4, i18next. Port `8080`. Run and Docker instructions are in [README.md](README.md). Visual rules are in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+React 19, TypeScript (strict), Vite, Redux Toolkit with redux-persist, React Router, Tailwind CSS v4, i18next. Port `8080`. Run and Docker instructions are in [README.md](README.md). Visual rules are in [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). The business rules of the whole platform are in [docs/REGRAS_DE_NEGOCIO.md](docs/REGRAS_DE_NEGOCIO.md) and the roadmap in [docs/PLANO.md](docs/PLANO.md); they live here for every project (auth, core, gateway, registry too).
 
 ## Layout
 
@@ -17,6 +17,7 @@ src/
   constants/           Shared constants (colors, limits, error codes the app reacts to)
   i18n/                i18next setup and locales (pt-BR.json, en-US.json)
   hooks/               Shared hooks
+docs/                  Business rules (REGRAS_DE_NEGOCIO.md) and roadmap (PLANO.md) of the whole platform
 .docker/               Dockerfile, nginx.conf and docker-compose.yml
 ```
 
@@ -101,7 +102,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 ## Tests
 
-End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. `npm run seed:dev` fills the local stack with mentors and mentees to try by hand. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in REGRAS_DE_NEGOCIO.md.
+End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. `npm run seed:dev` fills the local stack with mentors and mentees to try by hand. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in [docs/REGRAS_DE_NEGOCIO.md](docs/REGRAS_DE_NEGOCIO.md).
 
 There is no unit test runner yet. When you add one, use Vitest with React Testing Library:
 

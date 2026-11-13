@@ -1,6 +1,6 @@
 # End-to-end tests
 
-Playwright tests for the business rules already built ([REGRAS_DE_NEGOCIO.md](../../REGRAS_DE_NEGOCIO.md), items marked **[feito]**). Each test names the rule it covers, e.g. `(2.5)`.
+Playwright tests for the business rules already built ([REGRAS_DE_NEGOCIO.md](../docs/REGRAS_DE_NEGOCIO.md), items marked **[feito]**). Each test names the rule it covers, e.g. `(2.5)`.
 
 | Folder | What it drives | Covers |
 |---|---|---|
