@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { consentService } from '../service/request/api';
+import { consentService } from '../service/request';
 import { toApiError } from '../service/request/apiError';
 import { CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../constants/legal';
 import { useI18n } from './useI18n';

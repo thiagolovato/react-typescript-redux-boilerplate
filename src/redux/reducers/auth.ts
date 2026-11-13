@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { authService, tokenUtils } from '../../service/request/api';
+import { authService, tokenUtils } from '../../service/request';
 import { CustomerType, RegisterRequest, RegisterResponse } from '../../types/auth/register';
 import type { ApiError } from '../../types/api';
 import { ApiRequestError, toApiError } from '../../service/request/apiError';

@@ -2,7 +2,7 @@
 
 Web app. React 19, TypeScript, Vite, Redux Toolkit, Tailwind. Port `8080`.
 
-Calls the gateway at `http://localhost:8765` (`src/service/request/api.ts`). Start the gateway, auth and core first. See the workspace [README](../README.md).
+Calls the gateway at `http://localhost:8765` (`src/service/request/httpClient.ts`). Start the gateway, auth and core first. See the workspace [README](../README.md).
 
 Design rules: [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). Coding standards: [AGENTS.md](AGENTS.md).
 

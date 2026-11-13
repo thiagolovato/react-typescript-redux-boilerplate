@@ -11,7 +11,7 @@ src/
   components/          Pages and features (auth/, layout/, Dashboard, Profile)
   components/ui/       Reusable design-system pieces (Button, Input, ...), exported from ui/index.ts
   components/hoc/      Higher-order components (withAuthentication)
-  service/request/     All HTTP calls (api.ts)
+  service/request/     All HTTP calls: httpClient.ts (axios setup), one <domain>Service.ts per domain, index.ts
   redux/               Store, typed hooks, reducers (slices)
   types/               API and domain types
   constants/           Shared constants (colors, limits, error codes the app reacts to)
@@ -22,9 +22,10 @@ src/
 
 ## Backend access
 
-- Every request goes through the gateway (`GATEWAY_BASE_URL` in `service/request/api.ts`). Never call a service port directly.
+- Every request goes through the gateway (`GATEWAY_BASE_URL` in `service/request/httpClient.ts`). Never call a service port directly.
 - Path prefixes: `/auth` for mentor-mentee-auth, `/mmc` for mentor-mentee-core. Use `API_ROUTES`, not string literals.
-- Add calls as functions on a service object in `api.ts` (`authService`, `profileService`...). Components never import axios.
+- One file per domain in `service/request/` (`authService.ts`, `profileService.ts`...), each exporting a service object of call functions. A new domain gets its own file, exported from `service/request/index.ts`. Components and thunks import from `service/request`, never axios.
+- Shared HTTP setup (axios instances, retries, `API_ROUTES`, `authHeader`) lives only in `httpClient.ts`.
 - Type every request and response in `types/`. No `unknown` or `any` in new code.
 - Send the token with `Authorization: Bearer <token>`. Read it with `tokenUtils`.
 
@@ -32,7 +33,7 @@ src/
 
 Every service answers errors as a problem detail with a list of field errors (`types/api.ts`, contract in the auth and core AGENTS.md).
 
-- In `api.ts`, end every catch with `throw toApiRequestError(error)`. It parses any failure into an `ApiError`. Thunks reject with `toApiError(error)`.
+- In every service file, end every catch with `throw toApiRequestError(error)`. It parses any failure into an `ApiError`. Thunks reject with `toApiError(error)`.
 - Show it with `ApiErrorAlert`. It translates the server `code` (`<service>.<context>.<error>`) from `apiErrors.problems`; `fallback` covers network errors, server errors and codes without a translation.
 - Show field errors next to their input: `fieldErrorOf(error, 'address.city')` and `useFieldErrorText()`, which looks up `apiErrors.fields.<service>.<field>.<code>` (pass `error.service`, the first segment of the problem `code`), then `apiErrors.codes.<code>`, fills `params` (`{{min}}`, `{{max}}`) and falls back to the server text. `Size` uses `Size.min`, `Size.max` or `Size.range`. Pass those fields as `inlineFields` so the alert does not repeat them.
 - A new backend code needs its text in both locales.
@@ -90,7 +91,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 ## How to add a page
 
 1. Add the types in `types/`.
-2. Add the API calls in `service/request/api.ts`.
+2. Add the API calls to the domain's `service/request/<domain>Service.ts` (new domain: new file, exported from `index.ts`).
 3. Add the component in `components/`, built from `components/ui/`.
 4. Add the route in `App.tsx`. Wrap it with `withAuthentication` if it needs login.
 5. Add every text key to both locale files.
@@ -103,7 +104,7 @@ End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. 
 There is no unit test runner yet. When you add one, use Vitest with React Testing Library:
 
 - Test behaviour the user sees (text, roles, clicks), not implementation details.
-- Mock HTTP at the network level (MSW), not by mocking `api.ts` internals.
+- Mock HTTP at the network level (MSW), not by mocking the service files.
 - Name tests after the behaviour: `shows an error when login fails`.
 
 ## Before you finish

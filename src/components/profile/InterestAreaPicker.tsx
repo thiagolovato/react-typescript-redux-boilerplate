@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Checkbox } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
-import { referenceDataService } from '../../service/request/api';
+import { referenceDataService } from '../../service/request';
 import type { InterestGroup } from '../../types/profile';
 
 interface InterestAreaPickerProps {

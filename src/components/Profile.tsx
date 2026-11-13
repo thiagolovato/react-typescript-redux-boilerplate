@@ -4,7 +4,7 @@ import { useAppSelector } from '../redux/hooks';
 import { ApiErrorAlert, Button, Checkbox, Input, Select, TextArea } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import withAuthentication from './hoc/withAuthentication';
-import { profileService } from '../service/request/api';
+import { profileService } from '../service/request';
 import { fieldErrorOf, toApiError } from '../service/request/apiError';
 import { useFieldErrorText } from '../hooks/useFieldErrorText';
 import { LanguagePicker } from './profile/LanguagePicker';
