@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import { Privacy } from './components/Privacy';
 import { AuthLayout } from './components/layout/AuthLayout';
 import { Coordination } from './components/Coordination';
+import { MenteeMatching } from './components/coordination/MenteeMatching';
 import { NotFound } from './components/NotFound';
 import { APP_ROUTES } from './constants/routes';
 
@@ -35,6 +36,7 @@ function App() {
       </Route>
       <Route element={<AuthLayout roles={['COORDINATOR']} />}>
         <Route path={APP_ROUTES.coordination} element={<Coordination />} />
+        <Route path={APP_ROUTES.menteeMatching} element={<MenteeMatching />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

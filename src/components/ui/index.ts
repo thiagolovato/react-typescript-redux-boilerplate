@@ -9,5 +9,6 @@ export { RoleBird } from './RoleBird';
 export { Bird } from './Bird';
 export { ApiErrorAlert } from './ApiErrorAlert';
 export {
-  PlusIcon, TrashIcon, HomeIcon, UserIcon, SearchIcon, CalendarIcon, LogoutIcon, MenuIcon, PanelIcon,
+  PlusIcon, TrashIcon, HomeIcon, UserIcon, SearchIcon, CalendarIcon, LogoutIcon, MenuIcon, PanelIcon, RefreshIcon,
+  EyeIcon, EyeOffIcon, ChevronLeftIcon,
 } from './icons';

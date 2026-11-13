@@ -98,6 +98,8 @@ export interface Profile {
 export interface InterestArea {
   id: number;
   name: string;
+  /** False once the area left the catalog: not offered for new picks, but profiles that have it keep it. */
+  offered: boolean;
 }
 
 export interface InterestGroup {

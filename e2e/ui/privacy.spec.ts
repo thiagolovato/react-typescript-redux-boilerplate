@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fetchCurrentConsents } from '../support/api';
-import { CONSENT_HEADING_PREFIX, CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/legal';
+import { CONSENT_HEADING_PREFIX } from '../../src/constants/legal';
+import { CORE_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/coreLanguages';
 import { en, PRIVACY_PATH, translate } from '../support/ui';
 
 // The terms page shows the document in force from the server. REGRAS_DE_NEGOCIO.md 4.1.
@@ -19,7 +20,7 @@ test.describe('terms page', () => {
   });
 
   test('switching the interface language shows the same version in that language', async ({ page }) => {
-    const { terms: portuguese } = await fetchCurrentConsents(page.request, CONSENT_LANGUAGE_BY_UI_LANGUAGE[PORTUGUESE_UI]);
+    const { terms: portuguese } = await fetchCurrentConsents(page.request, CORE_LANGUAGE_BY_UI_LANGUAGE[PORTUGUESE_UI]);
     await page.goto(PRIVACY_PATH);
 
     await page.getByRole('combobox', { name: en.common.language }).selectOption(PORTUGUESE_UI);

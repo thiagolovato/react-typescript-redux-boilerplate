@@ -13,10 +13,10 @@ import {
 import { runCoreSql } from '../support/db';
 import { ERROR_CODES } from '../support/errorCodes';
 import { HTTP_STATUS, NON_EXISTENT_ID } from '../support/http';
-import { CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/legal';
+import { CORE_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/coreLanguages';
 
 // Versioned consent documents. REGRAS_DE_NEGOCIO.md section 4.
-const CONSENT_LANGUAGES = Object.values(CONSENT_LANGUAGE_BY_UI_LANGUAGE);
+const CONSENT_LANGUAGES = Object.values(CORE_LANGUAGE_BY_UI_LANGUAGE);
 const LANGUAGE_WITHOUT_TEXT = 'fr';
 
 const sha256Hex = (text: string) => createHash('sha256').update(text, 'utf8').digest('hex');

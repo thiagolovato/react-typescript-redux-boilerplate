@@ -1,6 +1,6 @@
 import { expect, type APIRequestContext } from '@playwright/test';
 import { DEFAULT_PASSWORD, GATEWAY_URL, TEST_EMAIL_DOMAIN, TEST_LOCALE } from './env';
-import { CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/legal';
+import { CORE_LANGUAGE_BY_UI_LANGUAGE } from '../../src/constants/coreLanguages';
 import type { ConsentDocument } from '../../src/types/consent';
 import { HTTP_STATUS } from './http';
 import { ADULT_AGE, birthDateForAge } from './dates';
@@ -65,7 +65,7 @@ export function coordinatorToken(): string {
 
 const DEFAULT_INTEREST_AREA_COUNT = 2;
 
-/** Fetches the reference data and returns the ids of its first interest areas. */
+/** Fetches the reference data and returns the ids of its first interest areas still offered. */
 export async function fetchInterestAreaIds(
   request: APIRequestContext,
   token: string,
@@ -73,12 +73,12 @@ export async function fetchInterestAreaIds(
 ): Promise<number[]> {
   const response = await request.get(`${CORE}/interest-groups`, { headers: authHeaders(token) });
   expect(response.ok()).toBeTruthy();
-  const groups: { areas: { id: number }[] }[] = await response.json();
-  return groups.flatMap((group) => group.areas.map((area) => area.id)).slice(0, count);
+  const groups: { areas: { id: number; offered: boolean }[] }[] = await response.json();
+  return groups.flatMap((group) => group.areas.filter((area) => area.offered).map((area) => area.id)).slice(0, count);
 }
 
 /** Core language code of the consent texts the tests read (the English interface). */
-export const CONSENT_LANGUAGE = CONSENT_LANGUAGE_BY_UI_LANGUAGE[TEST_LOCALE];
+export const CONSENT_LANGUAGE = CORE_LANGUAGE_BY_UI_LANGUAGE[TEST_LOCALE];
 
 /** Calls the public endpoint for the consent documents in force and returns the raw response. */
 export function requestCurrentConsents(request: APIRequestContext, language: string) {

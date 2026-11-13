@@ -36,3 +36,13 @@ export interface ApiError {
   /** Every failed field rule, in server order. */
   errors: FieldValidationError[];
 }
+
+/** One page of a list. Same shape as `PageResponse` in mentor-mentee-core. */
+export interface PageResponse<T> {
+  items: T[];
+  /** Zero-based page number. */
+  page: number;
+  /** Items in the whole list, not only this page. */
+  totalItems: number;
+  hasNext: boolean;
+}

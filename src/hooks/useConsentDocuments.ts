@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { consentService } from '../service/request';
 import { toApiError } from '../service/request/apiError';
-import { CONSENT_LANGUAGE_BY_UI_LANGUAGE } from '../constants/legal';
+import { CORE_LANGUAGE_BY_UI_LANGUAGE } from '../constants/coreLanguages';
 import { useI18n } from './useI18n';
 import type { ApiError } from '../types/api';
 import type { ConsentDocument, ConsentKind } from '../types/consent';
@@ -31,7 +31,7 @@ async function fetchDocuments(language: string): Promise<Loaded> {
  */
 export function useConsentDocuments() {
   const { currentLanguage } = useI18n();
-  const language = CONSENT_LANGUAGE_BY_UI_LANGUAGE[currentLanguage];
+  const language = CORE_LANGUAGE_BY_UI_LANGUAGE[currentLanguage];
   const [loaded, setLoaded] = useState<Loaded>({ language: null, documents: {}, error: null });
 
   useEffect(() => {

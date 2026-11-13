@@ -7,7 +7,7 @@ import type { Role } from '../support/api';
 export const SEED_EMAIL_DOMAIN = 'seed.test';
 export const SEED_PASSWORD = 'password123';
 
-// Core language codes of the consent texts (CONSENT_LANGUAGE_BY_UI_LANGUAGE values).
+// Core language codes of the consent texts (CORE_LANGUAGE_BY_UI_LANGUAGE values).
 const PORTUGUESE_TEXTS = 'pt_BR';
 const ENGLISH_TEXTS = 'en_US';
 

@@ -3,4 +3,5 @@ export { authService } from './authService';
 export { profileService } from './profileService';
 export { referenceDataService } from './referenceDataService';
 export { consentService } from './consentService';
+export { coordinationService } from './coordinationService';
 export { tokenUtils } from './tokenUtils';

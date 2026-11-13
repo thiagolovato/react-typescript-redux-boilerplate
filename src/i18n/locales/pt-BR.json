@@ -92,7 +92,53 @@
   },
   "coordination": {
     "title": "Coordenação",
-    "subtitle": "Inscritos, propostas e pares vão aparecer aqui."
+    "subtitle": "Inscritos, propostas e pares vão aparecer aqui.",
+    "unmatchedMentees": {
+      "title": "Mentees sem mentor",
+      "description": "Quem espera há mais tempo aparece primeiro.",
+      "empty": "Todos os mentees já têm mentor.",
+      "loadError": "Não foi possível carregar os mentees.",
+      "noName": "Nome não informado",
+      "noProfession": "Carreira não informada",
+      "graduation": "formatura {{year}}",
+      "retry": "Tentar de novo",
+      "waitingSince": "Esperando desde {{date}}",
+      "refresh": "Atualizar"
+    },
+    "matching": {
+      "back": "Mentees sem mentor",
+      "loadError": "Não foi possível carregar o matching deste mentee.",
+      "candidates": "Mentores compatíveis",
+      "filters": "Só aparecem mentores que aceitaram os termos em vigor, falam um idioma do mentee e têm um gênero que ele aceita. Melhor nota primeiro.",
+      "termsPending": "Este mentee ainda não aceitou a versão em vigor dos termos. Os candidatos aparecem depois que ele salvar o perfil de novo.",
+      "noCandidates": "Nenhum mentor passa pelos filtros agora.",
+      "academicBackground": "Formação acadêmica",
+      "interestAreas": "Áreas de interesse",
+      "preferredMentorGenders": "Gênero aceito para o mentor",
+      "noPreference": "Sem preferência",
+      "mentorPreferences": "Preferências sobre o mentor",
+      "menteePreferences": "Preferências sobre o mentee",
+      "motivation": "Motivação",
+      "goals": "Objetivos",
+      "nameHidden": "Nome escondido",
+      "showName": "Mostrar nome",
+      "hideName": "Esconder nome",
+      "score": "nota",
+      "acceptedBackgrounds": "Aceita mentorar",
+      "sharedAreas": "{{count}} de {{total}} áreas em comum",
+      "hasTraining": "Treinamento em mentoria",
+      "hasExperience": "Experiência em mentoria",
+      "details": "Detalhes da nota e do perfil",
+      "criteria": {
+        "interestAreas": "Áreas de interesse",
+        "location": "Localização",
+        "profession": "Profissão",
+        "mentorExperience": "Experiência em mentoria",
+        "languages": "Idioma",
+        "gender": "Gênero"
+      },
+      "propose": "Propor par (em breve)"
+    }
   },
   "common": {
     "loading": "Carregando...",
@@ -422,7 +468,8 @@
           "notFound": "Perfil não encontrado.",
           "termsNotAccepted": "Aceite os termos de uso para salvar seu perfil.",
           "unknownLanguage": "Um dos idiomas escolhidos não existe.",
-          "unknownInterestArea": "Uma das áreas de interesse escolhidas não existe."
+          "unknownInterestArea": "Uma das áreas de interesse escolhidas não existe.",
+          "interestAreaNotOffered": "Uma das áreas de interesse escolhidas não é mais oferecida."
         },
         "token": {
           "missingUserId": "Sessão inválida. Entre novamente.",
@@ -432,6 +479,9 @@
           "notFound": "Os termos não estão disponíveis agora. Tente mais tarde.",
           "outdated": "Os termos mudaram enquanto você estava nesta página. Leia a nova versão e aceite para salvar.",
           "languageUnavailable": "Os termos ainda não estão disponíveis neste idioma."
+        },
+        "mentee": {
+          "notFound": "Mentee não encontrado."
         }
       }
     }

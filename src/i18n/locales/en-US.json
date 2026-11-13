@@ -92,7 +92,53 @@
   },
   "coordination": {
     "title": "Coordination",
-    "subtitle": "Candidates, proposals and pairs will appear here."
+    "subtitle": "Candidates, proposals and pairs will appear here.",
+    "unmatchedMentees": {
+      "title": "Mentees without a mentor",
+      "description": "Waiting longest first.",
+      "empty": "Every mentee has a mentor.",
+      "loadError": "Could not load the mentees.",
+      "noName": "Name not informed",
+      "noProfession": "Career not informed",
+      "graduation": "graduation {{year}}",
+      "retry": "Try again",
+      "waitingSince": "Waiting since {{date}}",
+      "refresh": "Refresh"
+    },
+    "matching": {
+      "back": "Mentees without a mentor",
+      "loadError": "Could not load the matching for this mentee.",
+      "candidates": "Compatible mentors",
+      "filters": "Only mentors who accepted the terms in force, speak one of the mentee's languages and have a gender the mentee accepts. Best score first.",
+      "termsPending": "This mentee has not accepted the terms in force yet. Candidates show up after they save their profile again.",
+      "noCandidates": "No mentor passes the filters right now.",
+      "academicBackground": "Academic background",
+      "interestAreas": "Interest areas",
+      "preferredMentorGenders": "Accepted mentor gender",
+      "noPreference": "No preference",
+      "mentorPreferences": "Preferences about the mentor",
+      "menteePreferences": "Preferences about the mentee",
+      "motivation": "Motivation",
+      "goals": "Goals",
+      "nameHidden": "Name hidden",
+      "showName": "Show name",
+      "hideName": "Hide name",
+      "score": "score",
+      "acceptedBackgrounds": "Comfortable mentoring",
+      "sharedAreas": "{{count}} of {{total}} areas in common",
+      "hasTraining": "Mentorship training",
+      "hasExperience": "Mentorship experience",
+      "details": "Score and profile details",
+      "criteria": {
+        "interestAreas": "Interest areas",
+        "location": "Location",
+        "profession": "Profession",
+        "mentorExperience": "Mentorship experience",
+        "languages": "Language",
+        "gender": "Gender"
+      },
+      "propose": "Propose pair (soon)"
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -422,7 +468,8 @@
           "notFound": "Profile not found.",
           "termsNotAccepted": "Accept the terms of use to save your profile.",
           "unknownLanguage": "One of the chosen languages does not exist.",
-          "unknownInterestArea": "One of the chosen areas of interest does not exist."
+          "unknownInterestArea": "One of the chosen areas of interest does not exist.",
+          "interestAreaNotOffered": "One of the chosen interest areas is no longer offered."
         },
         "token": {
           "missingUserId": "Invalid session. Please log in again.",
@@ -432,6 +479,9 @@
           "notFound": "The terms are not available right now. Try again later.",
           "outdated": "The terms changed while you were on this page. Read the new version and accept it to save.",
           "languageUnavailable": "The terms are not available in this language yet."
+        },
+        "mentee": {
+          "notFound": "Mentee not found."
         }
       }
     }
