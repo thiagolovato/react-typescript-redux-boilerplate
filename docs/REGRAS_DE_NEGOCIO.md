@@ -99,7 +99,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - **pode ver:** papel, país, região, profissão, ano de formatura, formação acadêmica, idiomas, áreas de interesse, motivação, objetivos, experiência e treinamento em mentoria;
    - **nunca vê:** nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.
 6. A cidade fica escondida porque, numa vila pequena, ela identifica a pessoa. **[planejado: fase 2]**
-7. Texto livre pode conter o nome. O coordenador vê a mesma visão anônima antes de propor. **[planejado: fase 2]**
+7. A visão anônima vale só entre mentor e mentee. O coordenador vê o perfil completo, com nome, para saber quem é cada pessoa. Texto livre pode conter o nome: o coordenador confere antes de propor. **[feito]** para a lista de mentees sem mentor; **[planejado: fase 2]** para candidatos e proposta.
 8. Depois que os dois aceitam, cada um vê o perfil completo do outro, com contatos. **[planejado: fase 2]**
 
 ## 8. Acordo

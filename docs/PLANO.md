@@ -172,7 +172,7 @@ Enquanto o par está `PROPOSED`, cada parte vê da outra só:
 
 Nunca: nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.
 
-Campos de texto livre podem conter o nome. O coordenador vê a mesma visão anônima antes de propor e pode desistir. Depois de `ACCEPTED`, cada parte vê o perfil completo da outra, com contatos.
+Campos de texto livre podem conter o nome. A visão anônima vale só entre as partes: o coordenador vê o perfil completo, com nome, confere o texto livre antes de propor e pode desistir. Depois de `ACCEPTED`, cada parte vê o perfil completo da outra, com contatos.
 
 Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResponse` com campos nulos: assim um campo novo no perfil não vaza por engano.
 
