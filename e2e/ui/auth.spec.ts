@@ -34,15 +34,15 @@ test.describe('sign-up', () => {
   test('a mentor signs up and lands on the mentor dashboard', async ({ page }) => {
     await registerViaUi(page, uniqueEmail('ui-mentor'), DEFAULT_PASSWORD, 'MENTOR');
     await expectOnDashboard(page);
-    await expect(page.getByRole('heading', { name: en.dashboard.findMentees })).toBeVisible();
-    await expect(page.getByRole('heading', { name: en.dashboard.findMentors })).toHaveCount(0);
+    await expect(page.getByText(en.dashboard.mentorshipDescription.MENTOR)).toBeVisible();
+    await expect(page.getByText(en.dashboard.mentorshipDescription.MENTEE)).toHaveCount(0);
   });
 
   test('a mentee signs up and lands on the mentee dashboard', async ({ page }) => {
     await registerViaUi(page, uniqueEmail('ui-mentee'), DEFAULT_PASSWORD, 'MENTEE');
     await expectOnDashboard(page);
-    await expect(page.getByRole('heading', { name: en.dashboard.findMentors })).toBeVisible();
-    await expect(page.getByRole('heading', { name: en.dashboard.findMentees })).toHaveCount(0);
+    await expect(page.getByText(en.dashboard.mentorshipDescription.MENTEE)).toBeVisible();
+    await expect(page.getByText(en.dashboard.mentorshipDescription.MENTOR)).toHaveCount(0);
   });
 
   test('checks the form before sending', async ({ page }) => {

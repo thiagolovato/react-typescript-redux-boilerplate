@@ -11,7 +11,8 @@
     "mainMenu": "Menu principal",
     "collapse": "Recolher menu",
     "expand": "Expandir menu",
-    "coordination": "Coordenação"
+    "coordination": "Coordenação",
+    "mentorship": "Minha mentoria"
   },
   "auth": {
     "login": {
@@ -75,20 +76,25 @@
     "welcome": "Bem-vindo ao Mentor Mentee!",
     "subtitle": "Conecte-se, aprenda e cresça junto com nossa comunidade de mentores e mentees.",
     "quickActions": "Ações Rápidas",
-    "findMentors": "Encontrar Mentores",
-    "findMentees": "Encontrar Mentees",
     "myProfile": "Meu Perfil",
     "sessions": "Sessões de Mentoria",
     "logout": "Sair",
     "loading": "Carregando...",
-    "findMentorsDescription": "Descubra mentores experientes na sua área de interesse e acelere seu crescimento profissional.",
-    "findMenteesDescription": "Compartilhe seu conhecimento e ajude outros profissionais a crescerem em suas carreiras.",
     "myProfileDescription": "Gerencie suas informações pessoais, habilidades e preferências de mentoria.",
     "sessionsDescription": "Acompanhe suas sessões de mentoria ativas e gerencie seus compromissos.",
-    "exploreMentors": "Explorar Mentores",
-    "findMenteesButton": "Encontrar Mentees",
     "myProfileButton": "Ver Perfil",
-    "viewConversations": "Ver Conversas"
+    "viewConversations": "Ver Conversas",
+    "mentorship": "Minha Mentoria",
+    "mentorshipDescription": {
+      "MENTOR": "Responda aos estudantes que aceitaram você como mentor e veja quem você mentora.",
+      "MENTEE": "Veja o mentor que a coordenação sugere para você e responda à proposta."
+    },
+    "mentorshipButton": "Abrir mentoria",
+    "proposalWaiting": {
+      "MENTOR": "Um estudante aceitou você como mentor. Falta a sua resposta.",
+      "MENTEE": "A coordenação sugeriu um mentor para você. Falta a sua resposta.",
+      "open": "Ver proposta"
+    }
   },
   "coordination": {
     "title": "Coordenação",
@@ -137,8 +143,91 @@
         "languages": "Idioma",
         "gender": "Gênero"
       },
-      "propose": "Propor par (em breve)"
+      "propose": "Propor par",
+      "actionError": "Não foi possível concluir a ação. Tente de novo.",
+      "openPair": "Este estudante já tem um par aberto. Os candidatos voltam se a proposta for recusada ou retirada."
+    },
+    "mentorships": {
+      "title": "Propostas e pares do ciclo aberto",
+      "description": "O estudante responde primeiro; o mentor só vê a proposta depois que o estudante aceita.",
+      "loadError": "Não foi possível carregar as propostas.",
+      "empty": "Ainda não há propostas no ciclo aberto."
     }
+  },
+  "mentorship": {
+    "title": "Minha mentoria",
+    "subtitle": {
+      "MENTOR": "Propostas que estudantes aceitaram, esperando sua resposta, e os pares de que você faz parte.",
+      "MENTEE": "O mentor que a coordenação sugere para você. Você responde primeiro; depois, o mentor."
+    },
+    "empty": {
+      "MENTOR": "Nada para responder agora. Uma proposta aparece aqui depois que um estudante aceita você como mentor.",
+      "MENTEE": "Ainda não há proposta. A coordenação vai sugerir um mentor para você."
+    },
+    "loadError": "Não foi possível carregar sua mentoria.",
+    "actionError": "Não foi possível enviar sua resposta. Tente de novo.",
+    "accept": "Aceitar",
+    "decline": "Recusar",
+    "confirmDecline": "Recusar proposta",
+    "declineReasonLabel": "Por que você está recusando? (opcional)",
+    "declineReasonHelp": "Só a coordenação vê.",
+    "anonymous": {
+      "MENTOR": "Mentor sugerido",
+      "MENTEE": "Estudante"
+    },
+    "introduction": {
+      "email": "E-mail",
+      "professionalLink": "Perfil profissional"
+    },
+    "profile": {
+      "place": "Localização",
+      "profession": "Profissão"
+    },
+    "party": {
+      "MENTEE": {
+        "yourTurn": {
+          "eyebrow": "Sugestão de mentor",
+          "description": "Nome e contatos ficam escondidos até os dois aceitarem. Se você aceitar, a proposta vai para o mentor."
+        },
+        "waiting": {
+          "eyebrow": "Aguardando o mentor",
+          "description": "Você aceitou. Agora o mentor responde; se ele aceitar, vocês veem aqui o nome e os contatos um do outro."
+        },
+        "accepted": {
+          "eyebrow": "Par formado",
+          "description": "Os dois aceitaram. Entre em contato para começar a mentoria."
+        }
+      },
+      "MENTOR": {
+        "yourTurn": {
+          "eyebrow": "Um estudante aceitou você",
+          "description": "Nome e contatos ficam escondidos até você aceitar. Se você aceitar, o par é formado."
+        },
+        "waiting": {
+          "eyebrow": "Aguardando o estudante",
+          "description": "Agora o estudante responde."
+        },
+        "accepted": {
+          "eyebrow": "Par formado",
+          "description": "Os dois aceitaram. Entre em contato para começar a mentoria."
+        }
+      }
+    },
+    "coordinatorStage": {
+      "awaitingMentee": "Aguardando o estudante",
+      "awaitingMentor": "Estudante aceitou · aguardando o mentor",
+      "accepted": "Aceito pelos dois",
+      "declined": "{{by}}",
+      "other": "Em andamento"
+    },
+    "declinedBy": {
+      "MENTEE": "Recusado pelo estudante",
+      "MENTOR": "Recusado pelo mentor",
+      "COORDINATOR": "Retirado pela coordenação"
+    },
+    "proposedOn": "Proposto em {{date}}",
+    "declineReason": "Motivo",
+    "withdraw": "Retirar proposta"
   },
   "common": {
     "loading": "Carregando...",
@@ -482,6 +571,21 @@
         },
         "mentee": {
           "notFound": "Mentee não encontrado."
+        },
+        "cohort": {
+          "noneOpen": "Nenhum ciclo está aberto hoje. Crie ou ajuste um ciclo antes de propor.",
+          "pairLimitReached": "O ciclo aberto chegou ao limite de pares.",
+          "limitBelowPairs": "O ciclo já tem mais pares do que esses limites permitem."
+        },
+        "mentor": {
+          "notFound": "Mentor não encontrado."
+        },
+        "mentorship": {
+          "notFound": "Esta proposta não está mais disponível.",
+          "menteeAlreadyPaired": "Este estudante já tem um par aberto.",
+          "notCandidate": "Este mentor não passa mais nos filtros para este estudante (por exemplo, chegou ao limite de estudantes no ciclo).",
+          "notAwaitingYou": "Esta proposta não está mais esperando sua resposta. Recarregue a página.",
+          "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada."
         }
       }
     }

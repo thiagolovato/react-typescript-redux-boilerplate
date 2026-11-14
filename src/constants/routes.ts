@@ -9,6 +9,7 @@ export const APP_ROUTES = {
   designSystem: '/design-system',
   dashboard: '/dashboard',
   profile: '/profile',
+  mentorship: '/mentorship',
   coordination: '/coordination',
   // Build with generatePath(APP_ROUTES.menteeMatching, { userId }).
   menteeMatching: '/coordination/mentees/:userId',

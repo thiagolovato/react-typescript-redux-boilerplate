@@ -20,5 +20,9 @@ export const ERROR_CODES = {
     cohortOverlap: 'core.cohort.overlap',
     consentOutdated: API_ERROR_CODES.core.consentOutdated,
     consentLanguageUnavailable: 'core.consent.languageUnavailable',
+    mentorshipNotFound: 'core.mentorship.notFound',
+    menteeAlreadyPaired: 'core.mentorship.menteeAlreadyPaired',
+    mentorshipNotAwaitingYou: 'core.mentorship.notAwaitingYou',
+    mentorshipNotProposed: 'core.mentorship.notProposed',
   },
 } as const;

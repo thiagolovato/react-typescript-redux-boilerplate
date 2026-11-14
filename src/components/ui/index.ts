@@ -10,5 +10,5 @@ export { Bird } from './Bird';
 export { ApiErrorAlert } from './ApiErrorAlert';
 export {
   PlusIcon, TrashIcon, HomeIcon, UserIcon, SearchIcon, CalendarIcon, LogoutIcon, MenuIcon, PanelIcon, RefreshIcon,
-  EyeIcon, EyeOffIcon, ChevronLeftIcon,
+  EyeIcon, EyeOffIcon, ChevronLeftIcon, PairIcon,
 } from './icons';

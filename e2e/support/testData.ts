@@ -16,7 +16,7 @@ export function createTestCoordinator(): void {
 
 /**
  * Deletes what the tests create: accounts and profiles under the test e-mail domain (the test coordinator too),
- * cohorts named with the test prefix, and every login-attempt counter.
+ * their pairs, cohorts named with the test prefix, and every login-attempt counter.
  */
 export function deleteTestData(): void {
   const emailPattern = `%@${TEST_EMAIL_DOMAIN}`;
@@ -29,6 +29,7 @@ export function deleteTestData(): void {
     runCoreSql(
       `CREATE TEMP TABLE gone AS
          SELECT id, address_id FROM core.customer WHERE user_id = ANY (string_to_array(:'ids', ',')::bigint[]);
+       DELETE FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_contacts WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_languages WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_interest_areas WHERE customer_id IN (SELECT id FROM gone);
@@ -41,6 +42,10 @@ export function deleteTestData(): void {
   }
 
   runAuthSql(`DELETE FROM auth.users WHERE username LIKE :'pattern';`, { pattern: emailPattern });
-  runCoreSql(`DELETE FROM core.cohort WHERE name LIKE :'pattern';`, { pattern: `${TEST_COHORT_PREFIX}%` });
+  runCoreSql(
+    `DELETE FROM core.mentorship WHERE cohort_id IN (SELECT id FROM core.cohort WHERE name LIKE :'pattern');
+     DELETE FROM core.cohort WHERE name LIKE :'pattern';`,
+    { pattern: `${TEST_COHORT_PREFIX}%` },
+  );
   clearLoginAttempts();
 }

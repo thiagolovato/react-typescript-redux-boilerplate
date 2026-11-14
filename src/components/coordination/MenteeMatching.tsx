@@ -8,6 +8,7 @@ import { toApiError } from '../../service/request/apiError';
 import { APP_ROUTES } from '../../constants/routes';
 import { MenteeProfilePanel } from './MenteeProfilePanel';
 import { MentorCandidateCard } from './MentorCandidateCard';
+import { MentorshipSummary } from './MentorshipSummary';
 import type { ApiError } from '../../types/api';
 import type { MenteeCandidates } from '../../types/coordination';
 
@@ -33,6 +34,22 @@ export function MenteeMatching() {
   const userId = Number(useParams().userId);
   const [loaded, setLoaded] = useState<Loaded>({ userId: null, data: null, error: null });
   const { areaNames } = useInterestGroups();
+  // Mentor being proposed, or 'withdraw' while the open pair is withdrawn.
+  const [pending, setPending] = useState<number | 'withdraw' | null>(null);
+  const [actionError, setActionError] = useState<ApiError | null>(null);
+
+  /** Runs a proposal or a withdrawal, then loads the page again: the mentee's open pair replaces the candidates. */
+  const act = async (target: number | 'withdraw', action: () => Promise<unknown>) => {
+    setPending(target);
+    setActionError(null);
+    try {
+      await action();
+    } catch (err) {
+      setActionError(toApiError(err));
+    }
+    setLoaded(await fetchMatching(userId));
+    setPending(null);
+  };
 
   useEffect(() => {
     let current = true;
@@ -75,13 +92,29 @@ export function MenteeMatching() {
               <p className="mt-1 text-sm text-neutral-600">{t('coordination.matching.filters')}</p>
             </div>
 
+            <ApiErrorAlert error={actionError} fallback={t('coordination.matching.actionError')} />
+
+            {data.mentorship && (
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-neutral-600">{t('coordination.matching.openPair')}</p>
+                <MentorshipSummary
+                  mentorship={data.mentorship}
+                  withdrawing={pending === 'withdraw'}
+                  onWithdraw={() => {
+                    const id = data.mentorship?.id;
+                    if (id !== undefined) void act('withdraw', () => coordinationService.withdraw(id));
+                  }}
+                />
+              </div>
+            )}
+
             {!data.mentee.termsAccepted && (
               <p className="rounded-xl border border-warning-main/40 bg-warning-light p-4 text-sm text-warning-dark">
                 {t('coordination.matching.termsPending')}
               </p>
             )}
 
-            {data.mentee.termsAccepted && data.candidates.length === 0 && (
+            {data.mentee.termsAccepted && !data.mentorship && data.candidates.length === 0 && (
               <p className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600">
                 {t('coordination.matching.noCandidates')}
               </p>
@@ -96,6 +129,10 @@ export function MenteeMatching() {
                     menteeAreas={menteeAreas}
                     menteeLanguages={menteeLanguages}
                     areaNames={areaNames}
+                    proposing={pending === candidate.userId}
+                    disabled={pending !== null}
+                    onPropose={() => void act(candidate.userId,
+                        () => coordinationService.propose(userId, candidate.userId))}
                   />
                 </li>
               ))}

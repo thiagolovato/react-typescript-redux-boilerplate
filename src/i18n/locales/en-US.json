@@ -11,7 +11,8 @@
     "mainMenu": "Main menu",
     "collapse": "Collapse menu",
     "expand": "Expand menu",
-    "coordination": "Coordination"
+    "coordination": "Coordination",
+    "mentorship": "My mentorship"
   },
   "auth": {
     "login": {
@@ -75,20 +76,25 @@
     "welcome": "Welcome to Mentor Mentee!",
     "subtitle": "Connect, learn and grow together with our community of mentors and mentees.",
     "quickActions": "Quick Actions",
-    "findMentors": "Find Mentors",
-    "findMentees": "Find Mentees",
     "myProfile": "My Profile",
     "sessions": "Mentorship Sessions",
     "logout": "Sign Out",
     "loading": "Loading...",
-    "findMentorsDescription": "Discover experienced mentors in your field of interest and accelerate your professional growth.",
-    "findMenteesDescription": "Share your knowledge and help other professionals grow in their careers.",
     "myProfileDescription": "Manage your personal information, skills and mentorship preferences.",
     "sessionsDescription": "Track your active mentorship sessions and manage your commitments.",
-    "exploreMentors": "Explore Mentors",
-    "findMenteesButton": "Find Mentees",
     "myProfileButton": "View Profile",
-    "viewConversations": "View Conversations"
+    "viewConversations": "View Conversations",
+    "mentorship": "My Mentorship",
+    "mentorshipDescription": {
+      "MENTOR": "Answer the students who accepted you as their mentor, and see who you mentor.",
+      "MENTEE": "See the mentor the coordination suggests for you and answer the proposal."
+    },
+    "mentorshipButton": "Open mentorship",
+    "proposalWaiting": {
+      "MENTOR": "A student accepted you as their mentor. Your answer is next.",
+      "MENTEE": "The coordination suggested a mentor for you. Your answer is next.",
+      "open": "See the proposal"
+    }
   },
   "coordination": {
     "title": "Coordination",
@@ -137,8 +143,91 @@
         "languages": "Language",
         "gender": "Gender"
       },
-      "propose": "Propose pair (soon)"
+      "propose": "Propose pair",
+      "actionError": "Could not complete the action. Try again.",
+      "openPair": "This student already has an open pair. Candidates come back if the proposal is declined or withdrawn."
+    },
+    "mentorships": {
+      "title": "Proposals and pairs of the open cohort",
+      "description": "The student answers first; the mentor sees the proposal only after the student accepts.",
+      "loadError": "Could not load the proposals.",
+      "empty": "No proposals in the open cohort yet."
     }
+  },
+  "mentorship": {
+    "title": "My mentorship",
+    "subtitle": {
+      "MENTOR": "Proposals that students accepted, waiting for your answer, and the pairs you are in.",
+      "MENTEE": "The mentor the coordination suggests for you. You answer first; then the mentor answers."
+    },
+    "empty": {
+      "MENTOR": "Nothing to answer right now. A proposal shows up here after a student accepts you as their mentor.",
+      "MENTEE": "No proposal yet. The coordination will suggest a mentor for you."
+    },
+    "loadError": "Could not load your mentorship.",
+    "actionError": "Could not send your answer. Try again.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "confirmDecline": "Decline proposal",
+    "declineReasonLabel": "Why are you declining? (optional)",
+    "declineReasonHelp": "Only the coordination sees it.",
+    "anonymous": {
+      "MENTOR": "Suggested mentor",
+      "MENTEE": "Student"
+    },
+    "introduction": {
+      "email": "Email",
+      "professionalLink": "Professional profile"
+    },
+    "profile": {
+      "place": "Location",
+      "profession": "Profession"
+    },
+    "party": {
+      "MENTEE": {
+        "yourTurn": {
+          "eyebrow": "Mentor suggestion",
+          "description": "Name and contacts stay hidden until you both accept. If you accept, the proposal goes to the mentor."
+        },
+        "waiting": {
+          "eyebrow": "Waiting for the mentor",
+          "description": "You accepted. The mentor answers next; if they accept, you will both see each other's name and contacts here."
+        },
+        "accepted": {
+          "eyebrow": "Pair formed",
+          "description": "You both accepted. Get in touch to start the mentorship."
+        }
+      },
+      "MENTOR": {
+        "yourTurn": {
+          "eyebrow": "A student accepted you",
+          "description": "Name and contacts stay hidden until you accept. If you accept, the pair is formed."
+        },
+        "waiting": {
+          "eyebrow": "Waiting for the student",
+          "description": "The student answers next."
+        },
+        "accepted": {
+          "eyebrow": "Pair formed",
+          "description": "You both accepted. Get in touch to start the mentorship."
+        }
+      }
+    },
+    "coordinatorStage": {
+      "awaitingMentee": "Waiting for the student",
+      "awaitingMentor": "Student accepted · waiting for the mentor",
+      "accepted": "Accepted by both",
+      "declined": "{{by}}",
+      "other": "In progress"
+    },
+    "declinedBy": {
+      "MENTEE": "Declined by the student",
+      "MENTOR": "Declined by the mentor",
+      "COORDINATOR": "Withdrawn by the coordination"
+    },
+    "proposedOn": "Proposed on {{date}}",
+    "declineReason": "Reason",
+    "withdraw": "Withdraw proposal"
   },
   "common": {
     "loading": "Loading...",
@@ -482,6 +571,21 @@
         },
         "mentee": {
           "notFound": "Mentee not found."
+        },
+        "cohort": {
+          "noneOpen": "No cohort is open today. Create or adjust a cohort before proposing.",
+          "pairLimitReached": "The open cohort has reached its limit of pairs.",
+          "limitBelowPairs": "The cohort already has more pairs than these limits allow."
+        },
+        "mentor": {
+          "notFound": "Mentor not found."
+        },
+        "mentorship": {
+          "notFound": "This proposal is no longer available.",
+          "menteeAlreadyPaired": "This student already has an open pair.",
+          "notCandidate": "This mentor no longer passes the filters for this student (for example, they reached the limit of students in the cohort).",
+          "notAwaitingYou": "This proposal is not waiting for your answer anymore. Reload the page.",
+          "notProposed": "Only a proposal not yet accepted by both can be withdrawn."
         }
       }
     }

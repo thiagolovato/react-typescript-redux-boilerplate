@@ -17,7 +17,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 ## 1. O programa
 
 1. Programa gratuito de mentoria em saúde rural, entre um mentor e um mentee (estudante ou profissional em início de carreira).
-2. Fluxo, na ordem: cadastro, match pela coordenação, proposta anônima, aceite dos dois, e-mail de apresentação, assinatura do acordo, encontros, check-in, avaliações, encerramento e certificado.
+2. Fluxo, na ordem: cadastro, match pela coordenação, proposta anônima, aceite do mentee e depois do mentor, e-mail de apresentação, assinatura do acordo, encontros, check-in, avaliações, encerramento e certificado.
 3. Um par dura 1 ano, ou até o fim do ciclo, o que vier antes.
 4. No máximo 20 pares por ano.
 
@@ -33,8 +33,8 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - Papel errado recebe a mesma resposta de senha errada, para não revelar o papel da conta, e conta como tentativa falha.
 6. No app, o coordenador entra por `/coordination/login`. Nenhuma página tem link para ela. Cada papel só vê suas próprias páginas: quem abre a página de outro papel é levado para a sua. **[feito]**
 7. A regra que protege os dados é a do servidor: endpoints em `/coordination/**` exigem o papel `COORDINATOR` e respondem 403 (`core.access.denied`) para os outros. **[feito]**
-8. Um participante nunca lista nem lê perfis de outras pessoas. Só vê o perfil da outra parte do próprio par, e nos limites da seção 7. **[feito]** para o bloqueio; **[planejado: fase 2]** para a visão do par.
-9. Quem não participa de um par e não é coordenador recebe 404 ao tentar acessá-lo, para não revelar que o par existe. **[planejado: fase 2]**
+8. Um participante nunca lista nem lê perfis de outras pessoas. Só vê o perfil da outra parte do próprio par, e nos limites da seção 7. **[feito]**
+9. Quem não participa de um par e não é coordenador recebe 404 ao tentar acessá-lo, para não revelar que o par existe. O mesmo vale para o mentor antes de o mentee aceitar (7.3). **[feito]**
 10. Login: no máximo 5 tentativas por e-mail e IP, e 50 por IP, a cada 15 minutos. Login certo devolve a tentativa. Sem Redis, o login falha em vez de rodar sem proteção. **[feito]**
 11. E-mail de login é guardado sem espaços e em minúsculas: variações de maiúsculas são a mesma conta. **[feito]**
 12. Senha: de 8 a 72 caracteres, e no máximo 72 bytes. **[feito]**
@@ -50,7 +50,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 7. As áreas de interesse têm nome em cada idioma da interface (inglês quando falta tradução) e mudam com o tempo. Uma área retirada sai do formulário e não pode ser escolhida de novo, mas continua no perfil de quem já a tinha e continua contando no matching. **[feito]**
 7. Campos só de mentor (experiência e treinamento em mentoria, formação que aceita mentorar) e só de mentee (gêneros de mentor aceitos) são ignorados quando enviados pelo outro papel. **[feito]**
 8. O e-mail de login fica guardado no perfil a cada salvamento, tirado do token. Ele é usado para enviar e-mails, não aparece na resposta e não pode ser enviado pelo usuário. **[feito]**
-9. Contatos (telefone, e-mail) e nome nunca aparecem para a outra parte antes do aceite do par (seção 7). **[feito]** para o perfil próprio; **[planejado: fase 2]** para a visão do par.
+9. Contatos (telefone, e-mail) e nome nunca aparecem para a outra parte antes do aceite do par (seção 7). **[feito]**
 10. O mentee pode aceitar vários gêneros de mentor. Nenhum marcado significa sem preferência. Itens repetidos contam uma vez. **[feito]**
 
 ## 4. Consentimento
@@ -65,44 +65,48 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 1. Um ciclo tem nome, data de início e data de fim. As duas datas contam. O fim é depois do início. **[feito]**
 2. Dois ciclos nunca têm um dia em comum, mesmo com duas gravações ao mesmo tempo. O banco garante isso. **[feito]**
-3. O ciclo aberto é o que contém a data de hoje (UTC). Propostas só acontecem no ciclo aberto. **[feito]** para "aberto"; **[planejado: fase 2]** para propostas.
+3. O ciclo aberto é o que contém a data de hoje (UTC). Propostas só acontecem no ciclo aberto: sem ciclo aberto, a proposta é recusada (409, `core.cohort.noneOpen`). **[feito]**
 4. Cada ciclo tem um limite de pares: padrão 20, entre 1 e 20. **[feito]**
 5. Cada ciclo tem um limite de mentees por mentor: padrão 1. **[feito]** — **[em aberto]**, decisão 1.
 6. Só o coordenador cria, edita e consulta ciclos. Ciclos não são apagados: são editados. **[feito]**
-7. O limite de pares conta os pares do ciclo que não foram recusados. Duas propostas simultâneas não passam do limite. **[planejado: fase 2]**
-8. Reduzir os limites abaixo do que o ciclo já tem é recusado. **[planejado: fase 2]**
+7. O limite de pares conta os pares do ciclo que não foram recusados (409, `core.cohort.pairLimitReached`). Duas propostas simultâneas não passam do limite: a proposta trava a linha do ciclo até o fim da transação. O limite de mentees por mentor conta do mesmo jeito. **[feito]**
+8. Reduzir os limites abaixo do que o ciclo já tem é recusado (409, `core.cohort.limitBelowPairs`). **[feito]**
 
 ## 6. Matching
 
 1. Só o coordenador vê sugestões de par. **[feito]**
-2. Um candidato só aparece se **[feito]** para termos, idioma e gênero; **[planejado: fase 2]** para par aberto e limite do ciclo:
+2. Um candidato só aparece se **[feito]**:
    - os dois aceitaram a versão vigente dos termos;
    - os dois têm pelo menos um idioma em comum;
    - o gênero do mentor está entre os que o mentee aceita, ou o mentee não tem preferência;
    - o mentee não tem par aberto (proposto, aceito ou ativo);
-   - o mentor está abaixo do limite de mentees do ciclo.
+   - o mentor está abaixo do limite de mentees do ciclo aberto.
+
+   Um mentee com par aberto sai da lista de mentees sem mentor; na página de matching, o par aberto aparece no lugar dos candidatos. **[feito]**
 3. Entre os candidatos, a ordem vem de uma nota de 0 a 100, com o detalhe de cada critério: áreas de interesse em comum, localização, profissão e experiência do mentor em mentoria. Os pesos são configuráveis. **[feito]**
 4. Nível de formação não filtra: os campos são texto livre. O coordenador vê a formação do mentee e o que o mentor aceita, lado a lado, e decide. **[feito]**
 5. Na página de matching, o nome de cada mentor começa escondido, para a escolha partir do perfil. O coordenador pode mostrá-lo a qualquer momento. **[feito]**
 
 ## 7. Proposta e par
 
-1. O coordenador propõe um par (um mentor e um mentee) no ciclo aberto. **[planejado: fase 2]**
-2. Estados do par **[planejado: fases 2 e 3]**:
-   - `PROPOSED`: proposto pela coordenação;
-   - `ACCEPTED`: os dois aceitaram;
+1. O coordenador propõe um par (um mentor e um mentee) no ciclo aberto, a partir dos candidatos da página de matching. Um mentor que não passa nos filtros da seção 6.2 é recusado (409, `core.mentorship.notCandidate`). **[feito]**
+2. Estados do par **[feito]** para `PROPOSED`, `ACCEPTED` e `DECLINED`; **[planejado: fase 3]** para os outros:
+   - `PROPOSED`: proposto pela coordenação; primeiro aguarda o mentee, depois o mentor;
+   - `ACCEPTED`: o mentee e depois o mentor aceitaram;
    - `ACTIVE`: os três assinaram o acordo;
    - `COMPLETED`: chegou ao fim do período;
    - `TERMINATED`: encerrado antes do fim;
    - `DECLINED`: recusado ou retirado antes do aceite.
-3. Cada parte aceita ou recusa a proposta. O motivo da recusa é opcional e só o coordenador vê. O coordenador pode retirar uma proposta ainda não aceita. **[planejado: fase 2]**
-4. Um mentee tem no máximo um par aberto. O banco garante isso. **[planejado: fase 2]**
-5. Proposta anônima. Enquanto o par está `PROPOSED`, cada parte vê da outra **[planejado: fase 2]**:
+3. O mentee responde primeiro. O mentor só vê a proposta depois que o mentee aceita; antes disso, para ele, a proposta não existe (404). Se o mentor também aceita, o par fica `ACCEPTED`. Responde só quem está sendo aguardado (409, `core.mentorship.notAwaitingYou` para os outros). **[feito]**
+4. Qualquer parte recusa quando é a sua vez. O motivo da recusa é opcional, tem até 500 caracteres e só o coordenador vê. A proposta recusada some para as duas partes, e o mentee volta para a lista de mentees sem mentor. O coordenador pode retirar uma proposta ainda não aceita pelos dois (409, `core.mentorship.notProposed` depois disso); fica registrada como recusada pela coordenação. **[feito]**
+5. Um mentee tem no máximo um par aberto (409, `core.mentorship.menteeAlreadyPaired`). O banco garante isso. **[feito]**
+6. Proposta anônima. Enquanto o par está `PROPOSED`, cada parte vê da outra **[feito]**:
    - **pode ver:** papel, país, região, profissão, ano de formatura, formação acadêmica, idiomas, áreas de interesse, motivação, objetivos, experiência e treinamento em mentoria;
    - **nunca vê:** nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.
-6. A cidade fica escondida porque, numa vila pequena, ela identifica a pessoa. **[planejado: fase 2]**
-7. A visão anônima vale só entre mentor e mentee. O coordenador vê o perfil completo, com nome, para saber quem é cada pessoa. Texto livre pode conter o nome: o coordenador confere antes de propor. **[feito]** para a lista de mentees sem mentor e os candidatos; **[planejado: fase 2]** para a proposta.
-8. Depois que os dois aceitam, cada um vê o perfil completo do outro, com contatos. **[planejado: fase 2]**
+7. A cidade fica escondida porque, numa vila pequena, ela identifica a pessoa. **[feito]**
+8. A visão anônima vale só entre mentor e mentee. O coordenador vê o perfil completo, com nome, para saber quem é cada pessoa. Texto livre pode conter o nome: o coordenador confere antes de propor. **[feito]**
+9. Depois que os dois aceitam, cada um vê da outra parte o nome, o e-mail, a cidade, o link profissional e os contatos. **[feito]**
+10. No app, mentor e mentee têm a página "Minha mentoria"; o dashboard avisa quando uma proposta espera a resposta da pessoa. Sem e-mail ainda (seção 13): quem não abre o app não fica sabendo. **[feito]**
 
 ## 8. Acordo
 
@@ -153,7 +157,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 1. Todo e-mail é gravado na mesma transação da mudança que o gerou e enviado depois, com novas tentativas em caso de falha. Uma falha de envio não desfaz a mudança nem perde o e-mail. **[planejado: fase 2]**
 2. Os textos vão em inglês e português no mesmo e-mail. **[planejado: fase 2]**
 3. E-mails previstos:
-   - proposta recebida, para cada parte, sem dados da outra **[planejado: fase 2]**;
+   - proposta recebida, sem dados da outra parte: para o mentee quando a coordenação propõe, para o mentor quando o mentee aceita **[planejado: fase 2]**;
    - proposta recusada, para a coordenação **[planejado: fase 2]**;
    - apresentação, para os dois, com cópia para a coordenação, com nome e e-mail de cada um **[planejado: fase 2]**;
    - pedido de encerramento, para a outra parte e para a coordenação **[planejado: fase 3]**;
