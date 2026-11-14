@@ -143,13 +143,17 @@
         "languages": "Idioma",
         "gender": "Gênero"
       },
-      "propose": "Propor par",
       "actionError": "Não foi possível concluir a ação. Tente de novo.",
-      "openPair": "Este estudante já tem um par aberto. Os candidatos voltam se a proposta for recusada ou retirada."
+      "openPair": "Este estudante já tem uma proposta aberta. Os candidatos voltam se ela for recusada ou retirada.",
+      "propose_one": "Propor 1 mentor",
+      "propose_other": "Propor {{count}} mentores",
+      "select": "Incluir na proposta",
+      "selected": "{{count}} de {{max}} mentores na proposta",
+      "selectHelp": "O estudante compara os perfis e escolhe um; só o escolhido recebe a proposta."
     },
     "mentorships": {
       "title": "Propostas e pares do ciclo aberto",
-      "description": "O estudante responde primeiro; o mentor só vê a proposta depois que o estudante aceita.",
+      "description": "O estudante escolhe primeiro; o mentor só vê a proposta depois de ser escolhido.",
       "loadError": "Não foi possível carregar as propostas.",
       "empty": "Ainda não há propostas no ciclo aberto."
     }
@@ -158,7 +162,7 @@
     "title": "Minha mentoria",
     "subtitle": {
       "MENTOR": "Propostas que estudantes aceitaram, esperando sua resposta, e os pares de que você faz parte.",
-      "MENTEE": "O mentor que a coordenação sugere para você. Você responde primeiro; depois, o mentor."
+      "MENTEE": "Os mentores que a coordenação sugere para você. Você escolhe primeiro; depois, o mentor responde."
     },
     "empty": {
       "MENTOR": "Nada para responder agora. Uma proposta aparece aqui depois que um estudante aceita você como mentor.",
@@ -191,11 +195,15 @@
         },
         "waiting": {
           "eyebrow": "Aguardando o mentor",
-          "description": "Você aceitou. Agora o mentor responde; se ele aceitar, vocês veem aqui o nome e os contatos um do outro."
+          "description": "Você escolheu este mentor. Agora ele responde; se aceitar, vocês veem aqui o nome e os contatos um do outro."
         },
         "accepted": {
           "eyebrow": "Par formado",
           "description": "Os dois aceitaram. Entre em contato para começar a mentoria."
+        },
+        "option": {
+          "eyebrow": "Opção de mentor",
+          "description": "Nome e contatos ficam escondidos até os dois aceitarem. Se você escolher este mentor, as outras opções são descartadas e a proposta vai para ele."
         }
       },
       "MENTOR": {
@@ -218,16 +226,27 @@
       "awaitingMentor": "Estudante aceitou · aguardando o mentor",
       "accepted": "Aceito pelos dois",
       "declined": "{{by}}",
-      "other": "Em andamento"
+      "other": "Em andamento",
+      "choosing": "Estudante escolhendo entre {{count}} mentores"
     },
     "declinedBy": {
       "MENTEE": "Recusado pelo estudante",
       "MENTOR": "Recusado pelo mentor",
-      "COORDINATOR": "Retirado pela coordenação"
+      "COORDINATOR": "Retirado pela coordenação",
+      "SYSTEM": "Não escolhido pelo estudante"
     },
     "proposedOn": "Proposto em {{date}}",
     "declineReason": "Motivo",
-    "withdraw": "Retirar proposta"
+    "withdraw": "Retirar proposta",
+    "choose": "Escolher este mentor",
+    "choosing": {
+      "intro": "A coordenação sugeriu {{count}} mentores para você. Compare os perfis e escolha um.",
+      "noneTitle": "Nenhum combina com você?",
+      "noneDescription": "Você pode recusar todas as opções. A coordenação vai sugerir outros mentores.",
+      "declineAll": "Recusar todas",
+      "confirmDeclineAll": "Recusar todas as opções"
+    },
+    "optionTitle": "Opção {{number}}"
   },
   "common": {
     "loading": "Carregando...",
@@ -582,10 +601,12 @@
         },
         "mentorship": {
           "notFound": "Esta proposta não está mais disponível.",
-          "menteeAlreadyPaired": "Este estudante já tem um par aberto.",
-          "notCandidate": "Este mentor não passa mais nos filtros para este estudante (por exemplo, chegou ao limite de estudantes no ciclo).",
+          "menteeAlreadyPaired": "Este estudante já tem uma proposta aberta.",
+          "notCandidate": "Um dos mentores não passa mais nos filtros para este estudante (por exemplo, chegou ao limite de estudantes no ciclo).",
           "notAwaitingYou": "Esta proposta não está mais esperando sua resposta. Recarregue a página.",
-          "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada."
+          "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada.",
+          "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
+          "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas."
         }
       }
     }

@@ -5,8 +5,11 @@ import type { CustomerContact, CustomerType } from './profile';
 /** REGRAS_DE_NEGOCIO.md 7.2. ACTIVE, COMPLETED and TERMINATED come in phase 3. */
 export type MentorshipStatus = 'PROPOSED' | 'ACCEPTED' | 'ACTIVE' | 'COMPLETED' | 'TERMINATED' | 'DECLINED';
 
-/** Who answers or declines. The mentee answers first, then the mentor; the coordinator withdraws. */
-export type MentorshipParty = 'MENTEE' | 'MENTOR' | 'COORDINATOR';
+/**
+ * Who answers or declines. The mentee chooses first, then the mentor; the coordinator withdraws. SYSTEM is only in
+ * `declinedBy`: an option the mentee did not choose.
+ */
+export type MentorshipParty = 'MENTEE' | 'MENTOR' | 'COORDINATOR' | 'SYSTEM';
 
 /** What a party sees of the other while the pair is proposed (REGRAS_DE_NEGOCIO.md 7.5): no name, city or contacts. */
 export interface AnonymousProfile {
@@ -35,7 +38,10 @@ export interface Introduction {
   contacts: CustomerContact[];
 }
 
-/** A pair as one of its parties sees it (`GET /mentorships/mine`). */
+/**
+ * A pair as one of its parties sees it (`GET /mentorships/mine`). A mentee offered several mentors gets one per
+ * option, all awaiting them, and accepts one.
+ */
 export interface Mentorship {
   id: number;
   status: MentorshipStatus;

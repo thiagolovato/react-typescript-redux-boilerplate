@@ -47,10 +47,12 @@ export interface MentorCandidate {
 
 /**
  * The matching page for one mentee. `candidates` is empty while the mentee has not accepted the terms in force, or
- * while they have an open pair (`mentorship`).
+ * while they have an open proposal (`openMentorships`: its options until the mentee chooses, then the one chosen).
  */
 export interface MenteeCandidates {
   mentee: Profile;
   candidates: MentorCandidate[];
-  mentorship: CoordinatorMentorship | null;
+  openMentorships: CoordinatorMentorship[];
+  /** Most mentors the coordinator may propose at once. Set by mentor-mentee-core. */
+  maxMentorOptions: number;
 }

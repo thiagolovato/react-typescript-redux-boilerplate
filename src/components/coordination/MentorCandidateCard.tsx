@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, EyeIcon, EyeOffIcon } from '../ui';
+import { Checkbox, EyeIcon, EyeOffIcon } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useDisplayNames } from '../../hooks/useDisplayNames';
 import type { MatchCriterion, MentorCandidate } from '../../types/coordination';
@@ -11,9 +11,10 @@ interface MentorCandidateCardProps {
   menteeAreas: Set<number>;
   menteeLanguages: Set<string>;
   areaNames: Map<number, string>;
-  onPropose: () => void;
-  proposing: boolean;
-  /** Another proposal is being sent. */
+  /** Chosen to go in the proposal. */
+  selected: boolean;
+  onToggle: () => void;
+  /** The proposal is full or being sent. */
   disabled: boolean;
 }
 
@@ -35,7 +36,7 @@ function scoreTone(score: number) {
  * rests on the profile first. What the mentor shares with the mentee is highlighted.
  */
 export function MentorCandidateCard({
-  rank, candidate, menteeAreas, menteeLanguages, areaNames, onPropose, proposing, disabled,
+  rank, candidate, menteeAreas, menteeLanguages, areaNames, selected, onToggle, disabled,
 }: MentorCandidateCardProps) {
   const { t } = useI18n();
   const names = useDisplayNames();
@@ -43,7 +44,10 @@ export function MentorCandidateCard({
   const sharedAreas = candidate.interestAreaIds.filter((id) => menteeAreas.has(id)).length;
 
   return (
-    <article className="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-surface p-5">
+    <article
+      className={`flex flex-col gap-4 rounded-xl border bg-surface p-5 ${
+        selected ? 'border-primary-500 ring-2 ring-primary-200' : 'border-neutral-200'}`}
+    >
       <header className="flex items-start gap-3">
         <span className="mt-0.5 text-sm font-medium text-neutral-400">#{rank}</span>
         <div className="min-w-0 flex-1">
@@ -166,16 +170,13 @@ export function MentorCandidateCard({
         )}
       </details>
 
-      <Button
-        variant="secondary"
-        size="sm"
-        className="self-start"
-        onClick={onPropose}
-        isLoading={proposing}
-        disabled={disabled && !proposing}
-      >
-        {t('coordination.matching.propose')}
-      </Button>
+      <Checkbox
+        label={t('coordination.matching.select')}
+        checked={selected}
+        onChange={onToggle}
+        disabled={disabled && !selected}
+        className="self-start font-medium"
+      />
     </article>
   );
 }

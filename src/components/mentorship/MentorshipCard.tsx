@@ -1,10 +1,10 @@
 import { useState, type ReactNode } from 'react';
-import { ApiErrorAlert, Button, TextArea } from '../ui';
+import { ApiErrorAlert, Button } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useDisplayNames } from '../../hooks/useDisplayNames';
 import { mentorshipService } from '../../service/request';
 import { toApiError } from '../../service/request/apiError';
-import { MAX_DECLINE_REASON } from '../../constants/mentorship';
+import { DeclineForm } from './DeclineForm';
 import type { ApiError } from '../../types/api';
 import type { Mentorship, MentorshipParty } from '../../types/mentorship';
 
@@ -13,8 +13,13 @@ interface MentorshipCardProps {
   /** The viewer's side of the pair. */
   viewer: MentorshipParty;
   areaNames: Map<number, string>;
-  /** The server's answer after an accept or decline. */
-  onChange: (updated: Mentorship) => void;
+  /**
+   * Position, from 1, when this is one of several mentors offered to the mentee: accepting chooses it, and the mentee
+   * declines them all together instead of one by one.
+   */
+  optionNumber?: number;
+  /** After an accept or decline: other pairs may have changed too (the options not chosen close). */
+  onChange: () => void;
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -30,26 +35,28 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
  * One pair as a party sees it. While proposed, the other party is anonymous (REGRAS_DE_NEGOCIO.md 7.5) and the
  * party whose turn it is accepts or declines; once both accepted, the name and contacts show (7.8).
  */
-export function MentorshipCard({ mentorship, viewer, areaNames, onChange }: MentorshipCardProps) {
+export function MentorshipCard({ mentorship, viewer, areaNames, optionNumber, onChange }: MentorshipCardProps) {
   const { t } = useI18n();
   const names = useDisplayNames();
   const [declining, setDeclining] = useState(false);
-  const [reason, setReason] = useState('');
   const [pending, setPending] = useState<'accept' | 'decline' | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const { partner, introduction } = mentorship;
   const myTurn = mentorship.awaiting === viewer;
-  const state = mentorship.status === 'ACCEPTED' ? 'accepted' : myTurn ? 'yourTurn' : 'waiting';
+  const option = optionNumber !== undefined;
+  const state = mentorship.status === 'ACCEPTED' ? 'accepted' : myTurn ? (option ? 'option' : 'yourTurn') : 'waiting';
 
   const run = async (kind: 'accept' | 'decline', action: () => Promise<Mentorship>) => {
     setPending(kind);
     setError(null);
     try {
-      onChange(await action());
+      await action();
+      setDeclining(false);
+      onChange();
     } catch (err) {
       setError(toApiError(err));
-      setPending(null);
     }
+    setPending(null);
   };
 
   return (
@@ -59,7 +66,8 @@ export function MentorshipCard({ mentorship, viewer, areaNames, onChange }: Ment
           {t(`mentorship.party.${viewer}.${state}.eyebrow`)}
         </p>
         <h2 className="mt-1 text-xl font-semibold tracking-tight">
-          {introduction?.name ?? t(`mentorship.anonymous.${partner.role}`)}
+          {introduction?.name
+            ?? (option ? t('mentorship.optionTitle', { number: optionNumber }) : t(`mentorship.anonymous.${partner.role}`))}
         </h2>
         <p className="mt-2 text-sm text-neutral-600">{t(`mentorship.party.${viewer}.${state}.description`)}</p>
       </header>
@@ -149,40 +157,23 @@ export function MentorshipCard({ mentorship, viewer, areaNames, onChange }: Ment
             disabled={pending !== null}
             onClick={() => void run('accept', () => mentorshipService.accept(mentorship.id))}
           >
-            {t('mentorship.accept')}
+            {t(option ? 'mentorship.choose' : 'mentorship.accept')}
           </Button>
-          <Button variant="outline" disabled={pending !== null} onClick={() => setDeclining(true)}>
-            {t('mentorship.decline')}
-          </Button>
+          {!option && (
+            <Button variant="outline" disabled={pending !== null} onClick={() => setDeclining(true)}>
+              {t('mentorship.decline')}
+            </Button>
+          )}
         </div>
       )}
 
       {myTurn && declining && (
-        <form
-          className="flex flex-col gap-3"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void run('decline', () => mentorshipService.decline(mentorship.id, reason.trim()));
-          }}
-        >
-          <TextArea
-            label={t('mentorship.declineReasonLabel')}
-            helperText={t('mentorship.declineReasonHelp')}
-            value={reason}
-            maxLength={MAX_DECLINE_REASON}
-            rows={3}
-            fullWidth
-            onChange={(event) => setReason(event.target.value)}
-          />
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" variant="error" isLoading={pending === 'decline'} disabled={pending !== null}>
-              {t('mentorship.confirmDecline')}
-            </Button>
-            <Button type="button" variant="ghost" disabled={pending !== null} onClick={() => setDeclining(false)}>
-              {t('common.cancel')}
-            </Button>
-          </div>
-        </form>
+        <DeclineForm
+          declining={pending === 'decline'}
+          submitLabel={t('mentorship.confirmDecline')}
+          onCancel={() => setDeclining(false)}
+          onSubmit={(reason) => void run('decline', () => mentorshipService.decline(mentorship.id, reason))}
+        />
       )}
     </article>
   );

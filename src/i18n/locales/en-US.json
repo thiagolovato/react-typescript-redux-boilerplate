@@ -143,13 +143,17 @@
         "languages": "Language",
         "gender": "Gender"
       },
-      "propose": "Propose pair",
       "actionError": "Could not complete the action. Try again.",
-      "openPair": "This student already has an open pair. Candidates come back if the proposal is declined or withdrawn."
+      "openPair": "This student already has an open proposal. Candidates come back if it is declined or withdrawn.",
+      "propose_one": "Propose 1 mentor",
+      "propose_other": "Propose {{count}} mentors",
+      "select": "Include in the proposal",
+      "selected": "{{count}} of {{max}} mentors in the proposal",
+      "selectHelp": "The student compares the profiles and chooses one; only that mentor gets the proposal."
     },
     "mentorships": {
       "title": "Proposals and pairs of the open cohort",
-      "description": "The student answers first; the mentor sees the proposal only after the student accepts.",
+      "description": "The student chooses first; the mentor sees the proposal only once chosen.",
       "loadError": "Could not load the proposals.",
       "empty": "No proposals in the open cohort yet."
     }
@@ -158,7 +162,7 @@
     "title": "My mentorship",
     "subtitle": {
       "MENTOR": "Proposals that students accepted, waiting for your answer, and the pairs you are in.",
-      "MENTEE": "The mentor the coordination suggests for you. You answer first; then the mentor answers."
+      "MENTEE": "The mentors the coordination suggests for you. You choose first; then the mentor answers."
     },
     "empty": {
       "MENTOR": "Nothing to answer right now. A proposal shows up here after a student accepts you as their mentor.",
@@ -191,11 +195,15 @@
         },
         "waiting": {
           "eyebrow": "Waiting for the mentor",
-          "description": "You accepted. The mentor answers next; if they accept, you will both see each other's name and contacts here."
+          "description": "You chose this mentor. Now they answer; if they accept, you both see each other's name and contacts here."
         },
         "accepted": {
           "eyebrow": "Pair formed",
           "description": "You both accepted. Get in touch to start the mentorship."
+        },
+        "option": {
+          "eyebrow": "Mentor option",
+          "description": "Name and contacts stay hidden until you both accept. If you choose this mentor, the other options are dropped and the proposal goes to them."
         }
       },
       "MENTOR": {
@@ -218,16 +226,27 @@
       "awaitingMentor": "Student accepted · waiting for the mentor",
       "accepted": "Accepted by both",
       "declined": "{{by}}",
-      "other": "In progress"
+      "other": "In progress",
+      "choosing": "Student choosing between {{count}} mentors"
     },
     "declinedBy": {
       "MENTEE": "Declined by the student",
       "MENTOR": "Declined by the mentor",
-      "COORDINATOR": "Withdrawn by the coordination"
+      "COORDINATOR": "Withdrawn by the coordination",
+      "SYSTEM": "Not chosen by the student"
     },
     "proposedOn": "Proposed on {{date}}",
     "declineReason": "Reason",
-    "withdraw": "Withdraw proposal"
+    "withdraw": "Withdraw proposal",
+    "choose": "Choose this mentor",
+    "choosing": {
+      "intro": "The coordination suggested {{count}} mentors for you. Compare the profiles and choose one.",
+      "noneTitle": "None of them fits you?",
+      "noneDescription": "You can decline every option. The coordination will suggest other mentors.",
+      "declineAll": "Decline all",
+      "confirmDeclineAll": "Decline every option"
+    },
+    "optionTitle": "Option {{number}}"
   },
   "common": {
     "loading": "Loading...",
@@ -582,10 +601,12 @@
         },
         "mentorship": {
           "notFound": "This proposal is no longer available.",
-          "menteeAlreadyPaired": "This student already has an open pair.",
-          "notCandidate": "This mentor no longer passes the filters for this student (for example, they reached the limit of students in the cohort).",
+          "menteeAlreadyPaired": "This student already has an open proposal.",
+          "notCandidate": "One of the mentors no longer passes the filters for this student (for example, they reached the limit of students in the cohort).",
           "notAwaitingYou": "This proposal is not waiting for your answer anymore. Reload the page.",
-          "notProposed": "Only a proposal not yet accepted by both can be withdrawn."
+          "notProposed": "Only a proposal not yet accepted by both can be withdrawn.",
+          "duplicateMentor": "The same mentor was included more than once in the proposal.",
+          "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all."
         }
       }
     }

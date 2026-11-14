@@ -24,5 +24,7 @@ export const ERROR_CODES = {
     menteeAlreadyPaired: 'core.mentorship.menteeAlreadyPaired',
     mentorshipNotAwaitingYou: 'core.mentorship.notAwaitingYou',
     mentorshipNotProposed: 'core.mentorship.notProposed',
+    mentorshipDuplicateMentor: 'core.mentorship.duplicateMentor',
+    validationFailed: 'core.validation.failed',
   },
 } as const;

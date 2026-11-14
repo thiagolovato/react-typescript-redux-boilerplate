@@ -69,7 +69,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 4. Cada ciclo tem um limite de pares: padrão 20, entre 1 e 20. **[feito]**
 5. Cada ciclo tem um limite de mentees por mentor: padrão 1. **[feito]** — **[em aberto]**, decisão 1.
 6. Só o coordenador cria, edita e consulta ciclos. Ciclos não são apagados: são editados. **[feito]**
-7. O limite de pares conta os pares do ciclo que não foram recusados (409, `core.cohort.pairLimitReached`). Duas propostas simultâneas não passam do limite: a proposta trava a linha do ciclo até o fim da transação. O limite de mentees por mentor conta do mesmo jeito. **[feito]**
+7. O limite de pares conta os mentees do ciclo com par ou proposta não recusada; as opções de um mentee ocupam uma vaga só (409, `core.cohort.pairLimitReached`). Duas propostas simultâneas não passam do limite: a proposta trava a linha do ciclo até o fim da transação. O limite de mentees por mentor conta só os pares em que o mentee escolheu o mentor: uma opção não reserva vaga. Por isso o limite é checado de novo quando o mentee escolhe, com a mesma trava; se o mentor lotou nesse meio-tempo, a escolha é recusada (409, `core.mentorship.mentorUnavailable`) e o mentee escolhe outra opção ou recusa todas. **[feito]**
 8. Reduzir os limites abaixo do que o ciclo já tem é recusado (409, `core.cohort.limitBelowPairs`). **[feito]**
 
 ## 6. Matching
@@ -89,17 +89,17 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 7. Proposta e par
 
-1. O coordenador propõe um par (um mentor e um mentee) no ciclo aberto, a partir dos candidatos da página de matching. Um mentor que não passa nos filtros da seção 6.2 é recusado (409, `core.mentorship.notCandidate`). **[feito]**
+1. O coordenador propõe ao mentee de 1 a 3 mentores de uma vez (opções), no ciclo aberto, a partir dos candidatos da página de matching. O máximo fica em `Mentorship.MAX_MENTOR_OPTIONS` no core; o app lê dali. Mentor repetido é recusado (400, `core.mentorship.duplicateMentor`). Se um dos mentores não passa nos filtros da seção 6.2, a proposta inteira é recusada (409, `core.mentorship.notCandidate`). Para mudar as opções, o coordenador retira a proposta e propõe de novo; não dá para acrescentar mentores a uma proposta aberta. **[feito]**
 2. Estados do par **[feito]** para `PROPOSED`, `ACCEPTED` e `DECLINED`; **[planejado: fase 3]** para os outros:
-   - `PROPOSED`: proposto pela coordenação; primeiro aguarda o mentee, depois o mentor;
+   - `PROPOSED`: proposto pela coordenação; primeiro aguarda o mentee escolher, depois o mentor;
    - `ACCEPTED`: o mentee e depois o mentor aceitaram;
    - `ACTIVE`: os três assinaram o acordo;
    - `COMPLETED`: chegou ao fim do período;
    - `TERMINATED`: encerrado antes do fim;
-   - `DECLINED`: recusado ou retirado antes do aceite.
-3. O mentee responde primeiro. O mentor só vê a proposta depois que o mentee aceita; antes disso, para ele, a proposta não existe (404). Se o mentor também aceita, o par fica `ACCEPTED`. Responde só quem está sendo aguardado (409, `core.mentorship.notAwaitingYou` para os outros). **[feito]**
-4. Qualquer parte recusa quando é a sua vez. O motivo da recusa é opcional, tem até 500 caracteres e só o coordenador vê. A proposta recusada some para as duas partes, e o mentee volta para a lista de mentees sem mentor. O coordenador pode retirar uma proposta ainda não aceita pelos dois (409, `core.mentorship.notProposed` depois disso); fica registrada como recusada pela coordenação. **[feito]**
-5. Um mentee tem no máximo um par aberto (409, `core.mentorship.menteeAlreadyPaired`). O banco garante isso. **[feito]**
+   - `DECLINED`: recusado, retirado ou não escolhido antes do aceite.
+3. O mentee responde primeiro: compara as opções e escolhe uma. As outras fecham como recusadas pelo sistema (`declined_by = SYSTEM`, "não escolhido"), e os mentores delas nunca ficam sabendo. O mentor só vê a proposta depois que o mentee o escolhe; antes disso, para ele, a proposta não existe (404). Se o mentor também aceita, o par fica `ACCEPTED`. Responde só quem está sendo aguardado (409, `core.mentorship.notAwaitingYou` para os outros). **[feito]**
+4. Qualquer parte recusa quando é a sua vez. O mentee recusa todas as opções de uma vez. O motivo da recusa é opcional, tem até 500 caracteres e só o coordenador vê. A proposta recusada some para as duas partes, e o mentee volta para a lista de mentees sem mentor; a coordenação propõe de novo. O coordenador pode retirar uma proposta ainda não aceita pelos dois, com todas as opções (409, `core.mentorship.notProposed` depois disso); fica registrada como recusada pela coordenação. **[feito]** Avisar mentor, mentee e coordenador da recusa: **[planejado]** (TODO em `MentorshipService.decline`).
+5. Um mentee tem no máximo uma proposta aberta (409, `core.mentorship.menteeAlreadyPaired`): as opções enquanto escolhe, depois a escolhida. O banco garante uma escolhida por mentee e cada mentor uma vez por proposta. **[feito]**
 6. Proposta anônima. Enquanto o par está `PROPOSED`, cada parte vê da outra **[feito]**:
    - **pode ver:** papel, país, região, profissão, ano de formatura, formação acadêmica, idiomas, áreas de interesse, motivação, objetivos, experiência e treinamento em mentoria;
    - **nunca vê:** nome, data de nascimento, contatos, link profissional, cidade, informações adicionais.

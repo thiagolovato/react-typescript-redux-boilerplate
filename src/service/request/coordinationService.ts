@@ -40,12 +40,15 @@ export const coordinationService = {
     }
   },
 
-  /** Proposes the mentor to the mentee in the cohort open today. The mentee answers first. Coordinators only. */
-  propose: async (menteeUserId: number, mentorUserId: number): Promise<CoordinatorMentorship> => {
+  /**
+   * Proposes the mentors to the mentee in the cohort open today, one option each. The mentee chooses one first, then
+   * that mentor answers. Coordinators only.
+   */
+  propose: async (menteeUserId: number, mentorUserIds: number[]): Promise<CoordinatorMentorship[]> => {
     try {
-      return await httpClient.post<CoordinatorMentorship>(
+      return await httpClient.post<CoordinatorMentorship[]>(
           `${API_ROUTES.core}/coordination/mentorships`,
-          { menteeUserId, mentorUserId },
+          { menteeUserId, mentorUserIds },
           authHeader(),
       );
     } catch (error) {
@@ -53,10 +56,10 @@ export const coordinationService = {
     }
   },
 
-  /** Withdraws a proposal not yet accepted by both. Coordinators only. */
-  withdraw: async (id: number): Promise<CoordinatorMentorship> => {
+  /** Withdraws a proposal not yet accepted by both, all its options while the mentee is choosing. Coordinators only. */
+  withdraw: async (id: number): Promise<CoordinatorMentorship[]> => {
     try {
-      return await httpClient.delete<CoordinatorMentorship>(`${API_ROUTES.core}/coordination/mentorships/${id}`, authHeader());
+      return await httpClient.delete<CoordinatorMentorship[]>(`${API_ROUTES.core}/coordination/mentorships/${id}`, authHeader());
     } catch (error) {
       throw toApiRequestError(error);
     }

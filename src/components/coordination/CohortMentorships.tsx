@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiErrorAlert, Button, RefreshIcon } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { coordinationService } from '../../service/request';
@@ -10,6 +10,30 @@ import type { CoordinatorMentorship } from '../../types/mentorship';
 interface CohortMentorshipsProps {
   /** Called after a withdrawal: the mentee is back among those without a mentor. */
   onChange: () => void;
+}
+
+/**
+ * Rows as the coordinator reads them: the options of a proposal the mentee is still choosing from together (a mentee
+ * has one such proposal at most), every other row alone. Keeps the server's order, newest first.
+ */
+function groupOptions(mentorships: CoordinatorMentorship[]): CoordinatorMentorship[][] {
+  const choosing = new Map<number, CoordinatorMentorship[]>();
+  const groups: CoordinatorMentorship[][] = [];
+  for (const mentorship of mentorships) {
+    if (mentorship.status !== 'PROPOSED' || mentorship.awaiting !== 'MENTEE') {
+      groups.push([mentorship]);
+      continue;
+    }
+    const options = choosing.get(mentorship.mentee.userId);
+    if (options) {
+      options.push(mentorship);
+    } else {
+      const group = [mentorship];
+      choosing.set(mentorship.mentee.userId, group);
+      groups.push(group);
+    }
+  }
+  return groups;
 }
 
 /** Proposals and pairs of the cohort open today, newest first, declined ones with who declined and why. */
@@ -38,6 +62,8 @@ export function CohortMentorships({ onChange }: CohortMentorshipsProps) {
     };
   }, []);
 
+  const groups = useMemo(() => groupOptions(mentorships ?? []), [mentorships]);
+
   const withdraw = async (id: number) => {
     setWithdrawing(id);
     try {
@@ -56,7 +82,7 @@ export function CohortMentorships({ onChange }: CohortMentorshipsProps) {
         <div>
           <h2 id="cohort-mentorships" className="text-lg font-medium">
             {t('coordination.mentorships.title')}
-            {mentorships && <span className="ml-2 text-neutral-500">({mentorships.length})</span>}
+            {mentorships && <span className="ml-2 text-neutral-500">({groups.length})</span>}
           </h2>
           <p className="mt-1 text-sm text-neutral-600">{t('coordination.mentorships.description')}</p>
         </div>
@@ -77,12 +103,12 @@ export function CohortMentorships({ onChange }: CohortMentorshipsProps) {
 
       {mentorships && mentorships.length > 0 && (
         <ul className="flex flex-col gap-2">
-          {mentorships.map((mentorship) => (
-            <li key={mentorship.id}>
+          {groups.map((group) => (
+            <li key={group[0].id}>
               <MentorshipSummary
-                mentorship={mentorship}
-                withdrawing={withdrawing === mentorship.id}
-                onWithdraw={() => void withdraw(mentorship.id)}
+                mentorships={group}
+                withdrawing={withdrawing === group[0].id}
+                onWithdraw={() => void withdraw(group[0].id)}
               />
             </li>
           ))}
