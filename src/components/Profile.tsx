@@ -273,7 +273,7 @@ function Profile() {
       </div>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-10 rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8"
+        className="flex flex-col gap-10 rounded-2xl border border-neutral-200 bg-surface p-6 sm:p-8"
       >
         <FormSection title={t('profile.sections.aboutYou')}>
           <div className="grid gap-4 sm:grid-cols-2">

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearAuth } from '../../redux/reducers/auth';
 import { persistor } from '../../redux/store';
 import { useI18n } from '../../hooks/useI18n';
-import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, UserIcon } from '../ui';
+import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
 import { loginPathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
@@ -51,7 +51,7 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
         md:fixed md:inset-y-0 md:left-0 md:border-r md:border-b-0 ${isCollapsed ? 'md:w-20' : 'md:w-70'}`}
     >
       <div className={`flex min-h-16 items-center gap-3 px-4 ${isCollapsed ? 'md:flex-col md:justify-center md:py-4' : ''}`}>
-        <span aria-hidden="true" className="size-10 shrink-0 overflow-hidden">
+        <span aria-hidden="true" className="size-10 shrink-0 overflow-hidden dark:rounded-full dark:bg-paper">
           <img src={birds} alt="" className="size-full scale-150 object-cover mix-blend-multiply" />
         </span>
         <span className={`flex-1 truncate text-lg font-semibold tracking-tight text-neutral-900 ${labelClass}`}>
@@ -105,7 +105,10 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
         </nav>
 
         <div className="flex flex-col gap-3 border-t border-neutral-200 p-3">
-          <LanguageToggle className={isCollapsed ? 'md:hidden' : ''} />
+          <div className={`flex gap-2 ${isCollapsed ? 'md:hidden' : ''}`}>
+            <LanguageToggle className="min-w-0 flex-1" />
+            <ThemeToggle className="min-w-0 flex-1" />
+          </div>
           {user && (
             <div className={`flex items-center gap-3 px-1 ${isCollapsed ? 'md:justify-center' : ''}`}>
               {user.customerType && user.customerType !== 'COORDINATOR' && <RoleBird role={user.customerType} size="sm" />}

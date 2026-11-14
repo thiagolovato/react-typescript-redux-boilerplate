@@ -26,7 +26,7 @@ interface ActionCardProps {
 
 function ActionCard({ icon, tone, title, description, children }: ActionCardProps) {
   return (
-    <article className="flex flex-col items-start gap-3 rounded-xl border border-neutral-200 bg-white p-6">
+    <article className="flex flex-col items-start gap-3 rounded-xl border border-neutral-200 bg-surface p-6">
       <span className={`flex size-10 items-center justify-center rounded-lg ${toneClasses[tone]}`}>{icon}</span>
       <h3 className="mt-1 text-lg font-medium">{title}</h3>
       <p className="flex-1 text-sm leading-relaxed text-neutral-600">{description}</p>

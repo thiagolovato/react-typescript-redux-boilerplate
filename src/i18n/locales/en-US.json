@@ -493,5 +493,11 @@
     "hint": "Tap the little bird to call it back.",
     "callBird": "Call the little bird back to the branch",
     "birdHome": "It's back on the branch. Now it's your turn."
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
   }
 }

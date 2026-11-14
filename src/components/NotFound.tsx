@@ -88,8 +88,8 @@ export function NotFound() {
       <p className="mt-3 max-w-md text-neutral-600">{t('notFound.description')}</p>
       <Link
         to={homePath}
-        className="mt-8 inline-flex h-12 items-center rounded-lg bg-primary-600 px-6 font-medium text-white
-          hover:bg-primary-700 active:bg-primary-800"
+        className="mt-8 inline-flex h-12 items-center rounded-lg bg-fill-primary px-6 font-medium text-white
+          hover:bg-fill-primary-hover active:bg-fill-primary-active"
       >
         {t('notFound.back')}
       </Link>

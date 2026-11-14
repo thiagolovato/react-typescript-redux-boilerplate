@@ -1,7 +1,7 @@
 export type FieldVariant = 'default' | 'success' | 'warning' | 'error';
 
 export const fieldVariantClasses: Record<FieldVariant, string> = {
-  default: 'border-neutral-300 bg-white hover:border-neutral-400 ' +
+  default: 'border-neutral-300 bg-surface hover:border-neutral-400 ' +
     'focus-within:border-primary-500 focus-within:ring-primary-100',
   success: 'border-success-main bg-success-light focus-within:border-success-dark focus-within:ring-success-main/25',
   warning: 'border-warning-main bg-warning-light focus-within:border-warning-dark focus-within:ring-warning-main/25',
@@ -14,3 +14,7 @@ export const helperVariantClasses: Record<FieldVariant, string> = {
   warning: 'text-warning-dark',
   error: 'text-error-dark',
 };
+
+// The compact selects in page corners and the sidebar: language and theme.
+export const toggleSelectClasses = 'h-9 w-full rounded-md border border-neutral-300 bg-surface px-2 text-sm ' +
+  'text-neutral-800 hover:border-neutral-400';

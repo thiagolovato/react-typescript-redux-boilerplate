@@ -46,7 +46,7 @@ export function Coordination() {
         </div>
 
         {totalItems === 0 && (
-          <p className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600">
+          <p className="rounded-xl border border-neutral-200 bg-surface p-6 text-sm text-neutral-600">
             {t('coordination.unmatchedMentees.empty')}
           </p>
         )}
@@ -57,7 +57,7 @@ export function Coordination() {
               <li key={mentee.userId}>
                 <Link
                   to={generatePath(APP_ROUTES.menteeMatching, { userId: String(mentee.userId) })}
-                  className="flex flex-col gap-1 rounded-lg border border-neutral-200 bg-white px-4 py-3 transition-colors hover:border-secondary-300 hover:bg-secondary-50 focus-visible:outline-2 focus-visible:outline-secondary-600 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-1 rounded-lg border border-neutral-200 bg-surface px-4 py-3 transition-colors hover:border-secondary-300 hover:bg-secondary-50 focus-visible:outline-2 focus-visible:outline-secondary-600 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
                     <p className="font-medium">{mentee.name ?? t('coordination.unmatchedMentees.noName')}</p>

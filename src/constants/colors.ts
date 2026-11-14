@@ -76,6 +76,49 @@ export const colors = {
     main: '#448DE0',
     dark: '#275FA6',
   },
+
+  // Solid buttons under white text. Fixed in both themes: the deep stops above turn light in dark mode.
+  fill: {
+    primary: '#2F74C8',
+    'primary-hover': '#275FA6',
+    'primary-active': '#1F4A80',
+    secondary: '#357A40',
+    'secondary-hover': '#2B5F33',
+    'secondary-active': '#1F4425',
+    success: '#357A40',
+    'success-hover': '#2B5F33',
+    warning: '#B4570F',
+    error: '#A8332D',
+  },
+
+  // The logo's paper and ink, fixed in both themes: the birds photo sits on paper, the drawn bird's eye is ink.
+  paper: '#FCFAF6',
+  ink: '#2A3F4E',
+} as const;
+
+// Dark mode: only the stops that change. Paper and ink swap places: slate becomes the ground, paper the text.
+// Neutral 0 is the raised surface (cards, inputs), white in light mode.
+export const darkColors = {
+  primary: { 50: '#172A3D', 100: '#1C3756', 200: '#234870', 700: '#91BCEC', 800: '#B7D3F2', 900: '#DFECFA' },
+  secondary: { 50: '#16271C', 100: '#1D3624', 200: '#284A31', 700: '#93CF8F', 800: '#BFE3A0', 900: '#E2F3D6' },
+  teal: { 100: '#15352F', 700: '#6CCDB6' },
+  neutral: {
+    0: '#1A2731',
+    50: '#131E26',
+    100: '#213140',
+    200: '#2B3C49',
+    300: '#3B4E5B',
+    400: '#5D6F7B',
+    500: '#8A98A2',
+    600: '#A8B3BA',
+    700: '#C3CBD0',
+    800: '#E1E1DC',
+    900: '#F5F2EB',
+  },
+  success: { light: '#1D3624', dark: '#93CF8F' },
+  warning: { light: '#3A2B12', dark: '#EFB866' },
+  error: { light: '#3D1D1C', main: '#E8695F', dark: '#F08C84' },
+  info: { light: '#1C3756', dark: '#91BCEC' },
 } as const;
 
 // The perch: mentor blue to mentee green, the same direction as the logo.

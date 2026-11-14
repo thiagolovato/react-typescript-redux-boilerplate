@@ -56,7 +56,7 @@ export function Bird({ role, flapping = false, className = '' }: BirdProps) {
       <g className={flapping ? 'bird-flap' : undefined}>
         <path d="M34 70 C42 52 58 44 72 48 C82 52 80 64 70 72 C58 80 44 78 34 70 Z" fill={`url(#${wingId})`} />
       </g>
-      <circle cx="86" cy="26" r="4" fill="var(--color-neutral-800)" />
+      <circle cx="86" cy="26" r="4" fill="var(--color-ink)" />
     </svg>
   );
 }

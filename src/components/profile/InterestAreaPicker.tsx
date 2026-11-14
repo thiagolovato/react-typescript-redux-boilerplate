@@ -29,7 +29,7 @@ export function InterestAreaPicker({ value, onChange }: InterestAreaPickerProps)
         if (shown.length === 0) return null;
         const selected = shown.filter((area) => value.includes(area.id)).length;
         return (
-          <details key={group.id} className="rounded-lg border border-neutral-200 bg-neutral-50 open:bg-white">
+          <details key={group.id} className="rounded-lg border border-neutral-200 bg-neutral-50 open:bg-surface">
             <summary className="flex cursor-pointer items-center justify-between gap-4 px-4 py-3 font-medium">
               {group.name}
               {selected > 0 && (

@@ -493,5 +493,11 @@
     "hint": "Toque no passarinho para chamá-lo de volta.",
     "callBird": "Chamar o passarinho de volta ao galho",
     "birdHome": "Ele voltou para o galho. Agora é a sua vez."
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Tema do sistema",
+    "light": "Tema claro",
+    "dark": "Tema escuro"
   }
 }
