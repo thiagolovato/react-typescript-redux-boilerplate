@@ -81,3 +81,9 @@ typings/
 test-results/
 playwright-report/
 blob-report/
+
+# Local assistant folder
+.claude/
+
+# TypeScript incremental build info
+*.tsbuildinfo

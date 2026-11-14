@@ -163,6 +163,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - pedido de encerramento, para a outra parte e para a coordenação **[planejado: fase 3]**;
    - check-ins, avaliações e lembretes **[planejado: fase 4]**.
 4. A coordenação recebe numa caixa compartilhada, configurada por ambiente. **[planejado: fase 2]**
+5. Notificações gerais, para cada perfil a quem o evento interessa (mentee, mentor, coordenação): novo mentee, novo mentor, mentee escolheu um mentor, mentor aceitou o mentee, recusas e as outras mudanças de uma proposta ou par. Os e-mails acima passam a ser um dos canais dessas notificações. Primeiro ponto já marcado no código: TODO em `MentorshipService.decline`, quando o mentor recusa e o mentee volta para a coordenação. **[planejado]**
 
 ## 14. Pesquisa e dados
 
