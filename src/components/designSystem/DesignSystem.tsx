@@ -1,5 +1,6 @@
-import { colors } from '../../constants/colors';
+import { colors, darkColors } from '../../constants/colors';
 import { useI18n } from '../../hooks/useI18n';
+import { useTheme } from '../../hooks/useTheme';
 import {
   Button,
   CalendarIcon,
@@ -15,6 +16,7 @@ import {
   SearchIcon,
   Select,
   TextArea,
+  ThemeToggle,
   TrashIcon,
   UserIcon,
 } from '../ui';
@@ -26,7 +28,11 @@ const SECTIONS = [
   'textarea', 'select', 'checkbox', 'languageToggle', 'roleBird', 'icons',
 ] as const;
 
-const BUTTON_VARIANTS = ['primary', 'secondary', 'outline', 'ghost', 'success', 'warning', 'error'] as const;
+const SCALES = ['primary', 'secondary', 'teal', 'neutral', 'success', 'warning', 'error', 'info', 'fill'] as const;
+type Scale = (typeof SCALES)[number];
+const darkOverrides: Partial<Record<Scale, Readonly<Record<string, string>>>> = darkColors;
+
+const BUTTON_VARIANTS =['primary', 'secondary', 'outline', 'ghost', 'success', 'warning', 'error'] as const;
 const BUTTON_SIZES = ['sm', 'md', 'lg', 'xl'] as const;
 
 const ICONS = [
@@ -106,6 +112,9 @@ import { TrashIcon } from './ui';
 
 export function DesignSystem() {
   const { t } = useI18n();
+  const { theme } = useTheme();
+  // Swatches show the values on screen now: the dark overrides on top of the light palette in dark mode.
+  const scaleFor = (name: Scale) => (theme === 'dark' ? { ...colors[name], ...darkOverrides[name] } : colors[name]);
   const section = (key: (typeof SECTIONS)[number]) => ({
     id: key,
     title: t(`designSystem.sections.${key}.title`),
@@ -133,19 +142,17 @@ export function DesignSystem() {
             <h1 className="text-4xl font-semibold tracking-tight">{t('designSystem.title')}</h1>
             <p className="mt-3 text-lg leading-relaxed text-neutral-600">{t('designSystem.intro')}</p>
           </div>
-          <LanguageToggle />
+          <div className="flex gap-2">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
         </header>
 
         <Specimen {...section('colors')}>
           <div className="flex flex-col gap-6">
-            <ColorScale name="primary" scale={colors.primary} />
-            <ColorScale name="secondary" scale={colors.secondary} />
-            <ColorScale name="teal" scale={colors.teal} />
-            <ColorScale name="neutral" scale={colors.neutral} />
-            <ColorScale name="success" scale={colors.success} />
-            <ColorScale name="warning" scale={colors.warning} />
-            <ColorScale name="error" scale={colors.error} />
-            <ColorScale name="info" scale={colors.info} />
+            {SCALES.map((name) => (
+              <ColorScale key={name} name={name} scale={scaleFor(name)} />
+            ))}
           </div>
         </Specimen>
 

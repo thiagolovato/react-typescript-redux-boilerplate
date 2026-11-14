@@ -22,7 +22,7 @@ export function Privacy() {
             <h1 className="text-3xl font-semibold tracking-tight">{terms.title}</h1>
             <p className="text-sm text-neutral-600">{t('privacy.version', { version: terms.version })}</p>
           </div>
-          <article className="rounded-2xl border border-neutral-200 bg-white p-6 sm:p-8">
+          <article className="rounded-2xl border border-neutral-200 bg-surface p-6 sm:p-8">
             <ConsentText body={terms.body} />
           </article>
         </>

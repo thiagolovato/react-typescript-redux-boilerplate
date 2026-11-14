@@ -43,7 +43,7 @@ export function MentorCandidateCard({
   const sharedAreas = candidate.interestAreaIds.filter((id) => menteeAreas.has(id)).length;
 
   return (
-    <article className="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-white p-5">
+    <article className="flex flex-col gap-4 rounded-xl border border-neutral-200 bg-surface p-5">
       <header className="flex items-start gap-3">
         <span className="mt-0.5 text-sm font-medium text-neutral-400">#{rank}</span>
         <div className="min-w-0 flex-1">

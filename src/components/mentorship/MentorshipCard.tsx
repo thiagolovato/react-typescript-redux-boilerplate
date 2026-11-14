@@ -53,7 +53,7 @@ export function MentorshipCard({ mentorship, viewer, areaNames, onChange }: Ment
   };
 
   return (
-    <article className="flex flex-col gap-5 rounded-2xl border border-neutral-200 bg-white p-6">
+    <article className="flex flex-col gap-5 rounded-2xl border border-neutral-200 bg-surface p-6">
       <header>
         <p className="text-xs font-medium tracking-wide text-neutral-500 uppercase">
           {t(`mentorship.party.${viewer}.${state}.eyebrow`)}

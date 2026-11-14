@@ -16,7 +16,7 @@ export function Specimen({ id, title, description, code, children }: SpecimenPro
         <h2 id={`${id}-title`} className="text-2xl font-semibold tracking-tight">{title}</h2>
         <p className="mt-2 leading-relaxed text-neutral-600">{description}</p>
       </header>
-      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-surface">
         <div className="p-6">{children}</div>
         {code && (
           <pre className="overflow-x-auto border-t border-neutral-200 bg-neutral-100 px-6 py-4 text-sm leading-relaxed

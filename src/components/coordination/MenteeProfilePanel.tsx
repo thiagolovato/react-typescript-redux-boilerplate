@@ -31,7 +31,7 @@ export function MenteeProfilePanel({ mentee, areaNames }: MenteeProfilePanelProp
   return (
     <section
       aria-labelledby="mentee-name"
-      className="flex flex-col gap-5 rounded-2xl border border-neutral-200 bg-white p-6 lg:sticky lg:top-6"
+      className="flex flex-col gap-5 rounded-2xl border border-neutral-200 bg-surface p-6 lg:sticky lg:top-6"
     >
       <header>
         <p className="text-xs font-medium tracking-wide text-secondary-700 uppercase">{t('roles.MENTEE')}</p>

@@ -30,7 +30,7 @@ const boxClasses: Record<RoleBirdSize, string> = {
 /** Decorative. The surrounding text names the role. */
 export function RoleBird({ role, size = 'md', className = '' }: RoleBirdProps) {
   return (
-    <span aria-hidden="true" className={`relative block shrink-0 overflow-hidden ${boxClasses[size]} ${className}`}>
+    <span aria-hidden="true" className={`relative block shrink-0 overflow-hidden dark:rounded-full dark:bg-paper ${boxClasses[size]} ${className}`}>
       <img src={birds} alt="" className={`absolute mix-blend-multiply ${cropClasses[size][role]}`} />
     </span>
   );

@@ -14,15 +14,16 @@ interface ButtonProps extends React.ComponentProps<'button'> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'border-transparent bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800',
-  secondary: 'border-transparent bg-secondary-700 text-white hover:bg-secondary-800 active:bg-secondary-900',
-  outline: 'border-neutral-300 bg-white text-neutral-800 hover:border-primary-400 hover:text-primary-700 ' +
+  primary: 'border-transparent bg-fill-primary text-white hover:bg-fill-primary-hover active:bg-fill-primary-active',
+  secondary: 'border-transparent bg-fill-secondary text-white hover:bg-fill-secondary-hover ' +
+    'active:bg-fill-secondary-active',
+  outline: 'border-neutral-300 bg-surface text-neutral-800 hover:border-primary-400 hover:text-primary-700 ' +
     'active:bg-primary-50',
   ghost: 'border-transparent bg-transparent text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 ' +
     'active:bg-neutral-200',
-  success: 'border-transparent bg-success-dark text-white hover:bg-secondary-800',
-  warning: 'border-transparent bg-warning-dark text-white hover:brightness-90',
-  error: 'border-transparent bg-error-dark text-white hover:brightness-90',
+  success: 'border-transparent bg-fill-success text-white hover:bg-fill-success-hover',
+  warning: 'border-transparent bg-fill-warning text-white hover:brightness-90',
+  error: 'border-transparent bg-fill-error text-white hover:brightness-90',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

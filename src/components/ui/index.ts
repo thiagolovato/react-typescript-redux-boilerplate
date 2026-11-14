@@ -3,6 +3,7 @@ export { Button } from './Button';
 export { Input } from './Input';
 export { Checkbox } from './Checkbox';
 export { LanguageToggle } from './LanguageToggle';
+export { ThemeToggle } from './ThemeToggle';
 export { TextArea } from './TextArea';
 export { Select } from './Select';
 export { RoleBird } from './RoleBird';

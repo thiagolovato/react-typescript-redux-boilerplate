@@ -47,7 +47,7 @@ export function MyMentorship() {
       {mentorships === null && !error && <p role="status" className="text-neutral-600">{t('common.loading')}</p>}
 
       {mentorships?.length === 0 && (
-        <p className="rounded-xl border border-neutral-200 bg-white p-6 text-neutral-600">{t(`mentorship.empty.${viewer}`)}</p>
+        <p className="rounded-xl border border-neutral-200 bg-surface p-6 text-neutral-600">{t(`mentorship.empty.${viewer}`)}</p>
       )}
 
       {mentorships?.map((mentorship) => (

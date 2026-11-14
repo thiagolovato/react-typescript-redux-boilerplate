@@ -70,7 +70,7 @@ export function CohortMentorships({ onChange }: CohortMentorshipsProps) {
       {mentorships === null && !error && <p role="status" className="text-sm text-neutral-600">{t('common.loading')}</p>}
 
       {mentorships?.length === 0 && (
-        <p className="rounded-xl border border-neutral-200 bg-white p-6 text-sm text-neutral-600">
+        <p className="rounded-xl border border-neutral-200 bg-surface p-6 text-sm text-neutral-600">
           {t('coordination.mentorships.empty')}
         </p>
       )}

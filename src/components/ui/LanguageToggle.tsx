@@ -1,4 +1,5 @@
 import { Language, useI18n } from '../../hooks/useI18n';
+import { toggleSelectClasses } from './fieldStyles';
 
 interface LanguageToggleProps {
   className?: string;
@@ -13,8 +14,7 @@ export function LanguageToggle({ className = '' }: LanguageToggleProps) {
       <select
         value={currentLanguage}
         onChange={(e) => changeLanguage(e.target.value as Language)}
-        className="h-9 w-full rounded-md border border-neutral-300 bg-white px-2 text-sm text-neutral-800
-          hover:border-neutral-400"
+        className={toggleSelectClasses}
       >
         {languages.map((language) => (
           <option key={language.code} value={language.code}>

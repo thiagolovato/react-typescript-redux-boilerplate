@@ -27,7 +27,7 @@ export function MentorshipSummary({ mentorship, onWithdraw, withdrawing }: Mento
   const noName = t('coordination.unmatchedMentees.noName');
 
   return (
-    <article className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 sm:flex-row sm:items-start sm:justify-between">
+    <article className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-surface px-4 py-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0">
         <p className="font-medium">
           <span className="text-secondary-700">{mentorship.mentee.name ?? noName}</span>
