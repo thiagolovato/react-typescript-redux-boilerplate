@@ -4,7 +4,9 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearAuth } from '../../redux/reducers/auth';
 import { persistor } from '../../redux/store';
 import { useI18n } from '../../hooks/useI18n';
-import { Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon } from '../ui';
+import {
+  Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PairIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon,
+} from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
 import { loginPathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
@@ -16,6 +18,7 @@ interface SidebarProps {
 
 const participantNavItems = [
   { to: APP_ROUTES.dashboard, Icon: HomeIcon, label: 'navigation.dashboard' },
+  { to: APP_ROUTES.mentorship, Icon: PairIcon, label: 'navigation.mentorship' },
   { to: APP_ROUTES.profile, Icon: UserIcon, label: 'navigation.profile' },
 ] as const;
 

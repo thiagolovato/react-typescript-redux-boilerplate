@@ -1,4 +1,5 @@
 import type { Profile } from './profile';
+import type { CoordinatorMentorship } from './mentorship';
 
 /** A mentee still waiting for a mentor. The coordinator sees who the person is (REGRAS_DE_NEGOCIO.md 7.7). */
 export interface UnmatchedMentee {
@@ -44,8 +45,12 @@ export interface MentorCandidate {
   breakdown: Partial<Record<MatchCriterion, number>>;
 }
 
-/** The matching page for one mentee. `candidates` is empty while the mentee has not accepted the terms in force. */
+/**
+ * The matching page for one mentee. `candidates` is empty while the mentee has not accepted the terms in force, or
+ * while they have an open pair (`mentorship`).
+ */
 export interface MenteeCandidates {
   mentee: Profile;
   candidates: MentorCandidate[];
+  mentorship: CoordinatorMentorship | null;
 }

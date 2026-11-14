@@ -11,6 +11,10 @@ interface MentorCandidateCardProps {
   menteeAreas: Set<number>;
   menteeLanguages: Set<string>;
   areaNames: Map<number, string>;
+  onPropose: () => void;
+  proposing: boolean;
+  /** Another proposal is being sent. */
+  disabled: boolean;
 }
 
 // Order of the score bars. Same names as MatchScorer in mentor-mentee-core.
@@ -30,7 +34,9 @@ function scoreTone(score: number) {
  * One mentor who passed the hard filters. The name stays hidden until the coordinator asks for it, so the choice
  * rests on the profile first. What the mentor shares with the mentee is highlighted.
  */
-export function MentorCandidateCard({ rank, candidate, menteeAreas, menteeLanguages, areaNames }: MentorCandidateCardProps) {
+export function MentorCandidateCard({
+  rank, candidate, menteeAreas, menteeLanguages, areaNames, onPropose, proposing, disabled,
+}: MentorCandidateCardProps) {
   const { t } = useI18n();
   const names = useDisplayNames();
   const [nameShown, setNameShown] = useState(false);
@@ -160,8 +166,14 @@ export function MentorCandidateCard({ rank, candidate, menteeAreas, menteeLangua
         )}
       </details>
 
-      {/* Proposals come in phase 2, step 4 (PLANO.md). The button stays disabled until then. */}
-      <Button variant="secondary" size="sm" className="self-start" disabled>
+      <Button
+        variant="secondary"
+        size="sm"
+        className="self-start"
+        onClick={onPropose}
+        isLoading={proposing}
+        disabled={disabled && !proposing}
+      >
         {t('coordination.matching.propose')}
       </Button>
     </article>

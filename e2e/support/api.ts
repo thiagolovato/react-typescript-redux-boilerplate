@@ -20,7 +20,7 @@ export function uniqueEmail(label = 'user'): string {
 export const authHeaders = (token: string) => ({ Authorization: `Bearer ${token}` });
 
 /** Token claims, read without checking the signature. */
-export function decodeTokenClaims(jwt: string): { type: string; authorities: string[] } {
+export function decodeTokenClaims(jwt: string): { type: string; authorities: string[]; uid: number } {
   const [, payload] = jwt.split('.');
   return JSON.parse(Buffer.from(payload, 'base64url').toString());
 }

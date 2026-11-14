@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
-import { Button, CalendarIcon, SearchIcon, UserIcon } from './ui';
+import { Button, CalendarIcon, PairIcon, UserIcon } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import { useAppSelector } from '../redux/hooks';
 import withAuthentication from './hoc/withAuthentication';
 import { APP_ROUTES } from '../constants/routes';
+import { mentorshipService } from '../service/request';
+import type { Mentorship } from '../types/mentorship';
 
 type CardTone = 'neutral' | 'mentor' | 'mentee' | 'bridge';
 
@@ -39,6 +41,19 @@ function Dashboard() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
+  const isMentor = user?.customerType === 'MENTOR';
+  const [mentorships, setMentorships] = useState<Mentorship[]>([]);
+
+  // Only to point at a proposal waiting for an answer; the mentorship page shows the errors.
+  useEffect(() => {
+    let current = true;
+    mentorshipService.getMine().then((found) => current && setMentorships(found)).catch(() => undefined);
+    return () => {
+      current = false;
+    };
+  }, []);
+
+  const waitingForMe = mentorships.some((mentorship) => mentorship.awaiting === (isMentor ? 'MENTOR' : 'MENTEE'));
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-10">
@@ -46,6 +61,18 @@ function Dashboard() {
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{t('dashboard.welcome')}</h1>
         <p className="mt-3 text-lg text-neutral-600">{t('dashboard.subtitle')}</p>
       </header>
+
+      {waitingForMe && (
+        <div
+          role="status"
+          className="flex flex-col items-start gap-3 rounded-xl border border-teal-300 bg-teal-50 p-5 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p className="text-teal-800">{t(isMentor ? 'dashboard.proposalWaiting.MENTOR' : 'dashboard.proposalWaiting.MENTEE')}</p>
+          <Button variant={isMentor ? 'primary' : 'secondary'} onClick={() => navigate(APP_ROUTES.mentorship)}>
+            {t('dashboard.proposalWaiting.open')}
+          </Button>
+        </div>
+      )}
 
       <section aria-labelledby="quick-actions" className="flex flex-col gap-4">
         <h2 id="quick-actions" className="text-lg font-medium">{t('dashboard.quickActions')}</h2>
@@ -61,28 +88,18 @@ function Dashboard() {
             </Button>
           </ActionCard>
 
-          {/* Mentor search and sessions have no page yet. Their buttons stay disabled until the feature exists. */}
-          {user?.customerType === 'MENTEE' && (
-            <ActionCard
-              icon={<SearchIcon />}
-              tone="mentor"
-              title={t('dashboard.findMentors')}
-              description={t('dashboard.findMentorsDescription')}
-            >
-              <Button disabled>{t('dashboard.exploreMentors')}</Button>
-            </ActionCard>
-          )}
+          <ActionCard
+            icon={<PairIcon />}
+            tone={isMentor ? 'mentee' : 'mentor'}
+            title={t('dashboard.mentorship')}
+            description={t(isMentor ? 'dashboard.mentorshipDescription.MENTOR' : 'dashboard.mentorshipDescription.MENTEE')}
+          >
+            <Button variant={isMentor ? 'secondary' : 'primary'} onClick={() => navigate(APP_ROUTES.mentorship)}>
+              {t('dashboard.mentorshipButton')}
+            </Button>
+          </ActionCard>
 
-          {user?.customerType === 'MENTOR' && (
-            <ActionCard
-              icon={<SearchIcon />}
-              tone="mentee"
-              title={t('dashboard.findMentees')}
-              description={t('dashboard.findMenteesDescription')}
-            >
-              <Button variant="secondary" disabled>{t('dashboard.findMenteesButton')}</Button>
-            </ActionCard>
-          )}
+          {/* Sessions have no page yet (phase 3). The button stays disabled until the feature exists. */}
 
           <ActionCard
             icon={<CalendarIcon />}

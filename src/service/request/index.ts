@@ -4,4 +4,5 @@ export { profileService } from './profileService';
 export { referenceDataService } from './referenceDataService';
 export { consentService } from './consentService';
 export { coordinationService } from './coordinationService';
+export { mentorshipService } from './mentorshipService';
 export { tokenUtils } from './tokenUtils';

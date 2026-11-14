@@ -5,11 +5,12 @@ import { useDisplayNames } from '../hooks/useDisplayNames';
 import { useInfiniteList } from '../hooks/useInfiniteList';
 import { coordinationService } from '../service/request';
 import { APP_ROUTES } from '../constants/routes';
+import { CohortMentorships } from './coordination/CohortMentorships';
 
 // Module function, so the list keeps the same fetcher across renders.
 const fetchUnmatchedMentees = (page: number) => coordinationService.getUnmatchedMentees(page);
 
-// Coordinator home. Proposals and pairs join the unmatched mentees in phase 2 (PLANO.md, step 6).
+// Coordinator home: proposals and pairs of the open cohort, then the mentees still waiting for a mentor.
 export function Coordination() {
   const { t } = useI18n();
   const names = useDisplayNames();
@@ -23,6 +24,8 @@ export function Coordination() {
         <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{t('coordination.title')}</h1>
         <p className="mt-3 text-lg text-neutral-600">{t('coordination.subtitle')}</p>
       </header>
+
+      <CohortMentorships onChange={refresh} />
 
       <section aria-labelledby="unmatched-mentees" className="flex flex-col gap-4">
         <div className="flex items-start justify-between gap-4">

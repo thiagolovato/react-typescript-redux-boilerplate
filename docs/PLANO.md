@@ -105,7 +105,7 @@ Depois (2026-11-10): consentimentos versionados no banco. Migração V8 com `con
 
 ### Fase 2 — Coordenação e proposta de par (3 semanas)
 
-Resumo: papel de coordenador, ciclo anual, matching só para o coordenador, proposta anônima com aceite ou recusa dos dois, e-mail de apresentação e painel. Fases 2 e 3 juntas substituem os passos 2 a 6 do fluxo da seção 1.
+Resumo: papel de coordenador, ciclo anual, matching só para o coordenador, proposta anônima com aceite ou recusa do mentee e depois do mentor, e-mail de apresentação e painel. Fases 2 e 3 juntas substituem os passos 2 a 6 do fluxo da seção 1.
 
 #### 2.1 Papel `COORDINATOR` (auth)
 
@@ -145,8 +145,8 @@ Tabela `mentorship`: `id`, `cohort_id`, `mentor_id`, `mentee_id` (FK para `custo
 
 Estados: `PROPOSED → ACCEPTED → ACTIVE → COMPLETED / TERMINATED`, ou `PROPOSED → DECLINED`.
 
-- `PROPOSED`: coordenador cria. Mentor e mentee recebem e-mail ("você tem uma proposta"), sem dados da outra parte.
-- `ACCEPTED`: quando a segunda parte aceita. Dispara o e-mail de apresentação.
+- `PROPOSED`: coordenador cria. O mentee responde primeiro; o mentor só vê a proposta depois que o mentee aceita (decidido em 2026-11-14). E-mail "você tem uma proposta", sem dados da outra parte: para o mentee na criação, para o mentor no aceite do mentee.
+- `ACCEPTED`: quando o mentor aceita, depois do mentee. Dispara o e-mail de apresentação.
 - `DECLINED`: qualquer parte recusa (motivo opcional, só o coordenador vê), ou o coordenador retira a proposta.
 - `ACTIVE`, `COMPLETED`, `TERMINATED`: Fase 3 (acordo assinado e encerramento).
 - Índice único parcial: um par aberto por mentee (`status IN ('PROPOSED','ACCEPTED','ACTIVE')`). O banco garante mesmo se a checagem do serviço falhar.
@@ -198,7 +198,7 @@ Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResp
 1. Auth: `COORDINATOR`, bloqueio no cadastro, criação de conta. Testes: cadastro com `COORDINATOR` recusado, token do coordenador com `ROLE_COORDINATOR`. **Feito em 2026-11-10:** `RegisterResource.SignUpType` só aceita MENTOR e MENTEE; teste no core de que coordenador não cria perfil. Também feito: `POST /users/coordinator/login` só aceita coordenador, e `/users/login` recusa coordenador; contas criadas por `mentor-mentee-auth/scripts/create-coordinator.sh` e, em dev, pelo seed `coordinator@test.com`; app com página `/coordination/login` sem link, rotas por papel (`AuthLayout roles`) e página `/coordination` provisória.
 2. Core: migração com `cohort` e `customer.email`. Endpoints de ciclo. Testes: só coordenador acessa `/coordination/**`. **Feito em 2026-11-10:** V7 com `cohort` (sem sobreposição de datas garantida por restrição de exclusão no banco, limite de 20 pares por `CHECK`) e `customer.email`; `/coordination/cohorts` (listar, ver, criar, editar; sem apagar); 403 com `core.access.denied` para mentor e mentee. As tabelas `mentorship` e `email_outbox` passaram para os passos 4 e 5, junto com o código que as usa. Tradução dos novos códigos de erro no app fica para o passo 6.
 3. Matching com filtros duros e lista de inscritos sem par. Testes unitários dos filtros; integração da consulta de disponibilidade. **Feito em 2026-11-14:** `GET /coordination/mentees/unmatched` (paginado, quem espera há mais tempo primeiro) e `GET /coordination/mentees/{userId}/candidates` (perfil completo do mentee e mentores que passam nos filtros de termos, idioma e gênero, em JPQL, ordenados pela nota do `MatchScorer`). No app, lista com rolagem infinita e botão de atualizar, e página de matching com nome do mentor escondido até o coordenador pedir. Os filtros de par aberto e limite de mentees por mentor entram com a tabela `mentorship` no passo 4.
-4. Migração com `mentorship`. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima.
+4. Migração com `mentorship`. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima. **Feito em 2026-11-14**, com o mentee respondendo primeiro: V12 com `mentorship` (audit no lugar de `proposed_by_user_id`/`proposed_at`; `declined_by` aceita `COORDINATOR` para proposta retirada; índice único parcial por mentee). `POST`/`GET /coordination/mentorships`, `DELETE /coordination/mentorships/{id}`, `GET /mentorships/mine`, `POST /mentorships/{id}/accept` e `/decline`. A proposta trava a linha do ciclo (`SELECT ... FOR UPDATE`) e checa par aberto, limite de pares e os filtros do matching, agora com par aberto e limite de mentees por mentor. Editar o ciclo abaixo do que ele já tem é recusado. Visão anônima em `AnonymousProfileResponse`; nome e contatos em `IntroductionResponse`, só depois do aceite. Também feito aqui, do passo 6: botão "Propor par" no matching, propostas e pares do ciclo aberto na página da coordenação (com retirar e motivo da recusa), página "Minha mentoria" para mentor e mentee e aviso no dashboard. Testes de API no e2e (`e2e/api/mentorship.spec.ts`).
 5. Migração com `email_outbox`. Envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite.
 6. App: painel do coordenador, tela de candidatos, tela de proposta.
 
