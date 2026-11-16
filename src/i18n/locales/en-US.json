@@ -12,7 +12,8 @@
     "collapse": "Collapse menu",
     "expand": "Expand menu",
     "coordination": "Coordination",
-    "mentorship": "My mentorship"
+    "mentorship": "My mentorship",
+    "notifications": "Notifications"
   },
   "auth": {
     "login": {
@@ -386,6 +387,11 @@
       "acceptTerms": "I have read and accept the terms of use and privacy notice",
       "termsChanged": "The terms changed since your last save. Accept the new version to save.",
       "researchAgree": "I agree to take part in the research described above"
+    },
+    "notificationChannel": "How do you want to be notified?",
+    "notificationChannels": {
+      "EMAIL_AND_APP": "In the app and by e-mail",
+      "APP_ONLY": "In the app only"
     }
   },
   "roles": {
@@ -607,6 +613,9 @@
           "notProposed": "Only a proposal not yet accepted by both can be withdrawn.",
           "duplicateMentor": "The same mentor was included more than once in the proposal.",
           "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all."
+        },
+        "notification": {
+          "notFound": "Notification not found."
         }
       }
     }
@@ -624,5 +633,29 @@
     "system": "System theme",
     "light": "Light theme",
     "dark": "Dark theme"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet.",
+    "unread": "unread",
+    "unreadCount_one": "{{count}} unread notification",
+    "unreadCount_other": "{{count}} unread notifications",
+    "retry": "Try again",
+    "errors": {
+      "load": "Could not load your notifications.",
+      "action": "Could not update the notification. Try again."
+    },
+    "types": {
+      "NEW_MENTOR": "A new mentor signed up.",
+      "NEW_MENTEE": "A new mentee signed up.",
+      "PROPOSAL_RECEIVED": "You received a mentorship proposal. Read the profile and answer.",
+      "MENTEE_CHOSE_MENTOR": "A mentee chose a mentor. Now the mentor answers.",
+      "PROPOSAL_DECLINED_BY_MENTEE": "A mentee declined the proposal and is waiting for a new one.",
+      "PROPOSAL_DECLINED_BY_MENTOR": "A mentor declined the proposal. The mentee is waiting for a new one.",
+      "MENTOR_DECLINED": "The mentor you chose could not take part. The coordination will propose new mentors.",
+      "PROPOSAL_WITHDRAWN": "The coordination withdrew a proposal you had received.",
+      "PAIR_ACCEPTED": "Mentor and mentee accepted the mentorship. See the contacts and plan your first meeting."
+    }
   }
 }

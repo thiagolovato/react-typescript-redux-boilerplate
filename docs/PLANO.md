@@ -199,10 +199,28 @@ Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResp
 2. Core: migração com `cohort` e `customer.email`. Endpoints de ciclo. Testes: só coordenador acessa `/coordination/**`. **Feito em 2026-11-10:** V7 com `cohort` (sem sobreposição de datas garantida por restrição de exclusão no banco, limite de 20 pares por `CHECK`) e `customer.email`; `/coordination/cohorts` (listar, ver, criar, editar; sem apagar); 403 com `core.access.denied` para mentor e mentee. As tabelas `mentorship` e `email_outbox` passaram para os passos 4 e 5, junto com o código que as usa. Tradução dos novos códigos de erro no app fica para o passo 6.
 3. Matching com filtros duros e lista de inscritos sem par. Testes unitários dos filtros; integração da consulta de disponibilidade. **Feito em 2026-11-14:** `GET /coordination/mentees/unmatched` (paginado, quem espera há mais tempo primeiro) e `GET /coordination/mentees/{userId}/candidates` (perfil completo do mentee e mentores que passam nos filtros de termos, idioma e gênero, em JPQL, ordenados pela nota do `MatchScorer`). No app, lista com rolagem infinita e botão de atualizar, e página de matching com nome do mentor escondido até o coordenador pedir. Os filtros de par aberto e limite de mentees por mentor entram com a tabela `mentorship` no passo 4.
 4. Migração com `mentorship`. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima. **Feito em 2026-11-14**, com o mentee respondendo primeiro: V12 com `mentorship` (audit no lugar de `proposed_by_user_id`/`proposed_at`; `declined_by` aceita `COORDINATOR` para proposta retirada; índice único parcial por mentee). `POST`/`GET /coordination/mentorships`, `DELETE /coordination/mentorships/{id}`, `GET /mentorships/mine`, `POST /mentorships/{id}/accept` e `/decline`. A proposta trava a linha do ciclo (`SELECT ... FOR UPDATE`) e checa par aberto, limite de pares e os filtros do matching, agora com par aberto e limite de mentees por mentor. Editar o ciclo abaixo do que ele já tem é recusado. Visão anônima em `AnonymousProfileResponse`; nome e contatos em `IntroductionResponse`, só depois do aceite. Também feito aqui, do passo 6: botão "Propor par" no matching, propostas e pares do ciclo aberto na página da coordenação (com retirar e motivo da recusa), página "Minha mentoria" para mentor e mentee e aviso no dashboard. Testes de API no e2e (`e2e/api/mentorship.spec.ts`). Em 2026-11-15, várias opções por proposta: o coordenador escolhe até 3 mentores (`Mentorship.MAX_MENTOR_OPTIONS`), o mentee escolhe um ou recusa todos, as outras opções fecham como `SYSTEM`. V13 troca o índice único por mentee (vale só depois da escolha) e cria `uk_mentorship_open_option`. Opções não reservam vaga do mentor; o limite é checado na escolha, com a trava do ciclo.
-5. Migração com `email_outbox`. Envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite.
+5. Migração com `email_outbox`. Envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite. **Feito em 2026-11-16**, junto com os avisos no app (seção 2.9): V14 com `email_outbox`, `notification` e `customer.notification_channel`. `NotificationService` grava o aviso e, quando o tipo vai por e-mail e a pessoa não escolheu "só no app", a linha do outbox, na transação da mudança. `EmailSender` (`@Scheduled`, a cada 30 s) envia em lotes com `FOR UPDATE SKIP LOCKED` e espera mais a cada falha (1 min, dobrando até 6 h, 10 tentativas). Modelos bilíngues em `src/main/resources/email/`. Mailpit no compose do core (`http://localhost:8025`). Testes: H2 (fluxo, só no app, falha de SMTP), PostgreSQL (`SKIP LOCKED`, regra da caixa) e e2e (`e2e/api/notification.spec.ts`, lê o Mailpit). Custo: Mailpit é local e gratuito; produção usa qualquer SMTP (seção 2.10).
 6. App: painel do coordenador, tela de candidatos, tela de proposta.
 
 Critério de pronto: coordenador cria o ciclo, abre um mentee, vê só candidatos com idioma comum e preferência atendida, propõe; mentor e mentee veem o perfil anônimo, aceitam, e os dois recebem o e-mail de apresentação no Mailpit.
+
+#### 2.9 Avisos no app e preferência de canal
+
+- Todo evento de proposta ou par vira uma linha em `notification`: tipo, papel e usuário de destino, par (sem chave estrangeira: é um registro de eventos, separado das tabelas do domínio) e data de leitura. Sem nomes: o app escreve o texto pelo tipo, então a proposta continua anônima.
+- Coordenadores dividem uma caixa (`recipient_user_id` nulo, garantido por `CHECK`).
+- `customer.notification_channel`: `EMAIL_AND_APP` (padrão) ou `APP_ONLY`. Escolhido no perfil. Clientes antigos que não mandam o campo não mudam a escolha.
+- API: `GET /notifications?page=`, `GET /notifications/unread-count`, `POST /notifications/{id}/read`, `POST /notifications/read-all`. Aviso de outra pessoa responde 404.
+- App: item "Avisos" no menu de todos os papéis, com contador de não lidos (consulta ao trocar de página e a cada minuto) e página de avisos.
+- Pendência: avisos de novo perfil não guardam de quem é o perfil, então o clique leva à página da coordenação, não ao mentee. Um `subject_user_id` resolveria e também deixaria o e2e limpar esses avisos, que hoje ficam na caixa da coordenação em dev.
+
+#### 2.10 Conversa assíncrona: caminho sem Kafka por enquanto
+
+Pedido: preparar a conversa assíncrona entre mentor e mentee, com Kafka. Decisão: preparar o terreno sem Kafka.
+
+- Volume: até 20 pares por ano, algumas mensagens por semana. Um broker Kafka (ou um serviço gerenciado) custaria mais que todo o resto da plataforma e acrescentaria operação, contra o objetivo de não gastar no início (ver também Fase 5).
+- O terreno já fica pronto: eventos de domínio gravados em tabela na transação da mudança (`notification` e `email_outbox`, padrão outbox). Se um dia o volume pedir um broker, um relay lê essas tabelas e publica no Kafka sem mudar o código que gera os eventos.
+- Conversa, quando entrar: tabelas `conversation` (uma por par aceito) e `message` (`conversation_id`, `sender_user_id`, `body`, `created_at`, `read_at`), só para as duas partes do par (404 para os outros, como 2.9 das regras). Cada mensagem gera um aviso `NEW_MESSAGE` e, para quem quer e-mail, um e-mail agrupado (não um por mensagem). Entrega no app por consulta periódica, como o contador de avisos; Server-Sent Events se a espera incomodar. Moderação e retenção das mensagens precisam de decisão da coordenação antes.
+- E-mail em produção: qualquer SMTP. Para o volume do programa, os planos gratuitos de serviços de envio ou a conta da coordenação bastam; conferir limites ao escolher.
 
 ### Fase 3 — Acordo e encontros (2 a 3 semanas)
 
@@ -325,6 +343,8 @@ Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assi
 
 - Ambiente de staging e produção, backup do banco, HTTPS, logs centralizados e alertas básicos.
 - Avaliar se a malha de microsserviços (registry, gateway, auth, core) é necessária para 20 pares por ano. Um core com auth embutido reduziria custo e operação. Decidir antes de ir para produção.
+- Escolher o SMTP de produção (`MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_SMTP_AUTH`, `MAIL_STARTTLS`, `MAIL_FROM`, `COORDINATION_EMAIL`, `APP_URL`) e configurar SPF e DKIM do domínio remetente.
+- Kafka só se o volume justificar (seção 2.10).
 
 ## 5. Decisões em aberto para a coordenação
 

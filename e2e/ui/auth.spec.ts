@@ -133,7 +133,8 @@ test.describe('sign-in', () => {
     await expectOnCoordinationPage(page);
 
     const menu = page.getByRole('navigation', { name: en.navigation.mainMenu });
-    await expect(menu.getByRole('link')).toHaveText([en.navigation.coordination]);
+    // The notifications link may also read out its unread count, hence "contain".
+    await expect(menu.getByRole('link')).toContainText([en.navigation.coordination, en.navigation.notifications]);
 
     await clickLogout(page);
     await expect(page).toHaveURL(urlEndsWith(COORDINATOR_LOGIN_PATH));

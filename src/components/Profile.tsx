@@ -22,6 +22,7 @@ import {
   MAX_GRADUATION_YEARS_AHEAD,
   MIN_AGE,
   MIN_GRADUATION_YEAR,
+  NOTIFICATION_CHANNELS,
   PREFERRED_MENTOR_GENDER_OPTIONS,
 } from '../constants/profileOptions';
 import type { ApiError } from '../types/api';
@@ -71,6 +72,7 @@ const emptyForm: ProfileForm = {
   hasMentorshipTraining: false,
   hasMentorshipExperience: false,
   researchConsent: false,
+  notificationChannel: NOTIFICATION_CHANNELS[0],
 };
 
 function toForm(profile: ProfileData): ProfileForm {
@@ -98,6 +100,7 @@ function toForm(profile: ProfileData): ProfileForm {
     hasMentorshipTraining: profile.hasMentorshipTraining,
     hasMentorshipExperience: profile.hasMentorshipExperience,
     researchConsent: profile.researchConsent,
+    notificationChannel: profile.notificationChannel,
   };
 }
 
@@ -487,6 +490,17 @@ function Profile() {
               <option value="" disabled>{t('profile.select')}</option>
               {CONTACT_PREFERENCES.map((option) => (
                 <option key={option} value={option}>{t(`profile.contactPreferences.${option}`)}</option>
+              ))}
+            </Select>
+            <Select
+              label={t('profile.notificationChannel')}
+              name="notificationChannel"
+              value={formData.notificationChannel}
+              onChange={handleInputChange}
+              required
+            >
+              {NOTIFICATION_CHANNELS.map((option) => (
+                <option key={option} value={option}>{t(`profile.notificationChannels.${option}`)}</option>
               ))}
             </Select>
           </div>

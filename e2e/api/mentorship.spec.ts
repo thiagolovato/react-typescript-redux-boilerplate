@@ -1,25 +1,12 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
-import {
-  authHeaders, coordinatorToken, CORE, createProfile, decodeTokenClaims, errorCodeOf, fetchProfileReferences,
-  profileRequest, registerParticipant, type Role,
-} from '../support/api';
-import { addDays, toIsoDate, today } from '../support/dates';
-import { TEST_COHORT_PREFIX } from '../support/env';
+import { authHeaders, coordinatorToken, CORE, errorCodeOf } from '../support/api';
 import { ERROR_CODES } from '../support/errorCodes';
 import { HTTP_STATUS } from '../support/http';
-import { randomSuffix } from '../support/random';
-import { MAX_PAIRS_PER_COHORT, MIN_PER_COHORT } from '../support/rules';
+import { ensureOpenCohort, participant, propose, PROPOSALS, type Participant } from '../support/mentorship';
 
 // REGRAS_DE_NEGOCIO.md section 7: the coordination proposes one or more mentors, the mentee chooses first, then the
 // mentor answers.
-const PROPOSALS = `${CORE}/coordination/mentorships`;
 const MINE = `${CORE}/mentorships/mine`;
-const OPEN_COHORT_LENGTH_DAYS = 30;
-
-interface Participant {
-  token: string;
-  userId: number;
-}
 
 interface PartyMentorship {
   id: number;
@@ -27,41 +14,6 @@ interface PartyMentorship {
   awaiting: string | null;
   partner: Record<string, unknown>;
   introduction: { name: string; email: string } | null;
-}
-
-/** Proposals need a cohort open today. Uses the one the database has, or creates a test one. */
-async function ensureOpenCohort(request: APIRequestContext, token: string) {
-  const startsOn = today();
-  await request.post(`${CORE}/coordination/cohorts`, {
-    headers: authHeaders(token),
-    data: {
-      name: `${TEST_COHORT_PREFIX}open-${randomSuffix()}`,
-      startsOn,
-      endsOn: toIsoDate(addDays(new Date(), OPEN_COHORT_LENGTH_DAYS)),
-      maxPairs: MAX_PAIRS_PER_COHORT,
-      maxMenteesPerMentor: MIN_PER_COHORT,
-    },
-  });
-  // 409 means another cohort already covers today: that one is open.
-}
-
-/** A participant with a complete profile that accepts the terms in force. */
-async function participant(request: APIRequestContext, role: Role): Promise<Participant> {
-  const { token } = await registerParticipant(request, role);
-  const references = await fetchProfileReferences(request, token);
-  const response = await createProfile(request, token, profileRequest(references, {
-    name: `E2E ${role} ${randomSuffix()}`,
-    preferredMentorGenders: [],
-  }));
-  expect(response.status(), await response.text()).toBe(HTTP_STATUS.CREATED);
-  return { token, userId: decodeTokenClaims(token).uid };
-}
-
-function propose(request: APIRequestContext, token: string, mentee: Participant, ...mentors: Participant[]) {
-  return request.post(PROPOSALS, {
-    headers: authHeaders(token),
-    data: { menteeUserId: mentee.userId, mentorUserIds: mentors.map((mentor) => mentor.userId) },
-  });
 }
 
 /** Ids of the options, in the order of the mentors. */

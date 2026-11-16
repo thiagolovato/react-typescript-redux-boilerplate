@@ -4,12 +4,16 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { clearAuth } from '../../redux/reducers/auth';
 import { persistor } from '../../redux/store';
 import { useI18n } from '../../hooks/useI18n';
+import { useUnreadNotifications } from '../../hooks/useUnreadNotifications';
 import {
-  Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PairIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon,
+  BellIcon, Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PairIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon,
 } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
 import { loginPathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
+
+// Larger counts show as "9+" so the badge stays small.
+const MAX_BADGE = 9;
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -19,11 +23,13 @@ interface SidebarProps {
 const participantNavItems = [
   { to: APP_ROUTES.dashboard, Icon: HomeIcon, label: 'navigation.dashboard' },
   { to: APP_ROUTES.mentorship, Icon: PairIcon, label: 'navigation.mentorship' },
+  { to: APP_ROUTES.notifications, Icon: BellIcon, label: 'navigation.notifications' },
   { to: APP_ROUTES.profile, Icon: UserIcon, label: 'navigation.profile' },
 ] as const;
 
 const coordinatorNavItems = [
   { to: APP_ROUTES.coordination, Icon: HomeIcon, label: 'navigation.coordination' },
+  { to: APP_ROUTES.notifications, Icon: BellIcon, label: 'navigation.notifications' },
 ] as const;
 
 export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
@@ -32,6 +38,7 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const dispatch = useAppDispatch();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
+  const unread = useUnreadNotifications();
 
   const isCoordinator = user?.customerType === 'COORDINATOR';
   const navItems = isCoordinator ? coordinatorNavItems : participantNavItems;
@@ -101,8 +108,22 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
                   ? 'bg-primary-50 font-medium text-primary-800'
                   : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'}`}
             >
-              <Icon />
+              <span className="relative flex">
+                <Icon />
+                {to === APP_ROUTES.notifications && unread > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-1.5 -right-2 min-w-4 rounded-full bg-primary-600 px-1 text-center
+                      text-[10px] leading-4 font-semibold text-white"
+                  >
+                    {unread > MAX_BADGE ? `${MAX_BADGE}+` : unread}
+                  </span>
+                )}
+              </span>
               <span className={`whitespace-nowrap ${labelClass}`}>{t(label)}</span>
+              {to === APP_ROUTES.notifications && unread > 0 && (
+                <span className="sr-only">{t('notifications.unreadCount', { count: unread })}</span>
+              )}
             </NavLink>
           ))}
         </nav>

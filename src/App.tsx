@@ -10,6 +10,7 @@ import { Coordination } from './components/Coordination';
 import { MenteeMatching } from './components/coordination/MenteeMatching';
 import { NotFound } from './components/NotFound';
 import { MyMentorship } from './components/mentorship/MyMentorship';
+import { Notifications } from './components/notifications/Notifications';
 import { APP_ROUTES } from './constants/routes';
 
 // Dev-only reference page. Vite replaces import.meta.env.DEV with false in production builds,
@@ -39,6 +40,9 @@ function App() {
       <Route element={<AuthLayout roles={['COORDINATOR']} />}>
         <Route path={APP_ROUTES.coordination} element={<Coordination />} />
         <Route path={APP_ROUTES.menteeMatching} element={<MenteeMatching />} />
+      </Route>
+      <Route element={<AuthLayout roles={['MENTOR', 'MENTEE', 'COORDINATOR']} />}>
+        <Route path={APP_ROUTES.notifications} element={<Notifications />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

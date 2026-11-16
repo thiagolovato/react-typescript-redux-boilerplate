@@ -152,18 +152,22 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 2. Avaliação de mentor e de mentee aos 6 e aos 12 meses, dentro do app, com as perguntas da planilha e escalas fixas. **[planejado: fase 4]**
 3. Lembrete mensal de encontro. **[planejado: fase 4]**
 
-## 13. E-mails
+## 13. Notificações e e-mails
 
-1. Todo e-mail é gravado na mesma transação da mudança que o gerou e enviado depois, com novas tentativas em caso de falha. Uma falha de envio não desfaz a mudança nem perde o e-mail. **[planejado: fase 2]**
-2. Os textos vão em inglês e português no mesmo e-mail. **[planejado: fase 2]**
+1. Todo e-mail é gravado na mesma transação da mudança que o gerou e enviado depois, com novas tentativas em caso de falha. Uma falha de envio não desfaz a mudança nem perde o e-mail. **[feito]**
+2. Os textos vão em inglês e português no mesmo e-mail. **[feito]**
 3. E-mails previstos:
-   - proposta recebida, sem dados da outra parte: para o mentee quando a coordenação propõe, para o mentor quando o mentee aceita **[planejado: fase 2]**;
-   - proposta recusada, para a coordenação **[planejado: fase 2]**;
-   - apresentação, para os dois, com cópia para a coordenação, com nome e e-mail de cada um **[planejado: fase 2]**;
+   - proposta recebida, sem dados da outra parte: para o mentee quando a coordenação propõe, para o mentor quando o mentee aceita **[feito]**;
+   - proposta recusada, para a coordenação, com o motivo **[feito]**;
+   - recusa do mentor, para o mentee, sem o motivo; proposta retirada, para o mentee e para o mentor que ele já tinha escolhido **[feito]**;
+   - apresentação, para os dois, com cópia para a coordenação, com nome e e-mail de cada um **[feito]**;
    - pedido de encerramento, para a outra parte e para a coordenação **[planejado: fase 3]**;
    - check-ins, avaliações e lembretes **[planejado: fase 4]**.
-4. A coordenação recebe numa caixa compartilhada, configurada por ambiente. **[planejado: fase 2]**
-5. Notificações gerais, para cada perfil a quem o evento interessa (mentee, mentor, coordenação): novo mentee, novo mentor, mentee escolheu um mentor, mentor aceitou o mentee, recusas e as outras mudanças de uma proposta ou par. Os e-mails acima passam a ser um dos canais dessas notificações. Primeiro ponto já marcado no código: TODO em `MentorshipService.decline`, quando o mentor recusa e o mentee volta para a coordenação. **[planejado]**
+4. A coordenação recebe numa caixa compartilhada, configurada por ambiente (`COORDINATION_EMAIL`). Sem caixa configurada, a coordenação não recebe e-mail, só os avisos no app. **[feito]**
+5. Notificações gerais, para cada perfil a quem o evento interessa (mentee, mentor, coordenação): novo mentee, novo mentor, mentee escolheu um mentor, mentor aceitou o mentee, recusas, proposta retirada. Todo evento vira um aviso no app; os eventos do item 3 também vão por e-mail. **[feito]**
+6. Mentor e mentee escolhem no perfil como querem ser avisados: no app e por e-mail (padrão) ou só no app. Só no app, nenhum e-mail é gravado para a pessoa; os avisos no app continuam. A coordenação não tem essa escolha. **[feito]**
+7. Os avisos no app não levam nomes: o app escreve o texto pelo tipo do aviso. Assim a proposta continua anônima (7.5). Cada pessoa vê só os próprios avisos; os coordenadores dividem uma caixa, e quem lê um aviso marca como lido para todos. **[feito]**
+8. Conversa assíncrona entre mentor e mentee pelo app, depois do aceite. Cada mensagem nova gera um aviso (item 5) e, para quem não escolheu "só no app", um e-mail. **[planejado]**
 
 ## 14. Pesquisa e dados
 

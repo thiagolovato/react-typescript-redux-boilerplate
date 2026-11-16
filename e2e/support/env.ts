@@ -1,6 +1,8 @@
 // Local stack addresses and containers. Override with environment variables to point elsewhere.
 export const APP_URL = process.env.E2E_APP_URL ?? 'http://localhost:8080';
 export const GATEWAY_URL = process.env.E2E_GATEWAY_URL ?? 'http://localhost:8765';
+// Mailpit catches the e-mails core sends (mentor-mentee-core docker-compose).
+export const MAILPIT_URL = process.env.E2E_MAILPIT_URL ?? 'http://localhost:8025';
 
 // Texts in the tests come from en-US.json, so the app must pick English.
 export const TEST_LOCALE = 'en-US';

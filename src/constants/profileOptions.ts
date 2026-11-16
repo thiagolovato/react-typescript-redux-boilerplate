@@ -27,6 +27,9 @@ export const PREFERRED_MENTOR_GENDER_OPTIONS = GENDER_OPTIONS.filter((option) =>
 
 export const CONTACT_PREFERENCES = ['VIDEO_CALL', 'PHONE_CALL', 'MESSAGING', 'EMAIL', 'NO_PREFERENCE'] as const;
 
+// Same values as NotificationChannel in mentor-mentee-core. The first is the default of a new profile.
+export const NOTIFICATION_CHANNELS = ['EMAIL_AND_APP', 'APP_ONLY'] as const;
+
 // The subscription forms accept graduation years from the past or a few years ahead.
 export const MIN_GRADUATION_YEAR = 1940;
 export const MAX_GRADUATION_YEARS_AHEAD = 10;

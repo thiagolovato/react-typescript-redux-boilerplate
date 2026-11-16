@@ -10,6 +10,8 @@ export const APP_ROUTES = {
   dashboard: '/dashboard',
   profile: '/profile',
   mentorship: '/mentorship',
+  // Every signed-in role, coordinators included.
+  notifications: '/notifications',
   coordination: '/coordination',
   // Build with generatePath(APP_ROUTES.menteeMatching, { userId }).
   menteeMatching: '/coordination/mentees/:userId',

@@ -12,7 +12,8 @@
     "collapse": "Recolher menu",
     "expand": "Expandir menu",
     "coordination": "Coordenação",
-    "mentorship": "Minha mentoria"
+    "mentorship": "Minha mentoria",
+    "notifications": "Avisos"
   },
   "auth": {
     "login": {
@@ -386,6 +387,11 @@
       "acceptTerms": "Li e aceito os termos de uso e a política de privacidade",
       "termsChanged": "Os termos mudaram desde a última vez. Aceite a nova versão para salvar.",
       "researchAgree": "Concordo em participar da pesquisa descrita acima"
+    },
+    "notificationChannel": "Como quer receber avisos?",
+    "notificationChannels": {
+      "EMAIL_AND_APP": "No app e por e-mail",
+      "APP_ONLY": "Só no app"
     }
   },
   "roles": {
@@ -607,6 +613,9 @@
           "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada.",
           "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
           "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas."
+        },
+        "notification": {
+          "notFound": "Aviso não encontrado."
         }
       }
     }
@@ -624,5 +633,29 @@
     "system": "Tema do sistema",
     "light": "Tema claro",
     "dark": "Tema escuro"
+  },
+  "notifications": {
+    "title": "Avisos",
+    "markAllRead": "Marcar todos como lidos",
+    "empty": "Nenhum aviso por enquanto.",
+    "unread": "não lido",
+    "unreadCount_one": "{{count}} aviso não lido",
+    "unreadCount_other": "{{count}} avisos não lidos",
+    "retry": "Tentar de novo",
+    "errors": {
+      "load": "Não foi possível carregar os avisos.",
+      "action": "Não foi possível atualizar o aviso. Tente de novo."
+    },
+    "types": {
+      "NEW_MENTOR": "Um novo mentor se inscreveu.",
+      "NEW_MENTEE": "Um novo mentee se inscreveu.",
+      "PROPOSAL_RECEIVED": "Você recebeu uma proposta de mentoria. Veja o perfil e responda.",
+      "MENTEE_CHOSE_MENTOR": "Um mentee escolheu um mentor. Agora o mentor responde.",
+      "PROPOSAL_DECLINED_BY_MENTEE": "Um mentee recusou a proposta e aguarda uma nova.",
+      "PROPOSAL_DECLINED_BY_MENTOR": "Um mentor recusou a proposta. O mentee aguarda uma nova.",
+      "MENTOR_DECLINED": "O mentor que você escolheu não pôde participar. A coordenação vai propor novos mentores.",
+      "PROPOSAL_WITHDRAWN": "A coordenação retirou uma proposta que você tinha recebido.",
+      "PAIR_ACCEPTED": "Mentor e mentee aceitaram a mentoria. Vejam os contatos e combinem o primeiro encontro."
+    }
   }
 }

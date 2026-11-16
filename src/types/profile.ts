@@ -18,6 +18,9 @@ export type CustomerType = 'MENTOR' | 'MENTEE';
 
 export type ContactPreference = 'VIDEO_CALL' | 'PHONE_CALL' | 'MESSAGING' | 'EMAIL' | 'NO_PREFERENCE';
 
+/** How the person is told about their proposals and pair: always in the app, by e-mail too unless APP_ONLY. */
+export type NotificationChannel = 'EMAIL_AND_APP' | 'APP_ONLY';
+
 /**
  * Body of POST /customers and PUT /customers/me. User id and type come from the token.
  * Fields of the other role are ignored by the server.
@@ -59,6 +62,7 @@ export interface ProfileRequest {
   researchDocumentId: number;
   /** Core language code of the consent texts the person read, such as `pt_BR`. */
   consentLanguage: string;
+  notificationChannel: NotificationChannel;
 }
 
 /**
@@ -93,6 +97,7 @@ export interface Profile {
   /** False when the person has not accepted the terms document in force. */
   termsAccepted: boolean;
   researchConsent: boolean;
+  notificationChannel: NotificationChannel;
 }
 
 export interface InterestArea {
