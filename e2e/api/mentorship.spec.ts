@@ -166,6 +166,23 @@ test.describe('mentorship API', () => {
     expect(await errorCodeOf(tooMany)).toBe(ERROR_CODES.core.validationFailed);
   });
 
+  test('answering twice, or out of turn, answers notAwaitingYou (7.1)', async ({ request }) => {
+    const [id] = await proposeIds(request, token, mentee, mentor);
+    expect((await answer(request, mentee, id, 'accept')).status()).toBe(HTTP_STATUS.OK);
+
+    const again = await answer(request, mentee, id, 'accept');
+    expect(again.status()).toBe(HTTP_STATUS.CONFLICT);
+    expect(await errorCodeOf(again)).toBe(ERROR_CODES.core.mentorshipNotAwaitingYou);
+  });
+
+  test('a mentor without a language in common cannot be proposed (6.2)', async ({ request }) => {
+    const japaneseOnly = await participant(request, 'MENTOR', { languages: ['ja'] });
+
+    const response = await propose(request, token, mentee, japaneseOnly);
+    expect(response.status()).toBe(HTTP_STATUS.CONFLICT);
+    expect(await errorCodeOf(response)).toBe(ERROR_CODES.core.mentorNotCandidate);
+  });
+
   test('a pair answers 404 to anyone outside it (2.9)', async ({ request }) => {
     const [id] = await proposeIds(request, token, mentee, mentor);
     const stranger = await participant(request, 'MENTEE');

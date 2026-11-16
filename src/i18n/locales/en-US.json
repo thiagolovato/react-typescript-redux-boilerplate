@@ -514,7 +514,8 @@
       },
       "Min": "Must be at least {{value}}",
       "Max": "Must be at most {{value}}",
-      "AssertTrue": "Invalid value"
+      "AssertTrue": "Invalid value",
+      "InvalidFormat": "Invalid value for this field"
     },
     "fields": {
       "auth": {
@@ -551,7 +552,10 @@
           "failed": "Please fix the highlighted fields."
         },
         "request": {
-          "invalid": "Invalid request. Please try again."
+          "invalid": "Could not read the request. Reload the page and try again.",
+          "notFound": "What you are looking for does not exist.",
+          "methodNotAllowed": "This action is not allowed here.",
+          "unsupportedMediaType": "Could not read the request. Reload the page and try again."
         },
         "password": {
           "tooLong": "Password is too long. Use fewer special characters or a shorter password."
@@ -564,7 +568,8 @@
         },
         "token": {
           "expired": "Your session expired. Please log in again.",
-          "invalid": "Invalid session. Please log in again."
+          "invalid": "Invalid session. Please log in again.",
+          "missing": "Log in to continue."
         },
         "user": {
           "alreadyExists": "An account with this email already exists."
@@ -575,7 +580,11 @@
           "failed": "Please fix the highlighted fields."
         },
         "request": {
-          "conflict": "Your data changed somewhere else. Reload the page and try again."
+          "conflict": "Your data changed somewhere else. Reload the page and try again.",
+          "invalid": "Could not read the request. Reload the page and try again.",
+          "notFound": "What you are looking for does not exist.",
+          "methodNotAllowed": "This action is not allowed here.",
+          "unsupportedMediaType": "Could not read the request. Reload the page and try again."
         },
         "profile": {
           "alreadyExists": "You already have a profile.",
@@ -600,15 +609,18 @@
         "cohort": {
           "noneOpen": "No cohort is open today. Create or adjust a cohort before proposing.",
           "pairLimitReached": "The open cohort has reached its limit of pairs.",
-          "limitBelowPairs": "The cohort already has more pairs than these limits allow."
+          "limitBelowPairs": "The cohort already has more pairs than these limits allow.",
+          "notFound": "Cohort not found.",
+          "invalidDates": "The cohort must end after it starts.",
+          "overlap": "Another cohort already takes some of these dates."
         },
         "mentor": {
           "notFound": "Mentor not found."
         },
         "mentorship": {
           "notFound": "This proposal is no longer available.",
-          "menteeAlreadyPaired": "This student already has an open proposal.",
-          "notCandidate": "One of the mentors no longer passes the filters for this student (for example, they reached the limit of students in the cohort).",
+          "menteeAlreadyPaired": "This mentee already has an open proposal.",
+          "notCandidate": "One of the mentors can no longer be proposed to this mentee. Refresh the candidate list and choose again.",
           "notAwaitingYou": "This proposal is not waiting for your answer anymore. Reload the page.",
           "notProposed": "Only a proposal not yet accepted by both can be withdrawn.",
           "duplicateMentor": "The same mentor was included more than once in the proposal.",
@@ -616,6 +628,9 @@
         },
         "notification": {
           "notFound": "Notification not found."
+        },
+        "access": {
+          "denied": "You do not have access to this area."
         }
       }
     }

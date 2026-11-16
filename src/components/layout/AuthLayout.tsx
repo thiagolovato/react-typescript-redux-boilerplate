@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router';
 import { useAppSelector } from '../../redux/hooks';
 import { Sidebar } from './Sidebar';
 import { homePathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
+import { useEndSession } from '../../hooks/useEndSession';
+import { onSessionRejected } from '../../service/request/httpClient';
 import type { CustomerType } from '../../types/auth/register';
+
+// Shown when a 401 came without a code, such as one from the gateway.
+const FALLBACK_SESSION_CODE = 'auth.token.invalid';
 
 interface AuthLayoutProps {
   /** Roles allowed on the pages inside. Anyone else goes to their own home page. */
@@ -16,6 +21,14 @@ export function AuthLayout({ roles }: AuthLayoutProps) {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const forCoordinators = roles.includes('COORDINATOR');
+  const endSession = useEndSession();
+
+  // A 401 on any call made with the token ends the session here, instead of an error on every page.
+  useEffect(() => {
+    if (!isAuthenticated) return undefined;
+    onSessionRejected((code) => void endSession(code ?? FALLBACK_SESSION_CODE));
+    return () => onSessionRejected(null);
+  }, [isAuthenticated, endSession]);
 
   if (!isAuthenticated) {
     return <Navigate to={forCoordinators ? APP_ROUTES.coordinatorLogin : APP_ROUTES.login} replace />;

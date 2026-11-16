@@ -37,7 +37,8 @@ Every service answers errors as a problem detail with a list of field errors (`t
 - In every service file, end every catch with `throw toApiRequestError(error)`. It parses any failure into an `ApiError`. Thunks reject with `toApiError(error)`.
 - Show it with `ApiErrorAlert`. It translates the server `code` (`<service>.<context>.<error>`) from `apiErrors.problems`; `fallback` covers network errors, server errors and codes without a translation.
 - Show field errors next to their input: `fieldErrorOf(error, 'address.city')` and `useFieldErrorText()`, which looks up `apiErrors.fields.<service>.<field>.<code>` (pass `error.service`, the first segment of the problem `code`), then `apiErrors.codes.<code>`, fills `params` (`{{min}}`, `{{max}}`) and falls back to the server text. `Size` uses `Size.min`, `Size.max` or `Size.range`. Pass those fields as `inlineFields` so the alert does not repeat them.
-- A new backend code needs its text in both locales.
+- A new backend code needs its text in both locales. `e2e/contract/errorTranslations.spec.ts` reads the `ErrorCodes` of core and auth and fails when one is missing (`*.unexpected` excepted: a 5xx shows the page's own `fallback`).
+- A 401 on a call made with the session token ends the session: `httpClient` calls the handler `AuthLayout` registers (`onSessionRejected`), which logs out (`useEndSession`) and opens the login with the code, shown there as the reason ("your session expired"). Login and sign-up send no token, so their 401 stays a form error.
 - A code the app reacts to (beyond showing it) goes in `constants/errorCodes.ts`; the end-to-end tests import it from there.
 - Check the same rules as the backend before sending. Shared limits live in `constants/` with a comment naming the backend rule.
 

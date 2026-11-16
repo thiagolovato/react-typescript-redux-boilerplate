@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { clearAuth } from '../../redux/reducers/auth';
-import { persistor } from '../../redux/store';
+import { NavLink } from 'react-router';
+import { useAppSelector } from '../../redux/hooks';
+import { useEndSession } from '../../hooks/useEndSession';
 import { useI18n } from '../../hooks/useI18n';
 import { useUnreadNotifications } from '../../hooks/useUnreadNotifications';
 import {
   BellIcon, Button, HomeIcon, LanguageToggle, LogoutIcon, MenuIcon, PairIcon, PanelIcon, RoleBird, ThemeToggle, UserIcon,
 } from '../ui';
 import birds from '../../assets/mentor-mentee-birds-640.jpg';
-import { loginPathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
 
 // Larger counts show as "9+" so the badge stays small.
@@ -34,8 +32,7 @@ const coordinatorNavItems = [
 
 export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const endSession = useEndSession();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
   const unread = useUnreadNotifications();
@@ -43,14 +40,7 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
   const isCoordinator = user?.customerType === 'COORDINATOR';
   const navItems = isCoordinator ? coordinatorNavItems : participantNavItems;
 
-  const handleLogout = async () => {
-    const loginPath = loginPathFor(user?.customerType);
-    dispatch(clearAuth());
-    // redux-persist writes storage a moment later. Without the flush, a reload right after logout
-    // would bring the old session back.
-    await persistor.flush();
-    navigate(loginPath);
-  };
+  const handleLogout = () => endSession();
 
   // Labels hide only on desktop when collapsed. The mobile panel always shows them.
   const labelClass = isCollapsed ? 'md:sr-only' : '';

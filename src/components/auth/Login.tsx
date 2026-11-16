@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { ApiErrorAlert, Button, Input } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -7,6 +7,7 @@ import { clearError, loginUser } from '../../redux/reducers/auth';
 import { AuthCard } from './AuthCard';
 import { homePathFor } from '../../constants/auth';
 import { APP_ROUTES } from '../../constants/routes';
+import type { SessionEndedState } from '../../hooks/useEndSession';
 
 interface LoginProps {
   /** The coordinator login: other texts, no sign-up link, and the server only accepts coordinator accounts. */
@@ -18,6 +19,9 @@ export function Login({ coordinator = false }: LoginProps) {
   const dispatch = useAppDispatch();
   const { t } = useI18n();
   const { loading, error, isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const location = useLocation();
+  // Read once: the history entry is cleared below, so a reload or "back" does not show the message again.
+  const [sessionEndedCode] = useState((location.state as SessionEndedState | null)?.sessionEndedCode);
 
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -32,6 +36,12 @@ export function Login({ coordinator = false }: LoginProps) {
       navigate(homePathFor(user?.customerType));
     }
   }, [isAuthenticated, user?.customerType, navigate]);
+
+  useEffect(() => {
+    if (sessionEndedCode) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [sessionEndedCode, location.pathname, navigate]);
 
   // Clear errors when component mounts
   useEffect(() => {
@@ -79,6 +89,11 @@ export function Login({ coordinator = false }: LoginProps) {
       title={t(coordinator ? 'auth.coordinatorLogin.title' : 'auth.login.title')}
       subtitle={t(coordinator ? 'auth.coordinatorLogin.subtitle' : 'auth.login.subtitle')}
     >
+      {sessionEndedCode && !error && (
+        <p role="status" className="rounded-lg border border-info-main/40 bg-info-light p-3 text-sm text-info-dark">
+          {t(`apiErrors.problems.${sessionEndedCode}`, { defaultValue: t('apiErrors.problems.auth.token.invalid') })}
+        </p>
+      )}
       <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
         <Input
           label={t('auth.login.email')}

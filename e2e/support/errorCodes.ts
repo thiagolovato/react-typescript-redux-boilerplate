@@ -4,6 +4,12 @@ import { API_ERROR_CODES } from '../../src/constants/errorCodes';
 export const ERROR_CODES = {
   auth: {
     passwordTooLong: 'auth.password.tooLong',
+    requestInvalid: 'auth.request.invalid',
+    requestNotFound: 'auth.request.notFound',
+    validationFailed: 'auth.validation.failed',
+    tokenMissing: 'auth.token.missing',
+    tokenInvalid: 'auth.token.invalid',
+    tokenExpired: 'auth.token.expired',
     invalidCredentials: 'auth.credentials.invalid',
     accountLocked: 'auth.account.locked',
     userAlreadyExists: 'auth.user.alreadyExists',
@@ -26,5 +32,10 @@ export const ERROR_CODES = {
     mentorshipNotProposed: 'core.mentorship.notProposed',
     mentorshipDuplicateMentor: 'core.mentorship.duplicateMentor',
     validationFailed: 'core.validation.failed',
+    requestInvalid: 'core.request.invalid',
+    requestNotFound: 'core.request.notFound',
+    methodNotAllowed: 'core.request.methodNotAllowed',
+    mentorNotCandidate: 'core.mentorship.notCandidate',
+    notificationNotFound: 'core.notification.notFound',
   },
 } as const;

@@ -8,6 +8,8 @@ if (!GATEWAY_BASE_URL) {
   throw new Error('VITE_API_URL is not set. Add it to .env.development or pass it to the build.');
 }
 
+const HTTP_UNAUTHORIZED = 401;
+
 export const API_ROUTES = {
   auth: '/auth',
   core: '/mmc',
@@ -77,5 +79,33 @@ export const httpClient = {
     }
   },
 };
+
+/** Problem code of a 401, such as `auth.token.expired`, when the server sent one. */
+type SessionRejectedHandler = (code: string | undefined) => void;
+let sessionRejectedHandler: SessionRejectedHandler | null = null;
+
+/**
+ * Called when a request that carried the session token answers 401: the token expired, was tampered with, or the
+ * account is gone, so the session is over. Requests without a token (login, sign-up) never trigger it: their 401
+ * means wrong credentials. AuthLayout registers the handler for the pages that need a session.
+ *
+ * The handler runs once: several requests in flight can fail together (a page and the unread count), and the session
+ * ends only once. AuthLayout registers it again after the next login.
+ */
+export const onSessionRejected = (handler: SessionRejectedHandler | null) => {
+  sessionRejectedHandler = handler;
+};
+
+axios.interceptors.response.use(undefined, (error: unknown) => {
+  if (axios.isAxiosError(error) && error.response?.status === HTTP_UNAUTHORIZED
+    && error.config?.headers?.has('Authorization')) {
+    const data: unknown = error.response.data;
+    const code = typeof data === 'object' && data !== null && 'code' in data ? String(data.code) : undefined;
+    const handler = sessionRejectedHandler;
+    sessionRejectedHandler = null;
+    handler?.(code);
+  }
+  return Promise.reject(error);
+});
 
 export const authHeader = () => ({ headers: { Authorization: `Bearer ${tokenUtils.get()}` } });

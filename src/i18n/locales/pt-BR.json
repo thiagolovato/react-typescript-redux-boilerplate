@@ -514,7 +514,8 @@
       },
       "Min": "Deve ser pelo menos {{value}}",
       "Max": "Deve ser no máximo {{value}}",
-      "AssertTrue": "Valor inválido"
+      "AssertTrue": "Valor inválido",
+      "InvalidFormat": "Valor inválido para este campo"
     },
     "fields": {
       "auth": {
@@ -551,7 +552,10 @@
           "failed": "Corrija os campos destacados."
         },
         "request": {
-          "invalid": "Pedido inválido. Tente novamente."
+          "invalid": "Não foi possível ler o pedido. Recarregue a página e tente de novo.",
+          "notFound": "O que você procura não existe.",
+          "methodNotAllowed": "Esta ação não é permitida aqui.",
+          "unsupportedMediaType": "Não foi possível ler o pedido. Recarregue a página e tente de novo."
         },
         "password": {
           "tooLong": "Senha muito longa. Use menos caracteres especiais ou uma senha mais curta."
@@ -564,7 +568,8 @@
         },
         "token": {
           "expired": "Sua sessão expirou. Entre novamente.",
-          "invalid": "Sessão inválida. Entre novamente."
+          "invalid": "Sessão inválida. Entre novamente.",
+          "missing": "Entre para continuar."
         },
         "user": {
           "alreadyExists": "Já existe uma conta com este email."
@@ -575,7 +580,11 @@
           "failed": "Corrija os campos destacados."
         },
         "request": {
-          "conflict": "Seus dados mudaram em outro lugar. Recarregue a página e tente de novo."
+          "conflict": "Seus dados mudaram em outro lugar. Recarregue a página e tente de novo.",
+          "invalid": "Não foi possível ler o pedido. Recarregue a página e tente de novo.",
+          "notFound": "O que você procura não existe.",
+          "methodNotAllowed": "Esta ação não é permitida aqui.",
+          "unsupportedMediaType": "Não foi possível ler o pedido. Recarregue a página e tente de novo."
         },
         "profile": {
           "alreadyExists": "Você já tem um perfil.",
@@ -600,15 +609,18 @@
         "cohort": {
           "noneOpen": "Nenhum ciclo está aberto hoje. Crie ou ajuste um ciclo antes de propor.",
           "pairLimitReached": "O ciclo aberto chegou ao limite de pares.",
-          "limitBelowPairs": "O ciclo já tem mais pares do que esses limites permitem."
+          "limitBelowPairs": "O ciclo já tem mais pares do que esses limites permitem.",
+          "notFound": "Ciclo não encontrado.",
+          "invalidDates": "O ciclo precisa terminar depois de começar.",
+          "overlap": "Outro ciclo já ocupa parte dessas datas."
         },
         "mentor": {
           "notFound": "Mentor não encontrado."
         },
         "mentorship": {
           "notFound": "Esta proposta não está mais disponível.",
-          "menteeAlreadyPaired": "Este estudante já tem uma proposta aberta.",
-          "notCandidate": "Um dos mentores não passa mais nos filtros para este estudante (por exemplo, chegou ao limite de estudantes no ciclo).",
+          "menteeAlreadyPaired": "Este mentee já tem uma proposta aberta.",
+          "notCandidate": "Um dos mentores não pode mais ser proposto a este mentee. Atualize a lista de candidatos e escolha de novo.",
           "notAwaitingYou": "Esta proposta não está mais esperando sua resposta. Recarregue a página.",
           "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada.",
           "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
@@ -616,6 +628,9 @@
         },
         "notification": {
           "notFound": "Aviso não encontrado."
+        },
+        "access": {
+          "denied": "Você não tem acesso a esta área."
         }
       }
     }

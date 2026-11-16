@@ -1,6 +1,7 @@
 import { expect, test, type APIRequestContext } from '@playwright/test';
 import { authHeaders, coordinatorToken, CORE } from '../support/api';
 import { MAILPIT_URL } from '../support/env';
+import { ERROR_CODES } from '../support/errorCodes';
 import { HTTP_STATUS } from '../support/http';
 import { ensureOpenCohort, participant, propose, type Participant } from '../support/mentorship';
 
@@ -93,6 +94,7 @@ test.describe('notifications API', () => {
 
     const foreign = await request.post(`${NOTIFICATIONS}/${notice.id}/read`, { headers: authHeaders(mentor.token) });
     expect(foreign.status()).toBe(HTTP_STATUS.NOT_FOUND);
+    expect((await foreign.json()).code).toBe(ERROR_CODES.core.notificationNotFound);
 
     const own = await request.post(`${NOTIFICATIONS}/${notice.id}/read`, { headers: authHeaders(mentee.token) });
     expect(await own.json()).toMatchObject({ id: notice.id, read: true });

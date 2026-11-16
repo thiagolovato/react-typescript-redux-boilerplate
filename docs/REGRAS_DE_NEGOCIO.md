@@ -38,6 +38,8 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 10. Login: no máximo 5 tentativas por e-mail e IP, e 50 por IP, a cada 15 minutos. Login certo devolve a tentativa. Sem Redis, o login falha em vez de rodar sem proteção. **[feito]**
 11. E-mail de login é guardado sem espaços e em minúsculas: variações de maiúsculas são a mesma conta. **[feito]**
 12. Senha: de 8 a 72 caracteres, e no máximo 72 bytes. **[feito]**
+13. Sessão recusada pelo servidor (token vencido, alterado, ou conta apagada) termina a sessão no app e abre o login com o motivo ("sua sessão expirou"). Senha errada no login continua sendo erro do formulário. **[feito]**
+14. Todo erro dos serviços tem um código traduzido nos dois idiomas, inclusive pedido malformado, valor do tipo errado (mostrado junto do campo), caminho ou método inexistente. Nenhum texto técnico em inglês chega à pessoa. **[feito]**
 
 ## 3. Cadastro e perfil
 

@@ -6,6 +6,7 @@ Playwright tests for the business rules already built ([REGRAS_DE_NEGOCIO.md](..
 |---|---|---|
 | `api/` | The gateway, with HTTP requests | Server rules: roles, logins, login limits, profile validation, consent, cohorts |
 | `ui/` | The app in Chromium | Sign-up, sign-in, coordinator login, pages by role, profile form |
+| `contract/` | Source files, no server | Every error code of core and auth has its text in both locales |
 | `support/` | Shared helpers | Addresses, API calls, database access, UI steps |
 
 ## Run
