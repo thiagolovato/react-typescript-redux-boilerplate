@@ -15,6 +15,7 @@ interface Notice {
   id: number;
   type: string;
   mentorshipId: number | null;
+  subjectUserId: number | null;
   read: boolean;
 }
 
@@ -50,6 +51,13 @@ test.describe('notifications API', () => {
   test.beforeEach(async ({ request }) => {
     token = coordinatorToken();
     await ensureOpenCohort(request, token);
+  });
+
+  test('a new profile reaches the coordination naming the person, not a pair (13.5)', async ({ request }) => {
+    const mentee = await participant(request, 'MENTEE');
+
+    expect(await notices(request, token)).toContainEqual(
+      expect.objectContaining({ type: 'NEW_MENTEE', subjectUserId: mentee.userId, mentorshipId: null }));
   });
 
   test('a proposal reaches the mentee in the app and by e-mail, and the pair is introduced (13.1, 13.3, 13.6)', async ({ request }) => {

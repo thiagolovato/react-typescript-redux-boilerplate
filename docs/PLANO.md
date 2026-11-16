@@ -200,7 +200,7 @@ Uma classe de resposta própria (`AnonymousProfileResponse`), não `CustomerResp
 3. Matching com filtros duros e lista de inscritos sem par. Testes unitários dos filtros; integração da consulta de disponibilidade. **Feito em 2026-11-14:** `GET /coordination/mentees/unmatched` (paginado, quem espera há mais tempo primeiro) e `GET /coordination/mentees/{userId}/candidates` (perfil completo do mentee e mentores que passam nos filtros de termos, idioma e gênero, em JPQL, ordenados pela nota do `MatchScorer`). No app, lista com rolagem infinita e botão de atualizar, e página de matching com nome do mentor escondido até o coordenador pedir. Os filtros de par aberto e limite de mentees por mentor entram com a tabela `mentorship` no passo 4.
 4. Migração com `mentorship`. Proposta, aceite, recusa e visão anônima. Testes: limite de 20 com propostas simultâneas, índice único por mentee, 404 para quem não é do par, nenhum campo proibido na visão anônima. **Feito em 2026-11-14**, com o mentee respondendo primeiro: V12 com `mentorship` (audit no lugar de `proposed_by_user_id`/`proposed_at`; `declined_by` aceita `COORDINATOR` para proposta retirada; índice único parcial por mentee). `POST`/`GET /coordination/mentorships`, `DELETE /coordination/mentorships/{id}`, `GET /mentorships/mine`, `POST /mentorships/{id}/accept` e `/decline`. A proposta trava a linha do ciclo (`SELECT ... FOR UPDATE`) e checa par aberto, limite de pares e os filtros do matching, agora com par aberto e limite de mentees por mentor. Editar o ciclo abaixo do que ele já tem é recusado. Visão anônima em `AnonymousProfileResponse`; nome e contatos em `IntroductionResponse`, só depois do aceite. Também feito aqui, do passo 6: botão "Propor par" no matching, propostas e pares do ciclo aberto na página da coordenação (com retirar e motivo da recusa), página "Minha mentoria" para mentor e mentee e aviso no dashboard. Testes de API no e2e (`e2e/api/mentorship.spec.ts`). Em 2026-11-15, várias opções por proposta: o coordenador escolhe até 3 mentores (`Mentorship.MAX_MENTOR_OPTIONS`), o mentee escolhe um ou recusa todos, as outras opções fecham como `SYSTEM`. V13 troca o índice único por mentee (vale só depois da escolha) e cria `uk_mentorship_open_option`. Opções não reservam vaga do mentor; o limite é checado na escolha, com a trava do ciclo.
 5. Migração com `email_outbox`. Envio e Mailpit. Testes: e-mail gravado na mesma transação; falha de SMTP não desfaz o aceite. **Feito em 2026-11-16**, junto com os avisos no app (seção 2.9): V14 com `email_outbox`, `notification` e `customer.notification_channel`. `NotificationService` grava o aviso e, quando o tipo vai por e-mail e a pessoa não escolheu "só no app", a linha do outbox, na transação da mudança. `EmailSender` (`@Scheduled`, a cada 30 s) envia em lotes com `FOR UPDATE SKIP LOCKED` e espera mais a cada falha (1 min, dobrando até 6 h, 10 tentativas). Modelos bilíngues em `src/main/resources/email/`. Mailpit no compose do core (`http://localhost:8025`). Testes: H2 (fluxo, só no app, falha de SMTP), PostgreSQL (`SKIP LOCKED`, regra da caixa) e e2e (`e2e/api/notification.spec.ts`, lê o Mailpit). Custo: Mailpit é local e gratuito; produção usa qualquer SMTP (seção 2.10).
-6. App: painel do coordenador, tela de candidatos, tela de proposta.
+6. App: painel do coordenador, tela de candidatos, tela de proposta. **Feito em 2026-11-17:** página da coordenação com ciclos (listar, criar, editar; o aberto hoje em destaque), inscritos sem par, propostas pendentes e pares em andamento, em listas separadas; propostas recusadas ou retiradas ficam recolhidas no fim (as opções que o mentee não escolheu, fechadas como `SYSTEM`, não aparecem). A tela de candidatos e a de proposta já tinham entrado no passo 4. As traduções dos códigos de erro já estavam completas (`e2e/contract/errorTranslations.spec.ts`). Critério de pronto conferido em `e2e/ui/coordination.spec.ts`: o coordenador cria um ciclo, propõe pela página do mentee, mentee e mentor aceitam nas suas páginas, o par aparece em andamento e os dois recebem o e-mail de apresentação no Mailpit.
 
 Critério de pronto: coordenador cria o ciclo, abre um mentee, vê só candidatos com idioma comum e preferência atendida, propõe; mentor e mentee veem o perfil anônimo, aceitam, e os dois recebem o e-mail de apresentação no Mailpit.
 
@@ -211,7 +211,7 @@ Critério de pronto: coordenador cria o ciclo, abre um mentee, vê só candidato
 - `customer.notification_channel`: `EMAIL_AND_APP` (padrão) ou `APP_ONLY`. Escolhido no perfil. Clientes antigos que não mandam o campo não mudam a escolha.
 - API: `GET /notifications?page=`, `GET /notifications/unread-count`, `POST /notifications/{id}/read`, `POST /notifications/read-all`. Aviso de outra pessoa responde 404.
 - App: item "Avisos" no menu de todos os papéis, com contador de não lidos (consulta ao trocar de página e a cada minuto) e página de avisos.
-- Pendência: avisos de novo perfil não guardam de quem é o perfil, então o clique leva à página da coordenação, não ao mentee. Um `subject_user_id` resolveria e também deixaria o e2e limpar esses avisos, que hoje ficam na caixa da coordenação em dev.
+- Avisos de novo perfil guardam de quem é o perfil (`subject_user_id`, V16, sem chave estrangeira, como `mentorship_id`). O aviso de novo mentee abre a página de matching dele; o de novo mentor abre a página da coordenação, porque ainda não há página de mentor. O e2e apaga esses avisos junto com os usuários de teste. Os avisos gravados antes da V16 ficam sem a pessoa e levam à página da coordenação. **Feito em 2026-11-17.**
 
 #### 2.10 Conversa assíncrona: caminho sem Kafka por enquanto
 
@@ -221,6 +221,66 @@ Pedido: preparar a conversa assíncrona entre mentor e mentee, com Kafka. Decis�
 - O terreno já fica pronto: eventos de domínio gravados em tabela na transação da mudança (`notification` e `email_outbox`, padrão outbox). Se um dia o volume pedir um broker, um relay lê essas tabelas e publica no Kafka sem mudar o código que gera os eventos.
 - Conversa, quando entrar: tabelas `conversation` (uma por par aceito) e `message` (`conversation_id`, `sender_user_id`, `body`, `created_at`, `read_at`), só para as duas partes do par (404 para os outros, como 2.9 das regras). Cada mensagem gera um aviso `NEW_MESSAGE` e, para quem quer e-mail, um e-mail agrupado (não um por mensagem). Entrega no app por consulta periódica, como o contador de avisos; Server-Sent Events se a espera incomodar. Moderação e retenção das mensagens precisam de decisão da coordenação antes.
 - E-mail em produção: qualquer SMTP. Para o volume do programa, os planos gratuitos de serviços de envio ou a conta da coordenação bastam; conferir limites ao escolher.
+
+### Mentor que também é mentee (papéis por conta)
+
+Pedido: uma pessoa que é mentor quer também ser mentee (ou o contrário). Hoje cada conta tem um papel só (`users.customer_type` no auth, `customer` único por `user_id` no core), então ela precisa de outro e-mail. Ainda não implementado.
+
+#### Abordagem escolhida
+
+Uma conta, até dois papéis de participante, um perfil por papel, e um papel ativo por vez na sessão.
+
+- **Um perfil por papel.** O core passa a ter até duas linhas de `customer` por `user_id`, uma `MENTOR` e uma `MENTEE`. Pares, matching, limites e avisos já trabalham sobre a linha de `customer` e o papel, então quase nada muda: `mentorship.mentor_id`/`mentee_id` continuam apontando para linhas de `customer`, e a caixa de avisos já é por `(recipient_role, recipient_user_id)`.
+- **Papel ativo no token.** O token continua com um `type` só (o papel ativo) e `authorities` só desse papel. Todo serviço segue checando um papel por pedido, sem mudança no `auth-shared` nem nas regras de acesso. Uma nova claim `roles` lista os papéis da conta, só para o app mostrar a troca.
+- **Trocar de papel é pedir outro token.** Nada de "modo duplo" na mesma tela: a pessoa troca, e o app inteiro passa a mostrar o outro papel. Assim a proposta anônima e as permissões continuam simples.
+
+Alternativas descartadas:
+
+- Separar `customer` em pessoa (nome, contatos, endereço, idiomas, aceite) e perfis de papel. É o modelo mais limpo, mas mexe em todo o perfil, no mapper e nas migrações, para resolver só a duplicação dos campos comuns. Fica para depois, se os campos comuns divergirem e isso incomodar.
+- Continuar com dois e-mails. Funciona hoje, mas a pessoa tem duas senhas, e a coordenação não sabe que é a mesma pessoa, então não consegue impedir que ela seja mentora de si mesma.
+
+#### Regras novas (entram em REGRAS_DE_NEGOCIO.md ao implementar)
+
+1. Uma conta de participante pode ter os papéis mentor e mentee. Coordenador nunca acumula papel de participante; quem coordena e participa usa outra conta.
+2. Cada papel tem o próprio perfil, o próprio aceite de termos e a própria preferência de aviso. Ao acrescentar um papel, o formulário vem preenchido com os campos comuns do outro perfil, e a pessoa aceita os termos de novo para esse perfil.
+3. Ninguém forma par consigo mesmo: o matching tira dos candidatos o mentor com o mesmo `user_id` do mentee, e a proposta recusa esse caso.
+4. Ser mentee e mentor no mesmo ciclo é permitido (decisão em aberto para a coordenação, item 7 da seção 5).
+5. Remover um papel fica fora desta entrega; quem desiste segue o caminho atual (pedido à coordenação).
+
+#### Auth
+
+- Migração: tabela `user_role` (`user_id`, `role`, chave primária nos dois, `CHECK` com `MENTOR`/`MENTEE`/`COORDINATOR`), preenchida a partir de `users.customer_type`. `CHECK` (ou trigger) impede coordenador com outro papel. `users.customer_type` fica como papel padrão do login, para a versão anterior rodar ao lado durante o deploy; sai numa versão seguinte.
+- `POST /users/roles` com `{ role }`: acrescenta MENTOR ou MENTEE à conta do token. Só participante; papel repetido responde `409` (`auth.role.alreadyAdded`); coordenador `403`.
+- `POST /users/role-switch` com `{ role }`: devolve um token novo com aquele papel ativo, se a conta o tiver (`403` com `auth.role.notGranted` se não). Sem senha de novo: o token atual já prova a sessão.
+- Login: entra no último papel usado (coluna `users.last_role`) ou no papel padrão. A resposta de login e do token traz `roles`.
+- Testes: acrescentar papel, repetir (409), coordenador recusado, troca para papel que não tem (403), claims `type`, `authorities` e `roles` do token novo.
+
+#### Core
+
+- Migração: troca `uk_customer_user_id` por `uk_customer_user_type` (`user_id`, `type`). `Customer.USER_ID_KEY` passa a nomear a nova restrição, para `RestExceptionHandler` seguir respondendo `core.profile.alreadyExists`.
+- `CustomerRepository.findByUserId` vira `findByUserIdAndType`. São 5 chamadas: `CustomerService` (2, com o papel do token), `MentorshipService` (2: a do token usa o papel do token; a da proposta busca o mentee como `MENTEE` e cada mentor como `MENTOR`) e `MatchingService` (1, como `MENTEE`).
+- Matching e proposta: filtro `mentor.userId <> mentee.userId` na consulta de candidatos e checagem na proposta (`core.mentorship.selfPair`, `409`).
+- Endpoint para preencher o segundo perfil: `GET /customers/me/shared` devolve os campos comuns do outro perfil da conta (nome, nascimento, gênero, endereço, idiomas, contatos, link profissional, formação), ou `404` se não houver. O app usa no formulário; nada é copiado sem a pessoa salvar.
+- Deploy: a versão com `findByUserIdAndType` sobe antes da migração que troca a restrição. Com a restrição antiga ainda valendo, nada muda; a migração entra na versão seguinte.
+- Coordenação: listas e e-mails já mostram a linha de `customer`; a mesma pessoa pode aparecer como mentor e como mentee. A lista de inscritos sem par marca quem também é mentor (campo `alsoMentor`), para a coordenação saber.
+- Testes: dois perfis da mesma conta (H2), restrição nova e corrida de criação (PostgreSQL), par consigo mesmo recusado, matching sem o próprio usuário, avisos de cada papel na caixa certa.
+
+#### App
+
+- Sessão: `user.roles` além de `customerType` (papel ativo), lidos da resposta de login e do token.
+- Menu lateral: com dois papéis, "Ver como mentor / mentee" chama `role-switch`, troca o token e vai para a página inicial do papel. Com um papel, item "Quero ser mentee também" (ou mentor) na página de perfil, que chama `POST /users/roles`, troca de papel e abre o formulário de perfil já preenchido por `GET /customers/me/shared`.
+- O contador de avisos segue o papel ativo. Avisos do outro papel aparecem ao trocar; um contador somado fica para depois, se fizer falta.
+- Textos em inglês e português; códigos novos de erro nas duas línguas (o teste de contrato cobra).
+- e2e: mentor acrescenta o papel mentee, salva o perfil preenchido, aparece entre os inscritos sem par, não se vê como candidato de si mesmo, troca de volta para mentor e encontra o painel de mentor como antes.
+
+#### Ordem de entrega
+
+1. Auth: `user_role`, `POST /users/roles`, `role-switch`, claim `roles`. Sem efeito visível: cada conta ainda tem um papel.
+2. Core: `findByUserIdAndType`, filtro de par consigo mesmo, `GET /customers/me/shared`, `alsoMentor`. Restrição antiga ainda valendo.
+3. Core: migração com `uk_customer_user_type`.
+4. App: troca de papel, "quero ser mentee/mentor também", formulário preenchido, e2e.
+
+Critério de pronto: uma conta de mentor vira também mentee sem novo e-mail, o coordenador a vê entre os inscritos sem par (marcada como mentora), nunca como candidata dela mesma, e ela troca entre os dois papéis sem sair da sessão.
 
 ### Fase 3 — Acordo e encontros (2 a 3 semanas)
 
@@ -354,3 +414,4 @@ Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assi
 4. Os dados atuais da planilha podem ser importados? Precisa pedir novo consentimento?
 5. Qual código de ética vale (GPS-Pean ou ICF)?
 6. Em quais idiomas a interface precisa existir além de inglês e português?
+7. A mesma pessoa pode ser mentee e mentora no mesmo ciclo? (Padrão do plano de papéis por conta: sim, nunca no mesmo par.)

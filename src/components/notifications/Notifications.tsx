@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { ApiErrorAlert, BellIcon, Button } from '../ui';
 import { useI18n } from '../../hooks/useI18n';
 import { useInfiniteList } from '../../hooks/useInfiniteList';
@@ -10,6 +10,15 @@ import { toApiError } from '../../service/request/apiError';
 import { APP_ROUTES } from '../../constants/routes';
 import type { ApiError } from '../../types/api';
 import type { AppNotification } from '../../types/notification';
+
+/** Where a notice leads: a new mentee's matching page, otherwise the home of the reader's pairs. */
+function targetOf(notification: AppNotification, isCoordinator: boolean): string {
+  if (!isCoordinator) return APP_ROUTES.mentorship;
+  if (notification.type === 'NEW_MENTEE' && notification.subjectUserId !== null) {
+    return generatePath(APP_ROUTES.menteeMatching, { userId: String(notification.subjectUserId) });
+  }
+  return APP_ROUTES.coordination;
+}
 
 /** The caller's notices, newest first. Opening one marks it read and goes to the page it is about. */
 export function Notifications() {
@@ -30,7 +39,7 @@ export function Notifications() {
         await notificationService.markRead(notification.id);
         announceNotificationsChanged();
       }
-      navigate(isCoordinator ? APP_ROUTES.coordination : APP_ROUTES.mentorship);
+      navigate(targetOf(notification, isCoordinator));
     } catch (err) {
       setActionError(toApiError(err));
     }

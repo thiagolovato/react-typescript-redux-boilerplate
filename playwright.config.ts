@@ -13,6 +13,9 @@ export default defineConfig({
   globalTeardown: './e2e/global-teardown.ts',
   use: {
     baseURL: APP_URL,
+    // A click or a page load that hangs fails fast; waits that need longer (the e-mail sender) set their own timeout.
+    actionTimeout: 10_000,
+    navigationTimeout: 10_000,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },

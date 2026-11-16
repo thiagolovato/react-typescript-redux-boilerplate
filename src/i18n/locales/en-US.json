@@ -99,7 +99,7 @@
   },
   "coordination": {
     "title": "Coordination",
-    "subtitle": "Candidates, proposals and pairs will appear here.",
+    "subtitle": "Cohorts, mentees without a mentor, proposals and pairs.",
     "unmatchedMentees": {
       "title": "Mentees without a mentor",
       "description": "Waiting longest first.",
@@ -153,10 +153,39 @@
       "selectHelp": "The student compares the profiles and chooses one; only that mentor gets the proposal."
     },
     "mentorships": {
-      "title": "Proposals and pairs of the open cohort",
-      "description": "The student chooses first; the mentor sees the proposal only once chosen.",
       "loadError": "Could not load the proposals.",
-      "empty": "No proposals in the open cohort yet."
+      "pending": {
+        "title": "Pending proposals",
+        "description": "The student chooses first; the mentor sees the proposal only once chosen.",
+        "empty": "No proposal waiting for an answer."
+      },
+      "inProgress": {
+        "title": "Pairs in progress",
+        "description": "Both accepted. They received each other's contacts by e-mail.",
+        "empty": "No pair in progress in the open cohort."
+      },
+      "declined_one": "1 declined or withdrawn proposal",
+      "declined_other": "{{count}} declined or withdrawn proposals"
+    },
+    "cohorts": {
+      "title": "Cohorts",
+      "openNow": "Open today: {{name}}.",
+      "noneOpen": "No cohort is open today. Proposals need a cohort open today.",
+      "create": "New cohort",
+      "edit": "Edit",
+      "name": "Name",
+      "startsOn": "Starts on",
+      "endsOn": "Ends on",
+      "maxPairs": "Pairs in the cohort",
+      "maxPairsHelp": "Up to {{max}} per year.",
+      "maxMenteesPerMentor": "Mentees per mentor",
+      "save": "Save",
+      "cancel": "Cancel",
+      "open": "Open",
+      "period": "{{start}} to {{end}}",
+      "limits": "{{pairs}} pairs, {{perMentor}} per mentor",
+      "loadError": "Could not load the cohorts.",
+      "saveError": "Could not save the cohort."
     }
   },
   "mentorship": {

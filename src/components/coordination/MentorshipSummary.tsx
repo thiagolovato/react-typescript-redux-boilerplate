@@ -7,9 +7,9 @@ import type { CoordinatorMentorship } from '../../types/mentorship';
 interface MentorshipSummaryProps {
   /** One pair, or the options of one proposal while the mentee is choosing (same mentee, same stage). */
   mentorships: CoordinatorMentorship[];
-  /** Shown only while the pair is proposed. Withdraws every option. */
-  onWithdraw: () => void;
-  withdrawing: boolean;
+  /** Withdraws every option. Without it there is no withdraw button; with it, the button shows only while proposed. */
+  onWithdraw?: () => void;
+  withdrawing?: boolean;
 }
 
 const STAGE_TONES = {
@@ -55,7 +55,7 @@ export function MentorshipSummary({ mentorships, onWithdraw, withdrawing }: Ment
           </p>
         )}
       </div>
-      {mentorship.status === 'PROPOSED' && (
+      {onWithdraw && mentorship.status === 'PROPOSED' && (
         <Button variant="outline" size="sm" className="shrink-0" onClick={onWithdraw} isLoading={withdrawing}>
           {t('mentorship.withdraw')}
         </Button>

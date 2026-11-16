@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { generatePath, Link } from 'react-router';
 import { ApiErrorAlert, Button, RefreshIcon } from './ui';
 import { useI18n } from '../hooks/useI18n';
@@ -6,14 +7,18 @@ import { useInfiniteList } from '../hooks/useInfiniteList';
 import { coordinationService } from '../service/request';
 import { APP_ROUTES } from '../constants/routes';
 import { CohortMentorships } from './coordination/CohortMentorships';
+import { CohortPanel } from './coordination/CohortPanel';
 
 // Module function, so the list keeps the same fetcher across renders.
 const fetchUnmatchedMentees = (page: number) => coordinationService.getUnmatchedMentees(page);
 
-// Coordinator home: proposals and pairs of the open cohort, then the mentees still waiting for a mentor.
+// Coordinator home: the cohorts, then the mentees still waiting for a mentor, the proposals waiting for an answer and
+// the pairs in progress in the open cohort.
 export function Coordination() {
   const { t } = useI18n();
   const names = useDisplayNames();
+  // Bumped when a cohort is saved: the pairs below belong to the cohort open today, which may have changed.
+  const [cohortVersion, setCohortVersion] = useState(0);
   const {
     items: mentees, totalItems, hasNext, loading, error, loadMore, refresh, sentinelRef,
   } = useInfiniteList(fetchUnmatchedMentees);
@@ -25,7 +30,12 @@ export function Coordination() {
         <p className="mt-3 text-lg text-neutral-600">{t('coordination.subtitle')}</p>
       </header>
 
-      <CohortMentorships onChange={refresh} />
+      <CohortPanel
+        onSaved={() => {
+          setCohortVersion((version) => version + 1);
+          refresh();
+        }}
+      />
 
       <section aria-labelledby="unmatched-mentees" className="flex flex-col gap-4">
         <div className="flex items-start justify-between gap-4">
@@ -97,6 +107,8 @@ export function Coordination() {
 
         {hasNext && <div ref={sentinelRef} aria-hidden="true" className="h-px" />}
       </section>
+
+      <CohortMentorships key={cohortVersion} onChange={refresh} />
     </div>
   );
 }

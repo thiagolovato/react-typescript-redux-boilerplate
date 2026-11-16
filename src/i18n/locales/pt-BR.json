@@ -99,7 +99,7 @@
   },
   "coordination": {
     "title": "Coordenação",
-    "subtitle": "Inscritos, propostas e pares vão aparecer aqui.",
+    "subtitle": "Ciclos, mentees sem mentor, propostas e pares.",
     "unmatchedMentees": {
       "title": "Mentees sem mentor",
       "description": "Quem espera há mais tempo aparece primeiro.",
@@ -153,10 +153,39 @@
       "selectHelp": "O estudante compara os perfis e escolhe um; só o escolhido recebe a proposta."
     },
     "mentorships": {
-      "title": "Propostas e pares do ciclo aberto",
-      "description": "O estudante escolhe primeiro; o mentor só vê a proposta depois de ser escolhido.",
       "loadError": "Não foi possível carregar as propostas.",
-      "empty": "Ainda não há propostas no ciclo aberto."
+      "pending": {
+        "title": "Propostas pendentes",
+        "description": "O estudante escolhe primeiro; o mentor só vê a proposta depois de escolhido.",
+        "empty": "Nenhuma proposta esperando resposta."
+      },
+      "inProgress": {
+        "title": "Pares em andamento",
+        "description": "Os dois aceitaram e receberam os contatos um do outro por e-mail.",
+        "empty": "Nenhum par em andamento no ciclo aberto."
+      },
+      "declined_one": "1 proposta recusada ou retirada",
+      "declined_other": "{{count}} propostas recusadas ou retiradas"
+    },
+    "cohorts": {
+      "title": "Ciclos",
+      "openNow": "Aberto hoje: {{name}}.",
+      "noneOpen": "Nenhum ciclo aberto hoje. Propostas precisam de um ciclo aberto hoje.",
+      "create": "Novo ciclo",
+      "edit": "Editar",
+      "name": "Nome",
+      "startsOn": "Início",
+      "endsOn": "Fim",
+      "maxPairs": "Pares no ciclo",
+      "maxPairsHelp": "Até {{max}} por ano.",
+      "maxMenteesPerMentor": "Mentees por mentor",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "open": "Aberto",
+      "period": "{{start}} a {{end}}",
+      "limits": "{{pairs}} pares, {{perMentor}} por mentor",
+      "loadError": "Não foi possível carregar os ciclos.",
+      "saveError": "Não foi possível salvar o ciclo."
     }
   },
   "mentorship": {

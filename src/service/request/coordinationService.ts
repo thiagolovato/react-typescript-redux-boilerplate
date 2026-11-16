@@ -1,11 +1,40 @@
 import type { PageResponse } from '../../types/api';
-import type { MenteeCandidates, UnmatchedMentee } from '../../types/coordination';
+import type { Cohort, CohortRequest, MenteeCandidates, UnmatchedMentee } from '../../types/coordination';
 import type { CoordinatorMentorship } from '../../types/mentorship';
 import { PAGE_SIZE } from '../../constants/pagination';
 import { toApiRequestError } from './apiError';
 import { API_ROUTES, authHeader, httpClient } from './httpClient';
 
+const COHORTS = `${API_ROUTES.core}/coordination/cohorts`;
+
 export const coordinationService = {
+  /** Every cohort. Coordinators only. */
+  getCohorts: async (): Promise<Cohort[]> => {
+    try {
+      return await httpClient.get<Cohort[]>(COHORTS, authHeader());
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+
+  /** Creates a cohort; its dates must not overlap another one. Coordinators only. */
+  createCohort: async (cohort: CohortRequest): Promise<Cohort> => {
+    try {
+      return await httpClient.post<Cohort>(COHORTS, cohort, authHeader());
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+
+  /** Edits a cohort. Limits below the pairs it already has are refused. Coordinators only. */
+  updateCohort: async (id: number, cohort: CohortRequest): Promise<Cohort> => {
+    try {
+      return await httpClient.put<Cohort>(`${COHORTS}/${id}`, cohort, authHeader());
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+
   /** One page of the mentees without a mentor, longest waiting first. Coordinators only. */
   getUnmatchedMentees: async (page: number, size = PAGE_SIZE): Promise<PageResponse<UnmatchedMentee>> => {
     try {

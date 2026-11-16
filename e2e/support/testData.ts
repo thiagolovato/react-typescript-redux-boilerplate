@@ -31,6 +31,7 @@ export function deleteTestData(): void {
          SELECT id, address_id FROM core.customer WHERE user_id = ANY (string_to_array(:'ids', ',')::bigint[]);
        DELETE FROM core.notification
          WHERE recipient_user_id = ANY (string_to_array(:'ids', ',')::bigint[])
+            OR subject_user_id = ANY (string_to_array(:'ids', ',')::bigint[])
             OR mentorship_id IN (SELECT id FROM core.mentorship
                                  WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone);

@@ -56,3 +56,18 @@ export interface MenteeCandidates {
   /** Most mentors the coordinator may propose at once. Set by mentor-mentee-core. */
   maxMentorOptions: number;
 }
+
+/** A cohort as the coordinator creates or edits it (CohortRequest in mentor-mentee-core). Dates are ISO, inclusive. */
+export interface CohortRequest {
+  name: string;
+  startsOn: string;
+  endsOn: string;
+  maxPairs: number;
+  maxMenteesPerMentor: number;
+}
+
+export interface Cohort extends CohortRequest {
+  id: number;
+  /** True if today is between `startsOn` and `endsOn`. */
+  open: boolean;
+}

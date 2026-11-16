@@ -17,6 +17,8 @@ export interface AppNotification {
   type: NotificationType;
   /** The pair it is about, if any. */
   mentorshipId: number | null;
+  /** The person a profile notice (NEW_MENTOR, NEW_MENTEE) is about; null for other notices and older ones. */
+  subjectUserId: number | null;
   /** ISO instant. */
   createdAt: string;
   read: boolean;
