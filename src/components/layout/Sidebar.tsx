@@ -159,7 +159,7 @@ export function Sidebar({ isCollapsed, onToggleCollapsed }: SidebarProps) {
         <div className="flex flex-col gap-3 border-t border-neutral-200 p-3">
           <div className={`flex gap-2 ${isCollapsed ? 'md:hidden' : ''}`}>
             <LanguageToggle className="min-w-0 flex-1" />
-            <ThemeToggle className="min-w-0 flex-1" />
+            <ThemeToggle />
           </div>
           {user && (
             <div className={`flex items-center gap-3 px-1 ${isCollapsed ? 'md:justify-center' : ''}`}>

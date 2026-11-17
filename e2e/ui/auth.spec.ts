@@ -26,7 +26,8 @@ const problems = en.apiErrors.problems.auth;
 test.describe('sign-up', () => {
   test('sign-up offers only mentor and mentee (2.2)', async ({ page }) => {
     await page.goto(REGISTER_PATH);
-    const roleValues = await page.getByRole('radio')
+    // The theme toggle on the same page is radios too: look only at the role choice.
+    const roleValues = await page.locator('input[type="radio"][name="customerType"]')
       .evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value));
     expect(roleValues).toEqual(['MENTOR', 'MENTEE']);
   });

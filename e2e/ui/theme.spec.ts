@@ -19,13 +19,13 @@ test.describe('theme', () => {
   test('system follows the operating system, and choosing it forgets the saved theme', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.goto(LOGIN_PATH);
-    const toggle = page.getByRole('combobox', { name: en.theme.label });
+    const toggle = page.getByRole('radiogroup', { name: en.theme.label });
 
-    await toggle.selectOption('light');
+    await toggle.getByRole('radio', { name: en.theme.light }).check();
     await expect(html(page)).toHaveAttribute('data-theme', 'light');
     expect(await page.evaluate(() => localStorage.getItem('theme'))).toBe('light');
 
-    await toggle.selectOption('system');
+    await toggle.getByRole('radio', { name: en.theme.system }).check();
     await expect(html(page)).toHaveAttribute('data-theme', 'dark');
     expect(await page.evaluate(() => localStorage.getItem('theme'))).toBeNull();
 
@@ -39,9 +39,9 @@ test.describe('theme', () => {
     await first.goto(LOGIN_PATH);
     await second.goto(LOGIN_PATH);
 
-    await first.getByRole('combobox', { name: en.theme.label }).selectOption('dark');
+    await first.getByRole('radio', { name: en.theme.dark }).check();
 
     await expect(html(second)).toHaveAttribute('data-theme', 'dark');
-    await expect(second.getByRole('combobox', { name: en.theme.label })).toHaveValue('dark');
+    await expect(second.getByRole('radio', { name: en.theme.dark })).toBeChecked();
   });
 });

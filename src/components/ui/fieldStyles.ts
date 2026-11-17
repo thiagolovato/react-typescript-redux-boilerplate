@@ -16,5 +16,6 @@ export const helperVariantClasses: Record<FieldVariant, string> = {
 };
 
 // The compact selects in page corners and the sidebar: language and theme.
-export const toggleSelectClasses = 'h-9 w-full rounded-md border border-neutral-300 bg-surface px-2 text-sm ' +
-  'text-neutral-800 hover:border-neutral-400';
+// The browser's own arrow is hidden (it sits against the edge); LanguageToggle draws one with the same inset as the text.
+export const toggleSelectClasses = 'h-9 w-full cursor-pointer appearance-none rounded-md border border-neutral-300 ' +
+  'bg-surface pl-3 pr-8 text-sm text-neutral-800 hover:border-neutral-400';
