@@ -50,6 +50,15 @@ Limits of the backend that shape the tests:
 - On the local stack it also makes sure `coordinator@test.com` (password `coordinator`) exists.
 - Another environment: `E2E_GATEWAY_URL=https://<gateway> npm run seed:dev`.
 
+## Screenshots
+
+`npm run screenshots` takes Portuguese screenshots of the main flow, for presentations, into `screenshots/output/` (not committed). Fictional people walk it end to end: Bruna Costa (mentee) waits, the coordinator proposes Ana Lima and Carla Mendes, Bruna picks Ana, Ana accepts, and the introduction e-mail arrives. Pedro Alves, a man, never shows among Bruna's candidates, because she accepts only women.
+
+- Needs the local stack and Mailpit; it waits up to 90 seconds for the e-mail sender.
+- The people use `@e2e.test`, so the next e2e run deletes them. Each run starts by deleting all `@e2e.test` data, then creates them again; don't run it while e2e tests run.
+- It signs in as `coordinator@test.com`, so the coordination pages also show the dev seed and anything else in the local database.
+- A changed screen or label breaks it at that step: fix the step in `screenshots/screenshots.ts`. A new screen is a new step there.
+
 Other addresses or container names: see `support/env.ts` (`E2E_APP_URL`, `E2E_GATEWAY_URL`, `E2E_*_CONTAINER`).
 
 ## Layout of `support/`
@@ -64,7 +73,7 @@ Other addresses or container names: see `support/env.ts` (`E2E_APP_URL`, `E2E_GA
 | `db.ts`, `testData.ts` | psql and redis-cli in the containers; test data setup and cleanup |
 | `dates.ts`, `random.ts` | Date and random-text helpers |
 
-`seed/` holds the dev seed (not tests): `participants.ts` (who), `dev-seed.ts` (how), `seed.config.ts` (its Playwright config).
+`seed/` holds the dev seed (not tests): `participants.ts` (who), `dev-seed.ts` (how), `seed.config.ts` (its Playwright config). `screenshots/` holds the screenshot script (not tests either), with its own config.
 
 ## Writing tests
 

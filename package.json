@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "seed:dev": "playwright test --config e2e/seed/seed.config.ts"
+    "seed:dev": "playwright test --config e2e/seed/seed.config.ts",
+    "screenshots": "playwright test --config e2e/screenshots/screenshots.config.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.14.0",

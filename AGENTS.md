@@ -104,7 +104,7 @@ Every service answers errors as a problem detail with a list of field errors (`t
 
 ## Tests
 
-End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. `npm run seed:dev` fills the local stack with mentors and mentees to try by hand. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in [docs/REGRAS_DE_NEGOCIO.md](docs/REGRAS_DE_NEGOCIO.md).
+End-to-end tests use Playwright, against the local backend: `npm run test:e2e`. `npm run seed:dev` fills the local stack with mentors and mentees to try by hand. `npm run screenshots` takes Portuguese screenshots of the main flow for presentations. How to run and write them: [e2e/README.md](e2e/README.md). A new business rule in the app or the backend gets a test there, named with its number in [docs/REGRAS_DE_NEGOCIO.md](docs/REGRAS_DE_NEGOCIO.md).
 
 There is no unit test runner yet. When you add one, use Vitest with React Testing Library:
 

@@ -87,3 +87,6 @@ blob-report/
 
 # TypeScript incremental build info
 *.tsbuildinfo
+
+# Screenshots for presentations (npm run screenshots)
+e2e/screenshots/output/
