@@ -13,7 +13,12 @@
     "expand": "Expand menu",
     "coordination": "Coordination",
     "mentorship": "My mentorship",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "switchRole": {
+      "MENTOR": "View as mentor",
+      "MENTEE": "View as student"
+    },
+    "switchRoleError": "Could not switch role. Try again."
   },
   "auth": {
     "login": {
@@ -110,7 +115,8 @@
       "graduation": "graduation {{year}}",
       "retry": "Try again",
       "waitingSince": "Waiting since {{date}}",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "alsoMentor": "Also a mentor"
     },
     "matching": {
       "back": "Mentees without a mentor",
@@ -421,6 +427,25 @@
     "notificationChannels": {
       "EMAIL_AND_APP": "In the app and by e-mail",
       "APP_ONLY": "In the app only"
+    },
+    "addRole": {
+      "title": {
+        "MENTOR": "Be a mentor too",
+        "MENTEE": "Be a student too"
+      },
+      "description": {
+        "MENTOR": "Keep this profile and add a mentor profile to the same account. You switch between them in the menu.",
+        "MENTEE": "Keep this profile and add a student profile to the same account. You switch between them in the menu."
+      },
+      "action": {
+        "MENTOR": "I want to be a mentor too",
+        "MENTEE": "I want to be a student too"
+      },
+      "prefilled": {
+        "MENTOR": "We filled in what your student profile already says. Check it, answer the mentor questions and accept the terms for this profile.",
+        "MENTEE": "We filled in what your mentor profile already says. Check it, answer the student questions and accept the terms for this profile."
+      },
+      "error": "Could not add the role. Try again."
     }
   },
   "roles": {
@@ -602,6 +627,11 @@
         },
         "user": {
           "alreadyExists": "An account with this email already exists."
+        },
+        "role": {
+          "alreadyAdded": "Your account already has this role.",
+          "notGranted": "Your account does not have this role.",
+          "notAllowed": "Coordinator accounts cannot be mentor or student. Use another account to take part."
         }
       },
       "core": {
@@ -653,7 +683,8 @@
           "notAwaitingYou": "This proposal is not waiting for your answer anymore. Reload the page.",
           "notProposed": "Only a proposal not yet accepted by both can be withdrawn.",
           "duplicateMentor": "The same mentor was included more than once in the proposal.",
-          "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all."
+          "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all.",
+          "selfPair": "A person cannot be their own mentor."
         },
         "notification": {
           "notFound": "Notification not found."

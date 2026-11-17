@@ -13,7 +13,12 @@
     "expand": "Expandir menu",
     "coordination": "Coordenação",
     "mentorship": "Minha mentoria",
-    "notifications": "Avisos"
+    "notifications": "Avisos",
+    "switchRole": {
+      "MENTOR": "Ver como mentor",
+      "MENTEE": "Ver como estudante"
+    },
+    "switchRoleError": "Não foi possível trocar de papel. Tente de novo."
   },
   "auth": {
     "login": {
@@ -110,7 +115,8 @@
       "graduation": "formatura {{year}}",
       "retry": "Tentar de novo",
       "waitingSince": "Esperando desde {{date}}",
-      "refresh": "Atualizar"
+      "refresh": "Atualizar",
+      "alsoMentor": "Também é mentor"
     },
     "matching": {
       "back": "Mentees sem mentor",
@@ -421,6 +427,25 @@
     "notificationChannels": {
       "EMAIL_AND_APP": "No app e por e-mail",
       "APP_ONLY": "Só no app"
+    },
+    "addRole": {
+      "title": {
+        "MENTOR": "Seja mentor também",
+        "MENTEE": "Seja estudante também"
+      },
+      "description": {
+        "MENTOR": "Este perfil continua. Você ganha um perfil de mentor na mesma conta e troca entre os dois pelo menu.",
+        "MENTEE": "Este perfil continua. Você ganha um perfil de estudante na mesma conta e troca entre os dois pelo menu."
+      },
+      "action": {
+        "MENTOR": "Quero ser mentor também",
+        "MENTEE": "Quero ser estudante também"
+      },
+      "prefilled": {
+        "MENTOR": "Preenchemos o que o seu perfil de estudante já diz. Confira, responda às perguntas de mentor e aceite os termos para este perfil.",
+        "MENTEE": "Preenchemos o que o seu perfil de mentor já diz. Confira, responda às perguntas de estudante e aceite os termos para este perfil."
+      },
+      "error": "Não foi possível acrescentar o papel. Tente de novo."
     }
   },
   "roles": {
@@ -602,6 +627,11 @@
         },
         "user": {
           "alreadyExists": "Já existe uma conta com este email."
+        },
+        "role": {
+          "alreadyAdded": "Sua conta já tem este papel.",
+          "notGranted": "Sua conta não tem este papel.",
+          "notAllowed": "Contas de coordenação não podem ser mentor ou estudante. Use outra conta para participar."
         }
       },
       "core": {
@@ -653,7 +683,8 @@
           "notAwaitingYou": "Esta proposta não está mais esperando sua resposta. Recarregue a página.",
           "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada.",
           "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
-          "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas."
+          "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas.",
+          "selfPair": "Uma pessoa não pode ser mentora de si mesma."
         },
         "notification": {
           "notFound": "Aviso não encontrado."

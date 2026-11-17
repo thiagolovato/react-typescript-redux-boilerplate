@@ -45,7 +45,8 @@ export function AuthLayout({ roles }: AuthLayoutProps) {
     <div className="min-h-screen">
       <Sidebar isCollapsed={isCollapsed} onToggleCollapsed={() => setIsCollapsed((value) => !value)} />
       <main className={`px-4 py-8 sm:px-8 sm:py-10 ${isCollapsed ? 'md:ml-20' : 'md:ml-70'}`}>
-        <Outlet />
+        {/* Keyed by role: after a role switch every page loads again, for the other profile. */}
+        <Outlet key={type} />
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
-import { RegisterRequest, RegisterResponse } from '../../types/auth/register';
+import { RegisterRequest, RegisterResponse, SignUpType } from '../../types/auth/register';
 import { toApiRequestError } from './apiError';
-import { API_ROUTES, authAxios } from './httpClient';
+import { API_ROUTES, authAxios, authHeader } from './httpClient';
 
 // Auth Service - Routes through /auth/** gateway
 export const authService = {
@@ -29,9 +29,34 @@ export const authService = {
     }
   },
 
-  authenticate: async (token: string): Promise<unknown> => {
+  /** Adds the other participant role to the signed-in account. Answers a token active in the new role. */
+  addRole: async (role: SignUpType): Promise<RegisterResponse> => {
     try {
-      const response = await authAxios.get(
+      const response = await authAxios.post<RegisterResponse>(`${API_ROUTES.auth}/users/roles`, { role }, authHeader());
+      return response.data;
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+
+  /** A token active in another role of the signed-in account. */
+  switchRole: async (role: SignUpType): Promise<RegisterResponse> => {
+    try {
+      const response = await authAxios.post<RegisterResponse>(
+          `${API_ROUTES.auth}/users/role-switch`,
+          { role },
+          authHeader(),
+      );
+      return response.data;
+    } catch (error) {
+      throw toApiRequestError(error);
+    }
+  },
+
+  /** Who the token belongs to: its active role and every role of the account, read from the server. */
+  authenticate: async (token: string): Promise<RegisterResponse> => {
+    try {
+      const response = await authAxios.get<RegisterResponse>(
           `${API_ROUTES.auth}/users/authenticate`,
           { headers: { Authorization: `Bearer ${token}` } },
       );

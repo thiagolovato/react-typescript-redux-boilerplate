@@ -71,6 +71,15 @@ export function LogoutIcon() {
   );
 }
 
+/** Two opposite arrows: switch between the account's roles. */
+export function SwapIcon() {
+  return (
+    <svg {...svgProps}>
+      <path d="M7 4 4 7l3 3M4 7h13M17 20l3-3-3-3M20 17H7" />
+    </svg>
+  );
+}
+
 export function MenuIcon() {
   return (
     <svg {...svgProps}>

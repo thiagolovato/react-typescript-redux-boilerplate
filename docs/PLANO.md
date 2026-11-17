@@ -224,7 +224,7 @@ Pedido: preparar a conversa assíncrona entre mentor e mentee, com Kafka. Decis�
 
 ### Mentor que também é mentee (papéis por conta)
 
-Pedido: uma pessoa que é mentor quer também ser mentee (ou o contrário). Hoje cada conta tem um papel só (`users.customer_type` no auth, `customer` único por `user_id` no core), então ela precisa de outro e-mail. Ainda não implementado.
+Pedido: uma pessoa que é mentor quer também ser mentee (ou o contrário). Hoje cada conta tem um papel só (`users.customer_type` no auth, `customer` único por `user_id` no core), então ela precisava de outro e-mail. **Feito em 2026-11-17** (ver "O que foi entregue" no fim desta seção).
 
 #### Abordagem escolhida
 
@@ -282,6 +282,16 @@ Alternativas descartadas:
 
 Critério de pronto: uma conta de mentor vira também mentee sem novo e-mail, o coordenador a vê entre os inscritos sem par (marcada como mentora), nunca como candidata dela mesma, e ela troca entre os dois papéis sem sair da sessão.
 
+#### O que foi entregue
+
+Critério de pronto conferido em `e2e/api/roles.spec.ts` e `e2e/ui/roles.spec.ts`. Diferenças em relação ao plano acima:
+
+- **Auth, V5.** `users.customer_type` fica para sempre como papel do cadastro (ou `COORDINATOR`), e `user_role` guarda só os papéis acrescentados depois. Os papéis da conta são os dois juntos. Assim nada precisou ser copiado, e o script de coordenador, o seed e o cadastro continuam como estavam. Um trigger recusa papel de participante em conta de coordenador e o papel do cadastro repetido. `users.last_role` guarda o último papel usado, onde o login começa. Só `role-switch` grava `last_role`: acrescentar um papel não grava, porque o perfil dele ainda não existe. O app chama `role-switch` depois de salvar o primeiro perfil do papel novo, e só então o login passa a começar nele.
+- **`POST /users/roles` já devolve o token ativo no papel novo.** O app não precisa chamar `role-switch` em seguida. `role-switch` e as duas rotas leem o token elas mesmas, como `/users/authenticate`. `/users/authenticate` devolve o papel ativo do token, não o do cadastro, e as três rotas acham a conta pelo `uid` do token (token sem `uid` ou sem `type` responde 401 `auth.token.invalid`). O app relê os papéis da conta em cada validação do token, então sessões salvas antes desta entrega também os recebem.
+- **Core: passos 2 e 3 numa entrega só (V17).** Ainda não há produção, então não há versão anterior rodando ao lado. A V17 cria `uk_customer_user_type` e apaga `uk_customer_user_id`.
+- `GET /customers/me/shared` devolve nome, nascimento, gênero, idiomas, ano de formatura, formação, link profissional, contatos, endereço, formação rural e preferência de contato. Profissão (ou escolha de carreira), motivação, expectativas e áreas de interesse ficam de fora, porque mudam de sentido em cada papel.
+- **App.** "Ver como mentor / estudante" no menu lateral para quem tem os dois papéis. No perfil, um bloco "Quero ser estudante também" (ou mentor). O formulário do papel novo vem preenchido e avisa isso. As páginas recarregam ao trocar de papel (`Outlet` com `key` do papel), e o contador de avisos também. Na coordenação, a etiqueta "Também é mentor" aparece na lista de inscritos sem par.
+
 ### Fase 3 — Acordo e encontros (2 a 3 semanas)
 
 Resumo: acordo revisado (seção 3.4) como texto versionado, assinado pelos três; registro de encontros com avaliação de cada parte; progresso até 5 encontros satisfatórios; encerramento com aviso de 2 semanas.
@@ -289,7 +299,7 @@ Resumo: acordo revisado (seção 3.4) como texto versionado, assinado pelos trê
 #### 3.0 Pré-requisitos
 
 - **Fase 2 pronta.** A Fase 3 usa `Mentorship` (já com `version`, `started_at` e `ends_at`), o papel `COORDINATOR`, o ciclo e a `email_outbox`. As migrações da Fase 3 vêm depois das da Fase 2.
-- **Texto do acordo revisado pela coordenação** (seção 3.4). Sem isso, publicar só como rascunho em ambiente de teste.
+- **Texto do acordo: provisório, revisão sem data.** Decidido em 2026-11-17: a revisão pela coordenação (seção 3.4) não vai acontecer tão cedo e não bloqueia a Fase 3. Publicar um texto provisório já com conteúdo (o acordo atual com os problemas da seção 3.4 corrigidos), marcado como "não revisado". Ver 3.2, "Texto provisório".
 - **Decisões 2, 3 e 5 da seção 5.** O plano abaixo assume os padrões marcados em 3.7; mudar depois é barato.
 
 #### 3.1 Ciclo de vida do par
@@ -320,6 +330,14 @@ Regras:
 - Os três assinam a mesma `version`, cada um no idioma que escolher. Se sair versão nova antes da terceira assinatura, as assinaturas antigas continuam válidas (o par assina a versão vigente no momento da primeira assinatura).
 - Mentor e mentee só assinam o próprio par. Coordenador assina qualquer par do ciclo.
 - Consentimento de pesquisa fica fora do acordo: já existe separado em `customer_consent` (Fase 1).
+
+Texto provisório e troca do texto:
+
+- Mesmo formato dos textos de consentimento (`consent_document` e `consent_document_text`, V8): uma versão por linha, um texto por idioma com `sha256`, triggers que recusam mudança. Vale a versão publicada mais recente. **Trocar o texto é publicar uma versão nova numa migração**, sem mudar código. Pares que já assinaram continuam com a versão que assinaram.
+- `agreement_version.reviewed` (boolean). A primeira versão sai com `false`. Enquanto a versão em vigor não estiver revisada, o app mostra um aviso fixo acima do texto, nos dois idiomas: "Texto provisório, ainda não revisado pela coordenação. Pode mudar antes da versão final." O próprio texto também começa com esse aviso, para valer em cópias e e-mails.
+- O texto provisório parte do acordo atual com as correções da seção 3.4: sem cobrança nem limite de responsabilidade, saúde rural no lugar de serviço social, um só código de ética (ICF, até a decisão 5), formato e frequência como no programa, pesquisa fora do acordo.
+- Quando a coordenação revisar, a versão aprovada entra como versão nova, com `reviewed = true`, e o aviso some. Ninguém precisa assinar de novo, a menos que a coordenação peça. Se pedir, é uma regra nova na Fase 3.
+- O AGENTS.md do core ganha um "Como trocar o texto do acordo" (uma migração com a versão nova nos dois idiomas), junto com a primeira versão.
 
 #### 3.3 Encontros
 
@@ -388,7 +406,7 @@ Erros novos em `ErrorCodes`: estado inválido para a ação, já assinado, vers�
 3. Progresso (consulta agregada) e endpoint do coordenador. Teste unitário do cálculo e de integração da consulta.
 4. Encerramento e tarefa diária de transições, com e-mails. Testes: pedido duplicado, desistência, transição idempotente em `TERMINATED` e `COMPLETED`.
 5. App: página do par e colunas do painel.
-6. Revisão do texto do acordo pela coordenação, migração com a versão final, publicação.
+6. Texto provisório publicado no passo 1, com o aviso de 3.2. A revisão pela coordenação não bloqueia o critério de pronto. Quando vier, entra como versão nova, sem mudança de código.
 
 Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assinaturas, registra 5 encontros avaliados pelos dois, e o painel mostra 5 de 5; outro par pede encerramento e vira `TERMINATED` 14 dias depois.
 
@@ -414,4 +432,5 @@ Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assi
 4. Os dados atuais da planilha podem ser importados? Precisa pedir novo consentimento?
 5. Qual código de ética vale (GPS-Pean ou ICF)?
 6. Em quais idiomas a interface precisa existir além de inglês e português?
-7. A mesma pessoa pode ser mentee e mentora no mesmo ciclo? (Padrão do plano de papéis por conta: sim, nunca no mesmo par.)
+7. A mesma pessoa pode ser mentee e mentora no mesmo ciclo? (Padrão, já em vigor: sim, nunca no mesmo par.)
+8. Revisão do texto do acordo (seção 3.4). Sem data. Até lá vale o texto provisório marcado "não revisado" (3.2).

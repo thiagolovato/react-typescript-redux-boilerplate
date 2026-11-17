@@ -15,6 +15,8 @@ export interface UnmatchedMentee {
   languages: string[];
   /** ISO instant the profile was created. */
   waitingSince: string;
+  /** The same account also has a mentor profile. */
+  alsoMentor: boolean;
 }
 
 /** Name of each matching criterion, as MatchScorer in mentor-mentee-core names it. */

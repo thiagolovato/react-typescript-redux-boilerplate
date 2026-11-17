@@ -23,7 +23,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 2. Papéis e acesso
 
-1. Há três papéis: `MENTOR`, `MENTEE` e `COORDINATOR`. Cada conta tem um só papel, gravado no token. **[feito]**
+1. Há três papéis: `MENTOR`, `MENTEE` e `COORDINATOR`. O token leva um papel ativo por vez. Uma conta de participante pode ter os dois papéis de participante (2.15); a de coordenador tem só esse. **[feito]**
 2. O cadastro público só oferece `MENTOR` e `MENTEE`. Enviar `COORDINATOR` no cadastro é recusado (400). **[feito]**
 3. Contas de coordenador são criadas fora da API, pelo script `mentor-mentee-auth/scripts/create-coordinator.sh`. Em dev, o perfil `local` do auth cria `coordinator@test.com`. Não existe endpoint para criar ou promover coordenador. **[feito]**
 4. A conta de coordenador é separada: não deve ter perfil de mentor ou mentee. Coordenador não cria perfil (403). **[feito]**
@@ -40,6 +40,13 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 12. Senha: de 8 a 72 caracteres, e no máximo 72 bytes. **[feito]**
 13. Sessão recusada pelo servidor (token vencido, alterado, ou conta apagada) termina a sessão no app e abre o login com o motivo ("sua sessão expirou"). Senha errada no login continua sendo erro do formulário. **[feito]**
 14. Todo erro dos serviços tem um código traduzido nos dois idiomas, inclusive pedido malformado, valor do tipo errado (mostrado junto do campo), caminho ou método inexistente. Nenhum texto técnico em inglês chega à pessoa. **[feito]**
+15. Mentor que também é mentee, ou o contrário **[feito]**:
+   - A pessoa acrescenta o outro papel de participante pela página de perfil, na mesma conta e com o mesmo e-mail. Coordenador nunca acumula papel de participante: quem coordena e participa usa outra conta (403).
+   - Cada papel tem o próprio perfil, o próprio aceite de termos e a própria preferência de aviso. O formulário do papel novo vem preenchido com o que o outro perfil já diz (nome, nascimento, gênero, idiomas, formação, contatos, endereço); nada é salvo antes de a pessoa salvar.
+   - Um papel ativo por vez. Trocar de papel pede um token novo e o app inteiro passa a mostrar o outro papel, avisos incluídos. O login começa no último papel usado. Um papel acrescentado só passa a contar como usado quando o perfil dele é salvo: quem acrescenta e sai sem salvar volta a entrar no papel antigo.
+   - Ninguém forma par consigo mesmo (6.2 e 7).
+   - Ser mentee e mentor no mesmo ciclo é permitido (seção 15, item 9).
+   - Remover um papel não existe no app: quem desiste pede à coordenação.
 
 ## 3. Cadastro e perfil
 
@@ -82,7 +89,10 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - os dois têm pelo menos um idioma em comum;
    - o gênero do mentor está entre os que o mentee aceita, ou o mentee não tem preferência;
    - o mentee não tem par aberto (proposto, aceito ou ativo);
-   - o mentor está abaixo do limite de mentees do ciclo aberto.
+   - o mentor está abaixo do limite de mentees do ciclo aberto;
+   - o mentor não é a mesma conta do mentee (2.15). A proposta também recusa esse caso (409, `core.mentorship.selfPair`).
+
+   Na lista de mentees sem mentor, quem também tem perfil de mentor aparece marcado. **[feito]**
 
    Um mentee com par aberto sai da lista de mentees sem mentor; na página de matching, o par aberto aparece no lugar dos candidatos. **[feito]**
 3. Entre os candidatos, a ordem vem de uma nota de 0 a 100, com o detalhe de cada critério: áreas de interesse em comum, localização, profissão e experiência do mentor em mentoria. Os pesos são configuráveis. **[feito]**
@@ -118,7 +128,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 4. Cada papel assina uma vez por par. **[planejado: fase 3]**
 5. Se sair versão nova no meio, vale a versão vigente na primeira assinatura do par. **[planejado: fase 3]**
 6. O par começa (`startedAt`) na terceira assinatura. Termina 1 ano depois, ou no fim do ciclo, o que vier antes. **[planejado: fase 3]**
-7. O texto do acordo precisa de revisão antes de publicar **[planejado: fase 3]**:
+7. O texto do acordo sai primeiro como versão provisória, já com conteúdo e marcada "não revisado": o app mostra um aviso acima do texto, e o texto começa com o mesmo aviso. A revisão da coordenação não tem data e não bloqueia o uso. A versão revisada entra como versão nova, sem mudar código, e o aviso some. **[planejado: fase 3]** O provisório já corrige o que a revisão apontou:
    - tirar a cobrança por sessão perdida e o limite de responsabilidade "ao valor pago", porque o programa é gratuito;
    - trocar as referências a serviço social e à conferência de 2018;
    - escolher um só código de ética.
@@ -187,3 +197,5 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 | 6 | Em quais idiomas a interface precisa existir? | Inglês e português |
 | 7 | O aceite eletrônico simples basta como assinatura do acordo? | Sim |
 | 8 | Os textos de termos e privacidade estão aprovados? | Rascunho publicado como versão `2026-11-10`; a versão aprovada entra como versão nova |
+| 9 | A mesma pessoa pode ser mentee e mentora no mesmo ciclo? | Sim, nunca no mesmo par |
+| 10 | Quando o texto do acordo será revisado? | Sem data; vale o texto provisório marcado "não revisado" (8.7) |

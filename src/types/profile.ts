@@ -100,6 +100,13 @@ export interface Profile {
   notificationChannel: NotificationChannel;
 }
 
+/**
+ * Fields the person's mentor and mentee profiles share, from the other profile (GET /customers/me/shared). Fills the
+ * form of a role just added; nothing is saved until the person saves.
+ */
+export type SharedProfile = Pick<Profile, 'name' | 'birthDate' | 'gender' | 'languages' | 'graduationYear'
+  | 'academicBackground' | 'professionalLink' | 'contacts' | 'address' | 'hasRuralTraining' | 'contactPreference'>;
+
 export interface InterestArea {
   id: number;
   name: string;

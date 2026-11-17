@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Profile, ProfileRequest } from '../../types/profile';
+import type { Profile, ProfileRequest, SharedProfile } from '../../types/profile';
 import { toApiRequestError } from './apiError';
 import { API_ROUTES, authHeader, httpClient } from './httpClient';
 
@@ -8,6 +8,15 @@ export const profileService = {
   getMine: async (): Promise<Profile | null> => {
     try {
       return await httpClient.get<Profile>(`${API_ROUTES.core}/customers/me`, authHeader());
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) return null;
+      throw toApiRequestError(error);
+    }
+  },
+  /** Common fields of the caller's profile in their other role, or null when there is none. */
+  getMineShared: async (): Promise<SharedProfile | null> => {
+    try {
+      return await httpClient.get<SharedProfile>(`${API_ROUTES.core}/customers/me/shared`, authHeader());
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) return null;
       throw toApiRequestError(error);

@@ -13,6 +13,9 @@ export const ERROR_CODES = {
     invalidCredentials: 'auth.credentials.invalid',
     accountLocked: 'auth.account.locked',
     userAlreadyExists: 'auth.user.alreadyExists',
+    roleAlreadyAdded: 'auth.role.alreadyAdded',
+    roleNotGranted: 'auth.role.notGranted',
+    roleNotAllowed: 'auth.role.notAllowed',
   },
   core: {
     accessDenied: 'core.access.denied',
@@ -36,6 +39,8 @@ export const ERROR_CODES = {
     requestNotFound: 'core.request.notFound',
     methodNotAllowed: 'core.request.methodNotAllowed',
     mentorNotCandidate: 'core.mentorship.notCandidate',
+    mentorshipSelfPair: 'core.mentorship.selfPair',
+    profileNotFound: 'core.profile.notFound',
     notificationNotFound: 'core.notification.notFound',
   },
 } as const;

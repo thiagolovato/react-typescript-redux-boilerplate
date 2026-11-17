@@ -73,7 +73,14 @@ export function Coordination() {
                   className="flex flex-col gap-1 rounded-lg border border-neutral-200 bg-surface px-4 py-3 transition-colors hover:border-secondary-300 hover:bg-secondary-50 focus-visible:outline-2 focus-visible:outline-secondary-600 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="min-w-0">
-                    <p className="font-medium">{mentee.name ?? t('coordination.unmatchedMentees.noName')}</p>
+                    <p className="font-medium">
+                      {mentee.name ?? t('coordination.unmatchedMentees.noName')}
+                      {mentee.alsoMentor && (
+                        <span className="ml-2 rounded-full bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-800">
+                          {t('coordination.unmatchedMentees.alsoMentor')}
+                        </span>
+                      )}
+                    </p>
                     <p className="text-sm text-neutral-700">
                       {mentee.profession ?? t('coordination.unmatchedMentees.noProfession')}
                       {mentee.graduationYear && (

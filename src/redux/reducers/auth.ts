@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authService, tokenUtils } from '../../service/request';
-import { CustomerType, RegisterRequest, RegisterResponse } from '../../types/auth/register';
+import { CustomerType, RegisterRequest, RegisterResponse, SignUpType } from '../../types/auth/register';
 import type { ApiError } from '../../types/api';
 import { ApiRequestError, toApiError } from '../../service/request/apiError';
 
@@ -11,7 +11,10 @@ interface AuthState {
   user: {
     userId?: number;
     email?: string;
+    /** Role the session is active in. */
     customerType?: CustomerType;
+    /** Every role of the account. Two participant roles offer a switch. */
+    roles?: CustomerType[];
   } | null;
   loading: boolean;
   error: ApiError | null;
@@ -57,8 +60,47 @@ export const registerUser = createAsyncThunk<
     },
 );
 
+/** Adds the other participant role and continues the session in it. */
+export const addRole = createAsyncThunk<RegisterResponse, SignUpType, { rejectValue: ApiError }>(
+    'auth/addRole',
+    async (role, thunkAPI) => {
+      try {
+        return await authService.addRole(role);
+      } catch (error) {
+        return thunkAPI.rejectWithValue(toApiError(error));
+      }
+    },
+);
+
+/** Continues the session in another role of the account, with a new token. */
+export const switchRole = createAsyncThunk<RegisterResponse, SignUpType, { rejectValue: ApiError }>(
+    'auth/switchRole',
+    async (role, thunkAPI) => {
+      try {
+        return await authService.switchRole(role);
+      } catch (error) {
+        return thunkAPI.rejectWithValue(toApiError(error));
+      }
+    },
+);
+
+/** A new session from login, sign-up or a role change: the token and who it belongs to. */
+function startSession(state: AuthState, response: RegisterResponse) {
+  state.loading = false;
+  state.isAuthenticated = true;
+  state.token = response.jwt;
+  state.error = null;
+  state.user = {
+    userId: response.userId,
+    email: response.username,
+    customerType: response.type,
+    roles: response.roles,
+  };
+  tokenUtils.save(response.jwt);
+}
+
 export const validateToken = createAsyncThunk<
-  boolean,
+  RegisterResponse,
   string,
   { rejectValue: { unauthorized: boolean } }
 >(
@@ -66,8 +108,7 @@ export const validateToken = createAsyncThunk<
     async (token, thunkAPI) => {
       try {
         // Validate with server only - let backend handle expiration
-        await authService.authenticate(token);
-        return true;
+        return await authService.authenticate(token);
       } catch (error) {
         // Only a 401 means the token is bad. A network error or 5xx keeps the session.
         const unauthorized = error instanceof ApiRequestError && error.details.status === 401;
@@ -114,8 +155,9 @@ export const authSlice = createSlice({
         const decoded = tokenUtils.decode(token) as {
           sub?: string;
           email?: string;
-          // Claim name set by JwtTokenUtil.CLAIM_TYPE in auth-service.
-          type?: CustomerType
+          // Claim names set by JwtTokenUtil (CLAIM_TYPE, CLAIM_ROLES) in auth-service.
+          type?: CustomerType;
+          roles?: CustomerType[];
         };
         if (decoded) {
           // Keep userId from login/register. The token payload does not carry it.
@@ -123,6 +165,7 @@ export const authSlice = createSlice({
             ...state.user,
             email: decoded.sub || decoded.email,
             customerType: decoded.type,
+            roles: decoded.roles,
           };
         }
       }
@@ -135,20 +178,7 @@ export const authSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
-        .addCase(loginUser.fulfilled, (state, action) => {
-          state.loading = false;
-          state.isAuthenticated = true;
-          state.token = action.payload.jwt;
-          state.error = null;
-
-          state.user = {
-            userId: action.payload.userId,
-            email: action.payload.username,
-            customerType: action.payload.type,
-          };
-
-          tokenUtils.save(action.payload.jwt);
-        })
+        .addCase(loginUser.fulfilled, (state, action) => startSession(state, action.payload))
         .addCase(loginUser.rejected, (state, action) => {
           state.loading = false;
           state.isAuthenticated = false;
@@ -163,20 +193,7 @@ export const authSlice = createSlice({
           state.loading = true;
           state.error = null;
         })
-        .addCase(registerUser.fulfilled, (state, action) => {
-          state.loading = false;
-          state.isAuthenticated = true;
-          state.token = action.payload.jwt;
-          state.error = null;
-
-          state.user = {
-            userId: action.payload.userId,
-            email: action.payload.username,
-            customerType: action.payload.type,
-          };
-
-          tokenUtils.save(action.payload.jwt);
-        })
+        .addCase(registerUser.fulfilled, (state, action) => startSession(state, action.payload))
         .addCase(registerUser.rejected, (state, action) => {
           state.loading = false;
           state.isAuthenticated = false;
@@ -185,15 +202,28 @@ export const authSlice = createSlice({
           state.error = action.payload ?? toApiError(action.error);
         });
 
+    // Role changes keep the session on failure: the page shows the error.
+    builder
+        .addCase(addRole.fulfilled, (state, action) => startSession(state, action.payload))
+        .addCase(switchRole.fulfilled, (state, action) => startSession(state, action.payload));
+
     // Validate Token
     builder
         .addCase(validateToken.pending, (state) => {
           state.loading = true;
         })
-        .addCase(validateToken.fulfilled, (state) => {
+        .addCase(validateToken.fulfilled, (state, action) => {
           state.loading = false;
           state.isAuthenticated = true;
           state.error = null;
+          // The server's answer, not the stored one: a session saved before roles existed, or a role added on
+          // another device, gets the account's roles here.
+          state.user = {
+            userId: action.payload.userId,
+            email: action.payload.username,
+            customerType: action.payload.type,
+            roles: action.payload.roles,
+          };
         })
         .addCase(validateToken.rejected, (state, action) => {
           state.loading = false;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { notificationService } from '../service/request';
+import { useAppSelector } from '../redux/hooks';
 
 // New notices show up without a reload. A count every minute is cheap for the server and fast enough here.
 const POLL_INTERVAL_MS = 60_000;
@@ -16,6 +17,8 @@ export const announceNotificationsChanged = () => window.dispatchEvent(new Event
 export function useUnreadNotifications(): number {
   const [count, setCount] = useState(0);
   const { pathname } = useLocation();
+  // Each role has its own inbox: count again after a role switch.
+  const role = useAppSelector((state) => state.auth.user?.customerType);
 
   useEffect(() => {
     let current = true;
@@ -38,7 +41,7 @@ export function useUnreadNotifications(): number {
       window.removeEventListener(NOTIFICATIONS_CHANGED_EVENT, load);
       document.removeEventListener('visibilitychange', loadIfVisible);
     };
-  }, [pathname]);
+  }, [pathname, role]);
 
   return count;
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { addRole, switchRole } from '../redux/reducers/auth';
 import { ApiErrorAlert, Button, Checkbox, Input, Select, TextArea } from './ui';
 import { useI18n } from '../hooks/useI18n';
 import withAuthentication from './hoc/withAuthentication';
@@ -26,7 +27,9 @@ import {
   PREFERRED_MENTOR_GENDER_OPTIONS,
 } from '../constants/profileOptions';
 import type { ApiError } from '../types/api';
-import type { ContactPreference, CustomerType, Profile as ProfileData, ProfileRequest } from '../types/profile';
+import type {
+  ContactPreference, CustomerType, Profile as ProfileData, ProfileRequest, SharedProfile,
+} from '../types/profile';
 import { APP_ROUTES } from '../constants/routes';
 
 // Numbers and choices are kept as typed text so the fields can be empty; they are converted on submit.
@@ -104,6 +107,24 @@ function toForm(profile: ProfileData): ProfileForm {
   };
 }
 
+/** A new role's form, filled with what the person's other profile shares with it. */
+function fromShared(shared: SharedProfile): ProfileForm {
+  return {
+    ...emptyForm,
+    name: shared.name,
+    birthDate: shared.birthDate ?? '',
+    gender: shared.gender,
+    languages: shared.languages,
+    graduationYear: shared.graduationYear === null ? '' : String(shared.graduationYear),
+    academicBackground: shared.academicBackground ?? '',
+    professionalLink: shared.professionalLink ?? '',
+    contacts: shared.contacts,
+    address: { ...emptyForm.address, ...shared.address, region: shared.address?.region ?? '' },
+    hasRuralTraining: shared.hasRuralTraining,
+    contactPreference: shared.contactPreference ?? '',
+  };
+}
+
 /** Values outside the fixed list are the person's own description. */
 function genderChoiceOf(gender: string): string {
   if (!gender) return '';
@@ -135,6 +156,7 @@ function FormSection({ title, description, children }: {
 
 function Profile() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const { t } = useI18n();
   const { user } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
@@ -149,9 +171,15 @@ function Profile() {
   const [formData, setFormData] = useState<ProfileForm>(emptyForm);
   const consents = useConsentDocuments();
   const [genderChoice, setGenderChoice] = useState('');
+  // Filled from the other role's profile, not saved yet.
+  const [prefilled, setPrefilled] = useState(false);
+  const [addingRole, setAddingRole] = useState(false);
 
   const role: CustomerType = user?.customerType === 'MENTOR' ? 'MENTOR' : 'MENTEE';
   const isMentor = role === 'MENTOR';
+  const otherRole: CustomerType = isMentor ? 'MENTEE' : 'MENTOR';
+  const hasBothRoles = (user?.roles ?? []).includes(otherRole);
+  const canAddOtherRole = profileExists && !hasBothRoles;
   const maxGraduationYear = new Date().getFullYear() + MAX_GRADUATION_YEARS_AHEAD;
 
   useEffect(() => {
@@ -163,6 +191,14 @@ function Profile() {
           setGenderChoice(genderChoiceOf(profile.gender));
           setProfileExists(true);
           setTermsAlreadyAccepted(profile.termsAccepted);
+        } else if (hasBothRoles) {
+          // A role just added: start from what the person already told us in the other role.
+          const shared = await profileService.getMineShared();
+          if (shared) {
+            setFormData(fromShared(shared));
+            setGenderChoice(genderChoiceOf(shared.gender));
+            setPrefilled(true);
+          }
         }
       } catch (err) {
         setApiError({ error: toApiError(err), fallbackKey: 'profile.errors.loadProfile' });
@@ -172,7 +208,7 @@ function Profile() {
     };
 
     loadProfile();
-  }, []);
+  }, [hasBothRoles]);
 
   const update = <K extends keyof ProfileForm>(field: K, value: ProfileForm[K]) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -233,6 +269,11 @@ function Profile() {
         consentLanguage: consents.language,
       };
       await (profileExists ? profileService.update(request) : profileService.create(request));
+      if (!profileExists && hasBothRoles) {
+        // Login stays in the old role until the new profile exists (REGRAS_DE_NEGOCIO.md 2.15). Switching to the
+        // role just saved records it as the last used one. If this fails, the next login starts in the old role.
+        await dispatch(switchRole(role));
+      }
       navigate(APP_ROUTES.dashboard);
     } catch (err) {
       const apiErr = toApiError(err);
@@ -249,6 +290,19 @@ function Profile() {
     } finally {
       setSaving(false);
     }
+  };
+
+  /** Adds the other role and continues in it; this page then loads again for that role's profile. */
+  const handleAddRole = async () => {
+    setApiError(null);
+    setAddingRole(true);
+    const result = await dispatch(addRole(otherRole));
+    if (addRole.rejected.match(result)) {
+      setApiError({ error: result.payload ?? toApiError(result.error), fallbackKey: 'profile.addRole.error' });
+      setAddingRole(false);
+      return;
+    }
+    window.scrollTo(0, 0);
   };
 
   /** Error look and text for an inline input (one or more request fields); `help` shows when it is fine. */
@@ -274,6 +328,11 @@ function Profile() {
         <h1 className="text-3xl font-semibold tracking-tight">{t('profile.title')}</h1>
         <p className="text-neutral-600">{t(`profile.intro.${role}`)}</p>
       </div>
+      {prefilled && (
+        <p role="status" className="rounded-lg border border-secondary-200 bg-secondary-50 p-4 text-sm text-secondary-900">
+          {t(`profile.addRole.prefilled.${role}`)}
+        </p>
+      )}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-10 rounded-2xl border border-neutral-200 bg-surface p-6 sm:p-8"
@@ -618,6 +677,18 @@ function Profile() {
           </Button>
         </div>
       </form>
+
+      {canAddOtherRole && (
+        <section className="flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-surface p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-medium">{t(`profile.addRole.title.${otherRole}`)}</h2>
+            <p className="text-sm text-neutral-600">{t(`profile.addRole.description.${otherRole}`)}</p>
+          </div>
+          <Button variant="outline" onClick={handleAddRole} isLoading={addingRole} className="shrink-0">
+            {t(`profile.addRole.action.${otherRole}`)}
+          </Button>
+        </section>
+      )}
     </div>
   );
 }
