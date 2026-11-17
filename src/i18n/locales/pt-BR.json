@@ -687,7 +687,16 @@
           "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
           "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas.",
           "selfPair": "Uma pessoa não pode ser mentora de si mesma.",
-          "notAccepted": "Este par não pode ser assinado agora: não foi aceito pelos dois ou já começou. Recarregue a página."
+          "notAccepted": "Este par não pode ser assinado agora: não foi aceito pelos dois ou já começou. Recarregue a página.",
+          "notActive": "Os encontros só podem ser registrados ou mudados enquanto o par está ativo."
+        },
+        "meeting": {
+          "notFound": "Este encontro não existe mais. Recarregue a página.",
+          "notCreator": "Só quem registrou o encontro pode mudá-lo. Peça à coordenação se precisar corrigir.",
+          "ratedByPartner": "A outra parte já avaliou este encontro. Peça à coordenação para corrigi-lo.",
+          "notHeld": "Só dá para avaliar um encontro depois da data dele.",
+          "ratedInFuture": "Um encontro já avaliado não pode ir para uma data futura.",
+          "outsidePair": "A data do encontro precisa estar dentro do período do par, do dia em que ele começou até o último dia."
         },
         "agreement": {
           "notFound": "O acordo não está disponível agora. Tente mais tarde.",

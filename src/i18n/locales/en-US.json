@@ -687,7 +687,16 @@
           "duplicateMentor": "The same mentor was included more than once in the proposal.",
           "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all.",
           "selfPair": "A person cannot be their own mentor.",
-          "notAccepted": "This pair cannot be signed now: it is not accepted by both, or it already started. Reload the page."
+          "notAccepted": "This pair cannot be signed now: it is not accepted by both, or it already started. Reload the page.",
+          "notActive": "Meetings can be recorded or changed only while the pair is active."
+        },
+        "meeting": {
+          "notFound": "This meeting no longer exists. Reload the page.",
+          "notCreator": "Only who recorded the meeting can change it. Ask the coordination if it needs a correction.",
+          "ratedByPartner": "The other party already rated this meeting. Ask the coordination to correct it.",
+          "notHeld": "A meeting can be rated only after its date.",
+          "ratedInFuture": "A meeting already rated cannot move to a future date.",
+          "outsidePair": "The meeting date must fall within the pair's period, from the day it started to its last day."
         },
         "agreement": {
           "notFound": "The agreement is not available right now. Try again later.",

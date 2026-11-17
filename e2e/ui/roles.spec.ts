@@ -77,6 +77,8 @@ for (const role of ['MENTOR', 'MENTEE'] as const) {
     await expect(sidebar.getByText(en.roles[role], { exact: true })).toBeVisible();
     // The role is still there, and its profile is still unsaved.
     await sidebar.getByRole('button', { name: en.navigation.switchRole[added] }).click();
+    // The switch is a request: wait for it, since the page is already the dashboard.
+    await expect(sidebar.getByText(en.roles[added], { exact: true })).toBeVisible();
     await expectOnDashboard(page);
     await page.goto(PROFILE_PATH);
     await expect(page.getByRole('status').filter({ hasText: en.profile.addRole.prefilled[added] })).toBeVisible();

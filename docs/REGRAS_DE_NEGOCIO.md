@@ -35,7 +35,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 7. A regra que protege os dados é a do servidor: endpoints em `/coordination/**` exigem o papel `COORDINATOR` e respondem 403 (`core.access.denied`) para os outros. **[feito]**
 8. Um participante nunca lista nem lê perfis de outras pessoas. Só vê o perfil da outra parte do próprio par, e nos limites da seção 7. **[feito]**
 9. Quem não participa de um par e não é coordenador recebe 404 ao tentar acessá-lo, para não revelar que o par existe. O mesmo vale para o mentor antes de o mentee aceitar (7.3). **[feito]**
-10. Login: no máximo 5 tentativas por e-mail e IP, e 50 por IP, a cada 15 minutos. Login certo devolve a tentativa. Sem Redis, o login falha em vez de rodar sem proteção. **[feito]**
+10. Login: no máximo 5 tentativas por e-mail e IP, e 50 por IP, a cada 15 minutos. Um endereço IPv6 conta pela rede /64 dele, para não driblar o limite trocando de endereço. Login certo devolve a tentativa. Sem Redis, o login falha em vez de rodar sem proteção. **[feito]**
 11. E-mail de login é guardado sem espaços e em minúsculas: variações de maiúsculas são a mesma conta. **[feito]**
 12. Senha: de 8 a 72 caracteres, e no máximo 72 bytes. **[feito]**
 13. Sessão recusada pelo servidor (token vencido, alterado, ou conta apagada) termina a sessão no app e abre o login com o motivo ("sua sessão expirou"). Senha errada no login continua sendo erro do formulário. **[feito]**
@@ -46,6 +46,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - Um papel ativo por vez. Trocar de papel pede um token novo e o app inteiro passa a mostrar o outro papel, avisos incluídos. O login começa no último papel usado. Um papel acrescentado só passa a contar como usado quando o perfil dele é salvo: quem acrescenta e sai sem salvar volta a entrar no papel antigo.
    - Ninguém forma par consigo mesmo (6.2 e 7).
    - Ser mentee e mentor no mesmo ciclo é permitido (seção 15, item 9).
+16. Auditoria de autenticação: o auth guarda cada cadastro (também o recusado por e-mail já cadastrado), tentativa de login (certa ou errada), papel acrescentado e troca de papel, com conta, e-mail digitado, IP, navegador e hora. Login errado guarda o motivo (e-mail sem conta, senha errada, página de login do outro papel) só na auditoria: a resposta continua a mesma. Se o e-mail digitado não tem conta e nem parece e-mail, guarda só um marcador, porque pode ser a senha digitada no campo errado. Tentativas recusadas pelo limite de 2.10 não são guardadas: o limite já impede que um só endereço encha a tabela. As linhas nunca mudam. Ainda sem tela nem prazo de retenção: IP é dado pessoal (LGPD), então a coordenação precisa decidir por quanto tempo guardar antes de produção. **[feito]**
    - Remover um papel não existe no app: quem desiste pede à coordenação.
 
 ## 3. Cadastro e perfil
@@ -135,13 +136,17 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 9. Encontros
 
-1. Só pares `ACTIVE` registram encontros. **[planejado: fase 3]**
-2. Mentor ou mentee registra o encontro: data e hora, duração, formato (vídeo, telefone, presencial, outro), áreas discutidas e notas opcionais. **[planejado: fase 3]**
-3. Encontro com data futura é um encontro agendado. Isso cobre o "mentor informa data e hora à coordenação". **[planejado: fase 3]**
-4. Cada parte avalia o encontro uma vez, como satisfatório ou não, com comentário opcional. A avaliação só é possível depois da data do encontro. Ela pode ser corrigida enquanto o par está ativo. **[planejado: fase 3]**
-5. O comentário da avaliação só o coordenador vê, não a outra parte. **[planejado: fase 3]**
-6. Quem registrou pode editar ou apagar o encontro até a outra parte avaliar. Depois, só o coordenador corrige. **[planejado: fase 3]**
-7. Duração menor que 1 hora não bloqueia o registro; o app só avisa. **[planejado: fase 3]** — **[em aberto]**, decisão 2.
+1. Só pares `ACTIVE` registram encontros. **[feito]**
+2. Mentor ou mentee registra o encontro: data e hora, duração, formato (vídeo, telefone, presencial, outro), áreas discutidas e notas opcionais. **[feito]**
+3. Encontro com data futura é um encontro agendado. Isso cobre o "mentor informa data e hora à coordenação". **[feito]**
+4. Cada parte avalia o encontro uma vez, como satisfatório ou não, com comentário opcional. A avaliação só é possível depois da data do encontro. Ela pode ser corrigida enquanto o par está ativo; cada versão fica num histórico que nunca muda. **[feito]**
+5. A avaliação (satisfatório ou não, e o comentário) só o coordenador vê. A outra parte vê só que o encontro já foi avaliado. **[feito]**
+6. Quem registrou pode editar ou apagar o encontro até a outra parte avaliar. Depois, só o coordenador corrige. **[feito]**
+7. Duração menor que 1 hora não bloqueia o registro; o app só avisa. **[feito]** no core; o aviso entra com a tela (**[planejado: fase 3]**). — **[em aberto]**, decisão 2.
+8. O coordenador corrige qualquer encontro de um par ativo, avaliado ou não: data, duração, formato, notas e áreas, e pode apagá-lo. Isso cobre o par que se encontrou antes da data registrada: o coordenador adianta o encontro, e as partes podem avaliá-lo. As avaliações ficam. **[feito]**
+9. Encontro já avaliado não pode ir para uma data futura, nem pelo coordenador: a avaliação diz que ele aconteceu. **[feito]**
+10. Apagar um encontro é lógico: ele some das listas, mas a linha e as avaliações ficam como registro. Cada criação, correção e exclusão de encontro fica no histórico, com quem fez. **[feito]**
+11. A data do encontro fica dentro do período do par: do dia em que ele começou (terceira assinatura) até o último dia, em UTC. Vale também para o coordenador. **[feito]**
 
 ## 10. Progresso e certificado
 

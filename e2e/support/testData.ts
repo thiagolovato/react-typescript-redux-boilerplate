@@ -36,6 +36,15 @@ export function deleteTestData(): void {
                                  WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.mentorship_signature WHERE mentorship_id IN (SELECT id FROM core.mentorship
                                                        WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
+       DELETE FROM core.change_history WHERE entity_type = 'MEETING_RATING' AND entity_id IN (
+         SELECT r.id FROM core.meeting_rating r JOIN core.meeting mt ON mt.id = r.meeting_id
+         WHERE mt.mentorship_id IN (SELECT id FROM core.mentorship
+                                    WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone)));
+       DELETE FROM core.change_history WHERE entity_type = 'MEETING' AND entity_id IN (
+         SELECT mt.id FROM core.meeting mt WHERE mt.mentorship_id IN (SELECT id FROM core.mentorship
+                                    WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone)));
+       DELETE FROM core.meeting WHERE mentorship_id IN (SELECT id FROM core.mentorship
+                                         WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_contacts WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_languages WHERE customer_id IN (SELECT id FROM gone);
@@ -49,9 +58,20 @@ export function deleteTestData(): void {
   }
 
   runCoreSql(`DELETE FROM core.email_outbox WHERE recipient LIKE :'pattern';`, { pattern: emailPattern });
+  // The audit allows deletes (only update and truncate are refused), so test accounts leave no rows behind.
+  runAuthSql(`DELETE FROM auth.auth_event WHERE username LIKE :'pattern';`, { pattern: emailPattern });
   runAuthSql(`DELETE FROM auth.users WHERE username LIKE :'pattern';`, { pattern: emailPattern });
   runCoreSql(
     `DELETE FROM core.mentorship_signature WHERE mentorship_id IN (SELECT m.id FROM core.mentorship m
+       JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
+     DELETE FROM core.change_history WHERE entity_type = 'MEETING_RATING' AND entity_id IN (
+       SELECT r.id FROM core.meeting_rating r JOIN core.meeting mt ON mt.id = r.meeting_id
+       JOIN core.mentorship m ON m.id = mt.mentorship_id JOIN core.cohort c ON c.id = m.cohort_id
+       WHERE c.name LIKE :'pattern');
+     DELETE FROM core.change_history WHERE entity_type = 'MEETING' AND entity_id IN (
+       SELECT mt.id FROM core.meeting mt JOIN core.mentorship m ON m.id = mt.mentorship_id
+       JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
+     DELETE FROM core.meeting WHERE mentorship_id IN (SELECT m.id FROM core.mentorship m
        JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
      DELETE FROM core.mentorship WHERE cohort_id IN (SELECT id FROM core.cohort WHERE name LIKE :'pattern');
      DELETE FROM core.cohort WHERE name LIKE :'pattern';`,
