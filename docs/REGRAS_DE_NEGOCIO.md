@@ -102,7 +102,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 ## 7. Proposta e par
 
 1. O coordenador propõe ao mentee de 1 a 3 mentores de uma vez (opções), no ciclo aberto, a partir dos candidatos da página de matching. O máximo fica em `Mentorship.MAX_MENTOR_OPTIONS` no core; o app lê dali. Mentor repetido é recusado (400, `core.mentorship.duplicateMentor`). Se um dos mentores não passa nos filtros da seção 6.2, a proposta inteira é recusada (409, `core.mentorship.notCandidate`). Para mudar as opções, o coordenador retira a proposta e propõe de novo; não dá para acrescentar mentores a uma proposta aberta. **[feito]**
-2. Estados do par **[feito]** para `PROPOSED`, `ACCEPTED` e `DECLINED`; **[planejado: fase 3]** para os outros:
+2. Estados do par **[feito]** para `PROPOSED`, `ACCEPTED`, `ACTIVE` e `DECLINED`; **[planejado: fase 3]** para os outros:
    - `PROPOSED`: proposto pela coordenação; primeiro aguarda o mentee escolher, depois o mentor;
    - `ACCEPTED`: o mentee e depois o mentor aceitaram;
    - `ACTIVE`: os três assinaram o acordo;
@@ -122,13 +122,13 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 8. Acordo
 
-1. O texto do acordo é versionado. Uma versão publicada nunca muda: texto novo é versão nova. **[planejado: fase 3]**
-2. O par só fica `ACTIVE` depois que mentor, mentee e coordenador assinam a mesma versão. Cada um pode ler no seu idioma. **[planejado: fase 3]**
-3. Assinatura é um aceite eletrônico simples: a pessoa lê o texto, digita o nome completo e confirma. Ficam gravados usuário, versão, hash do texto e data. Não é assinatura com certificado digital. **[planejado: fase 3]** — a coordenação precisa confirmar que basta.
-4. Cada papel assina uma vez por par. **[planejado: fase 3]**
-5. Se sair versão nova no meio, vale a versão vigente na primeira assinatura do par. **[planejado: fase 3]**
-6. O par começa (`startedAt`) na terceira assinatura. Termina 1 ano depois, ou no fim do ciclo, o que vier antes. **[planejado: fase 3]**
-7. O texto do acordo sai primeiro como versão provisória, já com conteúdo e marcada "não revisado": o app mostra um aviso acima do texto, e o texto começa com o mesmo aviso. A revisão da coordenação não tem data e não bloqueia o uso. A versão revisada entra como versão nova, sem mudar código, e o aviso some. **[planejado: fase 3]** O provisório já corrige o que a revisão apontou:
+1. O texto do acordo é versionado. Uma versão publicada nunca muda: texto novo é versão nova. **[feito]**
+2. O par só fica `ACTIVE` depois que mentor, mentee e coordenador assinam a mesma versão. Cada um pode ler no seu idioma. **[feito]**
+3. Assinatura é um aceite eletrônico simples: a pessoa lê o texto, digita o nome completo e confirma. Ficam gravados usuário, versão, hash do texto e data. Não é assinatura com certificado digital. **[feito]** — a coordenação precisa confirmar que basta.
+4. Cada papel assina uma vez por par. **[feito]**
+5. Se sair versão nova no meio, vale a versão vigente na primeira assinatura do par. **[feito]**
+6. O par começa (`startedAt`) na terceira assinatura. Termina 1 ano depois, ou no fim do ciclo, o que vier antes. **[feito]**
+7. O texto do acordo sai primeiro como versão provisória, já com conteúdo e marcada "não revisado": o app mostra um aviso acima do texto, e o texto começa com o mesmo aviso. A revisão da coordenação não tem data e não bloqueia o uso. A versão revisada entra como versão nova, sem mudar código, e o aviso some. **[feito]** no core (versão `2026-11-17`); o aviso no app entra com a tela, **[planejado: fase 3]**. O provisório já corrige o que a revisão apontou:
    - tirar a cobrança por sessão perdida e o limite de responsabilidade "ao valor pago", porque o programa é gratuito;
    - trocar as referências a serviço social e à conferência de 2018;
    - escolher um só código de ética.

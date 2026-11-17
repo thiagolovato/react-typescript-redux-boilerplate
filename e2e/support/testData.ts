@@ -34,6 +34,8 @@ export function deleteTestData(): void {
             OR subject_user_id = ANY (string_to_array(:'ids', ',')::bigint[])
             OR mentorship_id IN (SELECT id FROM core.mentorship
                                  WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
+       DELETE FROM core.mentorship_signature WHERE mentorship_id IN (SELECT id FROM core.mentorship
+                                                       WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_contacts WHERE customer_id IN (SELECT id FROM gone);
        DELETE FROM core.customer_languages WHERE customer_id IN (SELECT id FROM gone);
@@ -49,7 +51,9 @@ export function deleteTestData(): void {
   runCoreSql(`DELETE FROM core.email_outbox WHERE recipient LIKE :'pattern';`, { pattern: emailPattern });
   runAuthSql(`DELETE FROM auth.users WHERE username LIKE :'pattern';`, { pattern: emailPattern });
   runCoreSql(
-    `DELETE FROM core.mentorship WHERE cohort_id IN (SELECT id FROM core.cohort WHERE name LIKE :'pattern');
+    `DELETE FROM core.mentorship_signature WHERE mentorship_id IN (SELECT m.id FROM core.mentorship m
+       JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
+     DELETE FROM core.mentorship WHERE cohort_id IN (SELECT id FROM core.cohort WHERE name LIKE :'pattern');
      DELETE FROM core.cohort WHERE name LIKE :'pattern';`,
     { pattern: `${TEST_COHORT_PREFIX}%` },
   );

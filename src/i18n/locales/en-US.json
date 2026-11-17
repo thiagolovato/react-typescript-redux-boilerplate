@@ -669,6 +669,8 @@
           "noneOpen": "No cohort is open today. Create or adjust a cohort before proposing.",
           "pairLimitReached": "The open cohort has reached its limit of pairs.",
           "limitBelowPairs": "The cohort already has more pairs than these limits allow.",
+          "ended": "This pair's cohort has ended, so its agreement can no longer be signed.",
+          "endsBeforePairs": "An active pair of this cohort ends later. Choose an end date on or after that pair's last day.",
           "notFound": "Cohort not found.",
           "invalidDates": "The cohort must end after it starts.",
           "overlap": "Another cohort already takes some of these dates."
@@ -684,7 +686,14 @@
           "notProposed": "Only a proposal not yet accepted by both can be withdrawn.",
           "duplicateMentor": "The same mentor was included more than once in the proposal.",
           "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all.",
-          "selfPair": "A person cannot be their own mentor."
+          "selfPair": "A person cannot be their own mentor.",
+          "notAccepted": "This pair cannot be signed now: it is not accepted by both, or it already started. Reload the page."
+        },
+        "agreement": {
+          "notFound": "The agreement is not available right now. Try again later.",
+          "languageUnavailable": "The agreement is not available in this language yet.",
+          "outdated": "This pair signs another version of the agreement. Reload the page to read it.",
+          "alreadySigned": "You have already signed this agreement."
         },
         "notification": {
           "notFound": "Notification not found."

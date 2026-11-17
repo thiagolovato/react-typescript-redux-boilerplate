@@ -378,7 +378,9 @@ Todas exigem participante do par (comparando `userId` do token) ou `COORDINATOR`
 | GET | `/agreements/current?locale=` | Texto vigente para assinar |
 | GET | `/mentorships/mine` | Par do usuário com assinaturas e progresso |
 | GET | `/mentorships/{id}` | Detalhe (participante ou coordenador) |
-| POST | `/mentorships/{id}/signatures` | Assinar (`agreementVersion`, `fullName`) |
+| POST | `/mentorships/{id}/signatures` | Mentor ou mentee assina (`agreementVersionId`, `language`, `fullName`) |
+| POST | `/coordination/mentorships/{id}/signatures` | Coordenador assina |
+| GET | `/agreements/{id}?language=` | Versão que o par já assina |
 | GET/POST | `/mentorships/{id}/meetings` | Listar e registrar encontros |
 | PUT/DELETE | `/mentorships/{id}/meetings/{meetingId}` | Editar ou apagar (regras de 3.3) |
 | PUT | `/mentorships/{id}/meetings/{meetingId}/rating` | Minha avaliação |
@@ -399,13 +401,26 @@ Erros novos em `ErrorCodes`: estado inválido para a ação, já assinado, vers�
 - Painel do coordenador (da Fase 2): colunas de assinaturas pendentes e progresso; detalhe com comentários das avaliações; assinatura do coordenador.
 - Textos em inglês e português, como o resto do app.
 
+Pendências da revisão do front-end (2026-11-17), para fazer junto com as telas desta fase:
+
+- [ ] Dashboard do participante mostra o caminho do par (proposta, assinatura do acordo, encontros "X de 5") no lugar das saudações genéricas e dos três cartões "Ações Rápidas", que repetem o menu. Tirar o cartão "Sessões de Mentoria" com o botão "Ver Conversas" desativado.
+- [ ] Matching: com 0 mentores escolhidos, o botão diz "Propor 1 mentor" em português (no pt-BR o plural `one` inclui 0). Acrescentar `propose_zero` nos dois idiomas, ou usar `{{count}}` no texto do singular.
+- [ ] Um termo por papel em português: hoje a mesma tela diz "Estudante" e "Mentees sem mentor". Traduzir também "Dashboard" no menu.
+- [ ] Letra maiúscula só no começo, como no resto do app: "Ações Rápidas", "Meu Perfil", "Ver Perfil", "Sessões de Mentoria", "Ver Conversas".
+- [ ] Rótulos em maiúsculas espaçadas (`MenteeProfilePanel.tsx`, cartão da mentoria) viram rótulos normais em cinza secundário. Tirar o rótulo acima de "Mentor sugerido", que repete o título.
+- [ ] Seletores de idioma e tema cortam o texto ("Tema do siste…" no menu, quase nada no topo de `/design-system`): nomes mais curtos ou botões com ícone.
+- [ ] Login e cadastro dizem o que é o programa (mentoria gratuita em saúde rural, com coordenação) no lugar de "Conectando pessoas para crescimento mútuo…" e "Bem-vindo de volta! Faça login para continuar".
+- [ ] Hierarquia na página da coordenação: ciclo, listas e propostas usam o mesmo cartão arredondado e nada se destaca. Decidir o que é principal antes de acrescentar as colunas de assinatura e progresso.
+- [ ] Avisos da coordenação dizem quem se inscreveu (o aviso já guarda `subject_user_id`). Para mentor e mentee os avisos continuam sem nome.
+- [ ] Conferir com o painel do navegador visível se o passarinho da página 404 aparece; na revisão ele não apareceu com o painel em segundo plano, provavelmente porque as animações não rodaram.
+
 #### 3.9 Ordem de entrega
 
-1. Migração com `agreement_version` (rascunho do texto em inglês e português) e `mentorship_signature`. Endpoints de acordo e assinatura. Testes de integração: assinatura duplicada, versão desatualizada, terceira assinatura ativa o par.
+1. Migração com `agreement_version` (rascunho do texto em inglês e português) e `mentorship_signature`. Endpoints de acordo e assinatura. Testes de integração: assinatura duplicada, versão desatualizada, terceira assinatura ativa o par. **Feito em 2026-11-17:** V18 com `agreement_version` (com `reviewed`), `agreement_version_text` e `mentorship_signature`, no formato da V8; a assinatura aponta para o texto lido (versão, idioma e hash) e um trigger recusa mudá-la. Primeira versão `2026-11-17`, provisória, nos dois idiomas, com as correções da seção 3.4 e o aviso no começo do texto. `mentorship` ganhou `started_at` e `ends_on` (último dia, inclusive; `CHECK` exige os dois em `ACTIVE`, `COMPLETED` e `TERMINATED`). Diferenças em relação a 3.2 e 3.6: o coordenador assina por `POST /coordination/mentorships/{id}/signatures` (mentor e mentee por `/mentorships/{id}/signatures`), cada um com a sua resposta; `GET /agreements/{id}?language=` devolve a versão que o par já assina (`agreementVersionId` na resposta do par), além de `/agreements/current?language=`; as assinaturas de um par rodam sob trava da linha (`SELECT ... FOR UPDATE`), não com `@Version`, para a terceira sempre ver as outras duas. As respostas do par (mentor, mentee e coordenador) trazem `agreementVersionId`, `signatures`, `startedAt` e `endsOn`. Assinar trava também a linha do ciclo e é recusado se o ciclo já terminou (`core.cohort.ended`); editar o ciclo pega a mesma trava e recusa um fim antes do último dia de um par ativo (`core.cohort.endsBeforePairs`). Ainda sem aviso nem e-mail de assinatura ou de par ativo: entram com a tela (passo 5). Testes: `AgreementControllerIntegrationTest` (H2) e `AgreementPostgresIntegrationTest` (migração, triggers, restrições e as duas últimas assinaturas ao mesmo tempo). No app, só as traduções dos códigos novos e a limpeza das assinaturas no e2e.
 2. Migração de encontros e avaliações. CRUD e avaliação com as regras de 3.3. Testes: não participante recebe 404, avaliação antes do encontro, edição bloqueada após avaliação da outra parte.
 3. Progresso (consulta agregada) e endpoint do coordenador. Teste unitário do cálculo e de integração da consulta.
 4. Encerramento e tarefa diária de transições, com e-mails. Testes: pedido duplicado, desistência, transição idempotente em `TERMINATED` e `COMPLETED`.
-5. App: página do par e colunas do painel.
+5. App: página do par e colunas do painel, com as pendências da revisão do front-end (3.8).
 6. Texto provisório publicado no passo 1, com o aviso de 3.2. A revisão pela coordenação não bloqueia o critério de pronto. Quando vier, entra como versão nova, sem mudança de código.
 
 Critério de pronto: um par de teste vai de `ACCEPTED` a `ACTIVE` com três assinaturas, registra 5 encontros avaliados pelos dois, e o painel mostra 5 de 5; outro par pede encerramento e vira `TERMINATED` 14 dias depois.

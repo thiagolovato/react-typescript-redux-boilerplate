@@ -669,6 +669,8 @@
           "noneOpen": "Nenhum ciclo está aberto hoje. Crie ou ajuste um ciclo antes de propor.",
           "pairLimitReached": "O ciclo aberto chegou ao limite de pares.",
           "limitBelowPairs": "O ciclo já tem mais pares do que esses limites permitem.",
+          "ended": "O ciclo deste par já terminou, então o acordo não pode mais ser assinado.",
+          "endsBeforePairs": "Um par ativo deste ciclo termina depois. Escolha uma data de fim igual ou posterior ao último dia desse par.",
           "notFound": "Ciclo não encontrado.",
           "invalidDates": "O ciclo precisa terminar depois de começar.",
           "overlap": "Outro ciclo já ocupa parte dessas datas."
@@ -684,7 +686,14 @@
           "notProposed": "Só uma proposta ainda não aceita pelos dois pode ser retirada.",
           "duplicateMentor": "O mesmo mentor foi incluído mais de uma vez na proposta.",
           "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas.",
-          "selfPair": "Uma pessoa não pode ser mentora de si mesma."
+          "selfPair": "Uma pessoa não pode ser mentora de si mesma.",
+          "notAccepted": "Este par não pode ser assinado agora: não foi aceito pelos dois ou já começou. Recarregue a página."
+        },
+        "agreement": {
+          "notFound": "O acordo não está disponível agora. Tente mais tarde.",
+          "languageUnavailable": "O acordo ainda não está disponível neste idioma.",
+          "outdated": "Este par assina outra versão do acordo. Recarregue a página para lê-la.",
+          "alreadySigned": "Você já assinou este acordo."
         },
         "notification": {
           "notFound": "Aviso não encontrado."
