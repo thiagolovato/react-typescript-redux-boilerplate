@@ -88,7 +88,7 @@ Princípio: cada fase entrega algo que a coordenação usa de verdade e substitu
 - Fechar `/matches` e `GET /customers/{userId}` até existir o papel de coordenador.
 - Substituir `systemdesign.md` por decisões reais (ou remover).
 
-Feito: workflow `.github/workflows/ci.yml` em cada repositório; migração V4 corrige 38 nomes em Twi; `/matches` e `GET /customers/{userId}` removidos (`MatchScorer` fica para a Fase 2, já com preferência de gênero no lugar de gênero igual); `systemdesign.md` reescrito. Pendente: o CI do core precisa do segredo `AUTH_REPO_TOKEN` se o repositório auth for privado.
+Feito: workflow `.github/workflows/ci.yml` em cada repositório; migração V4 corrige 38 nomes em Twi; `/matches` e `GET /customers/{userId}` removidos (`MatchScorer` fica para a Fase 2, já com preferência de gênero no lugar de gênero igual); `systemdesign.md` reescrito (hoje em [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md)). Pendente: o CI do core precisa do segredo `AUTH_REPO_TOKEN` se o repositório auth for privado.
 
 ### Fase 1 — Cadastro completo e consentimento (2 a 3 semanas) — feita em 2026-11-10
 
