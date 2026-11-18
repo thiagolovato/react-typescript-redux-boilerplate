@@ -150,9 +150,9 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 10. Progresso e certificado
 
-1. Um encontro conta como satisfatório quando os dois o avaliam como satisfatório. **[planejado: fase 3]** — **[em aberto]**, decisão 3.
-2. A meta é de 5 encontros satisfatórios. **[planejado: fase 3]**
-3. O par e o coordenador veem: encontros feitos, agendados, satisfatórios, pendentes de avaliação e quanto falta para 5. **[planejado: fase 3]**
+1. Um encontro conta como satisfatório quando os dois o avaliam como satisfatório. **[feito]** — **[em aberto]**, decisão 3.
+2. A meta é de 5 encontros satisfatórios. **[feito]**
+3. O par e o coordenador veem: encontros feitos, agendados, satisfatórios, pendentes de avaliação e quanto falta para 5. **[feito]** no core; a tela entra no passo 5 da fase 3.
 4. Ao fim do par, quem tem 5 ou mais encontros satisfatórios recebe certificado em PDF. **[planejado: fase 4]**
 
 ## 11. Encerramento
