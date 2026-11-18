@@ -10,7 +10,11 @@ export type NotificationType =
   | 'PROPOSAL_DECLINED_BY_MENTOR'
   | 'MENTOR_DECLINED'
   | 'PROPOSAL_WITHDRAWN'
-  | 'PAIR_ACCEPTED';
+  | 'PAIR_ACCEPTED'
+  | 'TERMINATION_REQUESTED'
+  | 'TERMINATION_WITHDRAWN'
+  | 'PAIR_TERMINATED'
+  | 'PAIR_COMPLETED';
 
 export interface AppNotification {
   id: number;

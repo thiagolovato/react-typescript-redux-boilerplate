@@ -43,6 +43,8 @@ export function deleteTestData(): void {
        DELETE FROM core.change_history WHERE entity_type = 'MEETING' AND entity_id IN (
          SELECT mt.id FROM core.meeting mt WHERE mt.mentorship_id IN (SELECT id FROM core.mentorship
                                     WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone)));
+       DELETE FROM core.change_history WHERE entity_type = 'MENTORSHIP_TERMINATION' AND entity_id IN (
+         SELECT id FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.meeting WHERE mentorship_id IN (SELECT id FROM core.mentorship
                                          WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone));
        DELETE FROM core.mentorship WHERE mentee_id IN (SELECT id FROM gone) OR mentor_id IN (SELECT id FROM gone);
@@ -71,6 +73,8 @@ export function deleteTestData(): void {
      DELETE FROM core.change_history WHERE entity_type = 'MEETING' AND entity_id IN (
        SELECT mt.id FROM core.meeting mt JOIN core.mentorship m ON m.id = mt.mentorship_id
        JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
+     DELETE FROM core.change_history WHERE entity_type = 'MENTORSHIP_TERMINATION' AND entity_id IN (
+       SELECT m.id FROM core.mentorship m JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
      DELETE FROM core.meeting WHERE mentorship_id IN (SELECT m.id FROM core.mentorship m
        JOIN core.cohort c ON c.id = m.cohort_id WHERE c.name LIKE :'pattern');
      DELETE FROM core.mentorship WHERE cohort_id IN (SELECT id FROM core.cohort WHERE name LIKE :'pattern');

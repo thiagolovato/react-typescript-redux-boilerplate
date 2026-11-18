@@ -688,7 +688,14 @@
           "mentorUnavailable": "Este mentor não tem mais vaga no ciclo. Escolha outra opção ou recuse todas.",
           "selfPair": "Uma pessoa não pode ser mentora de si mesma.",
           "notAccepted": "Este par não pode ser assinado agora: não foi aceito pelos dois ou já começou. Recarregue a página.",
-          "notActive": "Os encontros só podem ser registrados ou mudados enquanto o par está ativo."
+          "notActive": "Este par não está mais ativo: os encontros e o pedido de encerramento não podem mudar. Recarregue a página."
+        },
+        "termination": {
+          "alreadyRequested": "Este par já tem um pedido de encerramento aberto.",
+          "notRequested": "Este par não tem pedido de encerramento aberto. Recarregue a página.",
+          "notYours": "Só quem pediu o encerramento pode desistir dele.",
+          "afterEnd": "O par termina antes de o aviso de 14 dias acabar, então não é preciso pedir o encerramento.",
+          "alreadyEffective": "O dia do encerramento já chegou, então não dá mais para desistir do pedido."
         },
         "meeting": {
           "notFound": "Este encontro não existe mais. Recarregue a página.",
@@ -696,7 +703,8 @@
           "ratedByPartner": "A outra parte já avaliou este encontro. Peça à coordenação para corrigi-lo.",
           "notHeld": "Só dá para avaliar um encontro depois da data dele.",
           "ratedInFuture": "Um encontro já avaliado não pode ir para uma data futura.",
-          "outsidePair": "A data do encontro precisa estar dentro do período do par, do dia em que ele começou até o último dia."
+          "outsidePair": "A data do encontro precisa estar dentro do período do par, do dia em que ele começou até o último dia.",
+          "afterTermination": "O par termina antes dessa data, por um pedido de encerramento. Escolha uma data anterior ao dia do encerramento."
         },
         "agreement": {
           "notFound": "O acordo não está disponível agora. Tente mais tarde.",
@@ -748,7 +756,11 @@
       "PROPOSAL_DECLINED_BY_MENTOR": "Um mentor recusou a proposta. O mentee aguarda uma nova.",
       "MENTOR_DECLINED": "O mentor que você escolheu não pôde participar. A coordenação vai propor novos mentores.",
       "PROPOSAL_WITHDRAWN": "A coordenação retirou uma proposta que você tinha recebido.",
-      "PAIR_ACCEPTED": "Mentor e mentee aceitaram a mentoria. Vejam os contatos e combinem o primeiro encontro."
+      "PAIR_ACCEPTED": "Mentor e mentee aceitaram a mentoria. Vejam os contatos e combinem o primeiro encontro.",
+      "TERMINATION_REQUESTED": "Foi pedido o encerramento antecipado de uma mentoria. O par segue ativo por 14 dias.",
+      "TERMINATION_WITHDRAWN": "O pedido de encerramento de uma mentoria foi retirado. O par continua.",
+      "PAIR_TERMINATED": "Uma mentoria foi encerrada antes do fim, depois do aviso de 14 dias.",
+      "PAIR_COMPLETED": "Uma mentoria chegou ao fim do período."
     }
   }
 }

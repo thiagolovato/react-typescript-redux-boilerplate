@@ -688,7 +688,14 @@
           "mentorUnavailable": "This mentor has no place left in the cohort. Choose another option or decline them all.",
           "selfPair": "A person cannot be their own mentor.",
           "notAccepted": "This pair cannot be signed now: it is not accepted by both, or it already started. Reload the page.",
-          "notActive": "Meetings can be recorded or changed only while the pair is active."
+          "notActive": "This pair is no longer active: its meetings and termination request cannot change. Reload the page."
+        },
+        "termination": {
+          "alreadyRequested": "This pair already has an open request to end it.",
+          "notRequested": "This pair has no open request to end it. Reload the page.",
+          "notYours": "Only who asked to end the pair can withdraw the request.",
+          "afterEnd": "The pair ends before the 14 days' notice would run out, so there is no need to ask.",
+          "alreadyEffective": "The termination day has come, so the request can no longer be withdrawn."
         },
         "meeting": {
           "notFound": "This meeting no longer exists. Reload the page.",
@@ -696,7 +703,8 @@
           "ratedByPartner": "The other party already rated this meeting. Ask the coordination to correct it.",
           "notHeld": "A meeting can be rated only after its date.",
           "ratedInFuture": "A meeting already rated cannot move to a future date.",
-          "outsidePair": "The meeting date must fall within the pair's period, from the day it started to its last day."
+          "outsidePair": "The meeting date must fall within the pair's period, from the day it started to its last day.",
+          "afterTermination": "The pair ends before that date, after a request to end it. Pick a date before the termination day."
         },
         "agreement": {
           "notFound": "The agreement is not available right now. Try again later.",
@@ -748,7 +756,11 @@
       "PROPOSAL_DECLINED_BY_MENTOR": "A mentor declined the proposal. The mentee is waiting for a new one.",
       "MENTOR_DECLINED": "The mentor you chose could not take part. The coordination will propose new mentors.",
       "PROPOSAL_WITHDRAWN": "The coordination withdrew a proposal you had received.",
-      "PAIR_ACCEPTED": "Mentor and mentee accepted the mentorship. See the contacts and plan your first meeting."
+      "PAIR_ACCEPTED": "Mentor and mentee accepted the mentorship. See the contacts and plan your first meeting.",
+      "TERMINATION_REQUESTED": "An early end of a mentorship was requested. The pair stays active for 14 days.",
+      "TERMINATION_WITHDRAWN": "The request to end a mentorship was withdrawn. The pair goes on.",
+      "PAIR_TERMINATED": "A mentorship ended early, after the 14 days' notice.",
+      "PAIR_COMPLETED": "A mentorship reached the end of its period."
     }
   }
 }

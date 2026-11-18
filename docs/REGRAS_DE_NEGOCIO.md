@@ -103,7 +103,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 ## 7. Proposta e par
 
 1. O coordenador propõe ao mentee de 1 a 3 mentores de uma vez (opções), no ciclo aberto, a partir dos candidatos da página de matching. O máximo fica em `Mentorship.MAX_MENTOR_OPTIONS` no core; o app lê dali. Mentor repetido é recusado (400, `core.mentorship.duplicateMentor`). Se um dos mentores não passa nos filtros da seção 6.2, a proposta inteira é recusada (409, `core.mentorship.notCandidate`). Para mudar as opções, o coordenador retira a proposta e propõe de novo; não dá para acrescentar mentores a uma proposta aberta. **[feito]**
-2. Estados do par **[feito]** para `PROPOSED`, `ACCEPTED`, `ACTIVE` e `DECLINED`; **[planejado: fase 3]** para os outros:
+2. Estados do par **[feito]**:
    - `PROPOSED`: proposto pela coordenação; primeiro aguarda o mentee escolher, depois o mentor;
    - `ACCEPTED`: o mentee e depois o mentor aceitaram;
    - `ACTIVE`: os três assinaram o acordo;
@@ -157,11 +157,11 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
 
 ## 11. Encerramento
 
-1. Mentor, mentee ou coordenador pode pedir o encerramento antecipado, com motivo obrigatório. **[planejado: fase 3]**
-2. O pedido é o aviso por escrito. A outra parte e a coordenação recebem e-mail. **[planejado: fase 3]**
-3. O encerramento vale 14 dias depois do pedido. Até lá o par continua ativo, e os encontros contam. **[planejado: fase 3]**
-4. Quem pediu pode desistir antes dos 14 dias. Só um pedido aberto por par. **[planejado: fase 3]**
-5. Ao fim do período, o par passa para `COMPLETED` automaticamente. **[planejado: fase 3]**
+1. Mentor, mentee ou coordenador pode pedir o encerramento antecipado de um par ativo, com motivo obrigatório (até 500 caracteres). O motivo só aparece para quem pediu e para a coordenação. **[feito]**
+2. O pedido é o aviso por escrito. A outra parte (as duas, se foi a coordenação) e a coordenação recebem aviso no app e e-mail, sem o motivo. **[feito]**
+3. O encerramento vale 14 dias depois do pedido, contados em dias UTC: pedido em 1º de junho, par encerrado (`TERMINATED`) em 15 de junho. Até lá o par continua ativo, e os encontros contam; um encontro novo ou corrigido precisa cair antes desse dia (409, `core.meeting.afterTermination`). Os encontros que já estavam marcados para esse dia ou depois são desmarcados (apagados) quando o par é encerrado. Se o par já termina antes disso, o pedido é recusado (409, `core.termination.afterEnd`). **[feito]**
+4. Quem pediu pode desistir antes dos 14 dias (depois, 409, `core.termination.alreadyEffective`); se foi a coordenação, qualquer coordenador. A outra parte não (403, `core.termination.notYours`). A desistência avisa as mesmas pessoas, também por e-mail. Só um pedido aberto por par (409, `core.termination.alreadyRequested`); depois de uma desistência, pode haver outro. Cada pedido e cada desistência ficam no histórico. **[feito]**
+5. Ao fim do período, o par passa para `COMPLETED` automaticamente. Uma tarefa diária, logo depois da meia-noite UTC, encerra os pares do dia (`TERMINATED` ou `COMPLETED`, o que vier primeiro) e avisa mentor, mentee e coordenação no app, sem e-mail. **[feito]**
 
 ## 12. Check-ins e avaliações
 
@@ -178,7 +178,7 @@ Fontes: `Mentor-mente Program.docx`, `Mentor Mentee - Agreement.docx` e a planil
    - proposta recusada, para a coordenação, com o motivo **[feito]**;
    - recusa do mentor, para o mentee, sem o motivo; proposta retirada, para o mentee e para o mentor que ele já tinha escolhido **[feito]**;
    - apresentação, para os dois, com cópia para a coordenação, com nome e e-mail de cada um **[feito]**;
-   - pedido de encerramento, para a outra parte e para a coordenação **[planejado: fase 3]**;
+   - pedido de encerramento e desistência dele, para a outra parte e para a coordenação, sem o motivo **[feito]**;
    - check-ins, avaliações e lembretes **[planejado: fase 4]**.
 4. A coordenação recebe numa caixa compartilhada, configurada por ambiente (`COORDINATION_EMAIL`). Sem caixa configurada, a coordenação não recebe e-mail, só os avisos no app. **[feito]**
 5. Notificações gerais, para cada perfil a quem o evento interessa (mentee, mentor, coordenação): novo mentee, novo mentor, mentee escolheu um mentor, mentor aceitou o mentee, recusas, proposta retirada. Todo evento vira um aviso no app; os eventos do item 3 também vão por e-mail. **[feito]**
